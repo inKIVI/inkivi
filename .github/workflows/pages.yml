@@ -1,4 +1,4 @@
-name: Deploy gh-pages site
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -22,52 +22,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout site from gh-pages
+      - name: Checkout
         uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          path: site
 
-      - name: Configure GitHub Pages
-        id: setup
-        continue-on-error: true
+      - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload static site
-        id: upload
-        if: steps.setup.outcome == 'success'
-        continue-on-error: true
         uses: actions/upload-pages-artifact@v4
         with:
-          path: site
+          path: .
 
-      - name: Deploy GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
-        if: steps.upload.outcome == 'success'
-        continue-on-error: true
         uses: actions/deploy-pages@v4
-
-      - name: Record deployment result
-        if: always()
-        env:
-          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-          SETUP_OUTCOME: ${{ steps.setup.outcome }}
-          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
-          DEPLOY_OUTCOME: ${{ steps.deployment.outcome }}
-        shell: bash
-        run: |
-          cd site
-          printf 'url=%s\nsetup=%s\nupload=%s\ndeploy=%s\nsource=%s\n' \
-            "$PAGE_URL" "$SETUP_OUTCOME" "$UPLOAD_OUTCOME" "$DEPLOY_OUTCOME" "$(git rev-parse HEAD)" \
-            > .pages-deployment-status
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .pages-deployment-status
-          git commit -m 'Record Pages deployment result' || true
-          git push origin HEAD:gh-pages
-
-      - name: Require successful deployment
-        if: steps.deployment.outcome != 'success'
-        run: exit 1
