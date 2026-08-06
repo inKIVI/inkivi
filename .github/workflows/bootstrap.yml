@@ -1,0 +1,32 @@
+name: Bootstrap inkivi site
+
+on:
+  push:
+    branches:
+      - gh-pages
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Materialize tested site
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .bootstrap/part-* | base64 -d > /tmp/inkivi-site.tgz
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          tar -xzf /tmp/inkivi-site.tgz -C .
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Build new inkivi interactive site'
+          git push origin HEAD:gh-pages
