@@ -115,8 +115,10 @@ game: {
 
 ## Публикация GitHub Pages
 
-Рабочая ветка сайта — `gh-pages`, файл `index.html` находится в корне. После коммита GitHub Pages должен публиковать адрес:
+Рабочая ветка сайта — `gh-pages`, файл `index.html` находится в корне. Адрес проекта:
 
 `https://inkivi.github.io/inkivi/`
 
-В настройках репозитория GitHub Pages выберите **Deploy from a branch**, ветку `gh-pages`, папку `/ (root)`. После публикации проверьте URL с query-параметром и без него.
+Workflow `.github/workflows/pages.yml` запускается при push в `gh-pages`, включает GitHub Pages при необходимости и публикует содержимое корня без отдельной сборки. После успешного развёртывания workflow записывает адрес и SHA публикации в `.pages-deployed`.
+
+Для приватного репозитория тариф GitHub должен поддерживать Pages. При ручной настройке в **Settings → Pages** выберите **GitHub Actions** как источник публикации.
