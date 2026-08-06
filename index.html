@@ -6,143 +6,345 @@
 <meta name="theme-color" content="#0b0b08">
 <meta name="description" content="Официальный сайт inkivi">
 <title>inkivi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0b08;
-  --ink:#e9e2d6;
-  --muted:#9a9285;
-  --line:rgba(238,228,210,.14);
-  --line-strong:rgba(238,228,210,.3);
+  --ink:#e8e0d2;
+  --muted:#9b9285;
+  --line:rgba(232,224,210,.14);
+  --line-strong:rgba(232,224,210,.34);
   --rust:#80513d;
   --olive:#5b5b48;
   --ease:cubic-bezier(.22,.8,.25,1);
 }
 *{box-sizing:border-box}
 html{background:var(--bg)}
-body{margin:0;min-width:280px;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+body{margin:0;min-width:280px;background:var(--bg);color:var(--ink);font-family:"Pixelify Sans",monospace;overflow:hidden}
 button,a{font:inherit;color:inherit}
 button{appearance:none}
-:focus-visible{outline:2px solid rgba(233,226,214,.72);outline-offset:-5px}
-.loader{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;background:#080806;transition:opacity .8s var(--ease),visibility .8s}
+:focus-visible{outline:2px solid rgba(232,224,210,.72);outline-offset:-5px}
+
+.loader{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;background:#080806;transition:opacity .7s var(--ease),visibility .7s}
 .loader.done{opacity:0;visibility:hidden;pointer-events:none}
-.loader__inner{width:min(480px,82vw);text-align:center}
-.loader__name{font-size:clamp(52px,12vw,110px);font-weight:800;line-height:.78;letter-spacing:-.08em;transform:skewX(-2deg) rotate(-.4deg);animation:textTremor 5.7s steps(1,end) infinite}
-.loader__line{height:1px;margin-top:30px;background:rgba(255,255,255,.1);overflow:hidden}
-.loader__bar{display:block;width:12%;height:100%;background:var(--ink);transform-origin:left;transition:width .25s ease}
-.loader__status{margin-top:12px;color:var(--muted);font-size:9px;letter-spacing:.25em;text-transform:uppercase}
+.loader__inner{width:min(500px,84vw);text-align:center}
+.loader__name{font-size:clamp(54px,13vw,118px);font-weight:700;line-height:.8;letter-spacing:-.045em;transform:skewX(-2deg) rotate(-.35deg);animation:textTremor 7.5s steps(1,end) infinite}
+.loader__line{height:2px;margin-top:30px;background:rgba(255,255,255,.09);overflow:hidden}
+.loader__bar{display:block;width:8%;height:100%;background:var(--ink);transition:width .22s ease}
+.loader__status{margin-top:12px;color:var(--muted);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+
 .stage{position:fixed;inset:0;min-height:100svh;min-height:100dvh;overflow:hidden;background:radial-gradient(circle at 50% 5%,rgba(161,142,97,.12),transparent 30%),linear-gradient(180deg,#191914,#090908)}
 .stage::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(119deg,transparent 0 43%,rgba(128,81,61,.07) 58%,transparent 76%),radial-gradient(circle at 15% 80%,rgba(91,91,72,.12),transparent 28%)}
 .stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,transparent 36%,rgba(0,0,0,.72) 100%)}
-.stage__shake{position:absolute;inset:-2px;animation:worldTremor 11s steps(1,end) infinite}
-.view{position:absolute;inset:0;min-height:100svh;min-height:100dvh;transition:opacity .9s var(--ease),transform 1.1s var(--ease),visibility .9s;will-change:opacity,transform}
-.view.off{opacity:0;visibility:hidden;pointer-events:none;transform:scale(1.018)}
+.stage__shake{position:absolute;inset:-2px;animation:worldTremor 13s steps(1,end) infinite}
+.view{position:absolute;inset:0;min-height:100svh;min-height:100dvh;transition:opacity .5s var(--ease),visibility .5s;will-change:opacity}
+.view.off{opacity:0;visibility:hidden;pointer-events:none}
+
 .start{z-index:3;display:grid;place-items:center;padding:max(24px,env(safe-area-inset-top)) clamp(18px,4vw,58px) max(24px,env(safe-area-inset-bottom))}
 .hero{position:relative;z-index:2;width:min(1180px,100%);text-align:center}
-.eyebrow,.date,.unit span,.btn{letter-spacing:.2em;text-transform:uppercase}
-.eyebrow{color:var(--muted);font-size:clamp(9px,.75vw,12px);letter-spacing:.34em;animation:textTremor 8.3s steps(1,end) infinite}
-h1{margin:clamp(20px,4vh,42px) 0 18px;font-size:clamp(80px,18vw,250px);font-weight:800;line-height:.72;letter-spacing:-.085em;transform:skewX(-2.2deg) rotate(-.45deg);animation:titleTremor 7.4s steps(1,end) infinite}
-.release{font-size:clamp(16px,2.2vw,30px);letter-spacing:.17em;text-transform:uppercase;transform:rotate(.18deg);animation:textTremor 6.8s steps(1,end) infinite reverse}
-.date{margin-top:10px;color:var(--muted);font-size:clamp(9px,.75vw,12px)}
+.eyebrow,.date,.unit span,.btn{letter-spacing:.13em;text-transform:uppercase}
+.eyebrow{color:var(--muted);font-size:clamp(11px,.85vw,15px);animation:textTremor 9.2s steps(1,end) infinite}
+h1{margin:clamp(20px,4vh,42px) 0 18px;font-size:clamp(82px,18vw,250px);font-weight:700;line-height:.72;letter-spacing:-.05em;transform:skewX(-2deg) rotate(-.4deg);animation:titleTremor 8.4s steps(1,end) infinite}
+.release{font-size:clamp(18px,2.25vw,34px);letter-spacing:.09em;text-transform:uppercase;transform:rotate(.15deg);animation:textTremor 7.8s steps(1,end) infinite reverse}
+.date{margin-top:10px;color:var(--muted);font-size:clamp(11px,.85vw,15px)}
 .timer{display:grid;grid-template-columns:repeat(4,minmax(72px,155px));justify-content:center;gap:clamp(14px,2.5vw,38px);margin:clamp(30px,5.5vh,62px) 0}
-.unit{position:relative;animation:textTremor 9s steps(1,end) infinite}
+.unit{position:relative;animation:textTremor 10.4s steps(1,end) infinite}
 .unit:nth-child(2){animation-delay:-2.1s}.unit:nth-child(3){animation-delay:-4.2s}.unit:nth-child(4){animation-delay:-6.3s}
 .unit:not(:last-child)::after{content:"";position:absolute;right:calc(clamp(14px,2.5vw,38px)/-2);top:9%;bottom:9%;width:1px;background:linear-gradient(transparent,var(--line),transparent)}
-.unit b{display:block;font-size:clamp(40px,6.3vw,92px);font-weight:300;line-height:.88}
-.unit span{display:block;margin-top:10px;color:var(--muted);font-size:clamp(8px,.6vw,10px)}
+.unit b{display:block;font-size:clamp(42px,6.5vw,96px);font-weight:500;line-height:.88}
+.unit span{display:block;margin-top:10px;color:var(--muted);font-size:clamp(9px,.68vw,12px)}
 .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-.btn{position:relative;min-width:min(224px,42vw);padding:16px 24px;border:1px solid var(--line);background:rgba(14,14,12,.65);font-size:10px;text-decoration:none;cursor:pointer;overflow:hidden;transition:transform .55s var(--ease),background .35s,color .35s,border-color .35s}
+.btn{position:relative;min-width:min(224px,42vw);padding:16px 24px;border:1px solid var(--line);background:rgba(14,14,12,.65);font-size:12px;text-decoration:none;cursor:pointer;overflow:hidden;transition:transform .5s var(--ease),background .35s,color .35s,border-color .35s}
 .btn::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.1) 50%,transparent 75%);transform:translateX(-130%);transition:transform .75s var(--ease)}
 .btn:hover{transform:translateY(-4px) rotate(-.35deg);border-color:var(--line-strong)}
 .btn:hover::before{transform:translateX(130%)}
 .btn.primary{background:var(--ink);color:#141410}
+
 .menu{z-index:2;overflow:hidden}
 .top{position:absolute;z-index:8;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:max(20px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) 20px max(22px,env(safe-area-inset-left));pointer-events:none}
-.brand{font-size:clamp(25px,2.3vw,42px);font-weight:800;line-height:.9;letter-spacing:-.055em;transform:skewX(-2deg) rotate(-.35deg);animation:textTremor 6.9s steps(1,end) infinite}
-.brand small{display:block;margin-top:8px;color:var(--muted);font-size:8px;font-weight:400;letter-spacing:.22em;text-transform:uppercase}
-.hint{color:var(--muted);font-size:8px;line-height:1.7;letter-spacing:.18em;text-align:right;text-transform:uppercase;animation:textTremor 8.1s steps(1,end) infinite reverse}
+.brand{font-size:clamp(28px,2.5vw,46px);font-weight:700;line-height:.9;letter-spacing:-.035em;transform:skewX(-2deg) rotate(-.35deg);animation:textTremor 8.1s steps(1,end) infinite}
+.brand small{display:block;margin-top:8px;color:var(--muted);font-size:10px;font-weight:400;letter-spacing:.13em;text-transform:uppercase}
+.hint{color:var(--muted);font-size:10px;line-height:1.6;letter-spacing:.12em;text-align:right;text-transform:uppercase;animation:textTremor 9.3s steps(1,end) infinite reverse}
 .zones{position:absolute;inset:0;z-index:2;display:grid;grid-template-columns:1.18fr .82fr 1.18fr;grid-template-rows:1fr 1fr;gap:10px;padding:10px}
 .zone{position:relative;min-width:0;min-height:0;padding:0;border:1px solid var(--line);background:transparent;overflow:hidden;cursor:pointer;text-align:left;transform-style:preserve-3d;transition:transform .65s var(--ease),border-color .35s,filter .35s;will-change:transform}
 .zone:hover{border-color:var(--line-strong);filter:brightness(1.06)}
-.zoneSkin{position:absolute;inset:0;display:block;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.008));animation:panelTremor 10s steps(1,end) infinite}
+.zoneSkin{position:absolute;inset:0;display:block;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.008));animation:panelTremor 11s steps(1,end) infinite}
 .zone:nth-child(2) .zoneSkin{animation-delay:-2.4s}.zone:nth-child(3) .zoneSkin{animation-delay:-5.1s}.zone:nth-child(4) .zoneSkin{animation-delay:-7.3s}
-.zoneSkin::before{content:"";position:absolute;inset:-8%;background:radial-gradient(circle at 72% 18%,rgba(161,137,82,.17),transparent 28%),radial-gradient(circle at 12% 90%,rgba(128,81,61,.16),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.012),rgba(0,0,0,.52));transition:transform 1s var(--ease),opacity .5s}
+.zoneSkin::before{content:"";position:absolute;inset:-8%;background:radial-gradient(circle at 72% 18%,rgba(161,137,82,.17),transparent 28%),radial-gradient(circle at 12% 90%,rgba(128,81,61,.16),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.012),rgba(0,0,0,.52));transition:transform 1s var(--ease)}
 .zone:hover .zoneSkin::before{transform:scale(1.055) translate3d(1.2%,-.8%,0)}
-.zoneSkin::after{content:"";position:absolute;inset:0;border:1px solid transparent;box-shadow:inset 0 0 80px rgba(0,0,0,.22);pointer-events:none}
-.zoneMedia{position:absolute;inset:clamp(70px,9vh,110px) clamp(18px,2.5vw,44px) clamp(86px,12vh,150px);display:grid;place-items:center;pointer-events:none}
-.zoneMedia img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55));transition:transform .85s var(--ease),filter .5s;animation:objectTremor 8.8s steps(1,end) infinite}
+.zoneSkin::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 80px rgba(0,0,0,.22);pointer-events:none}
+.zoneMedia{position:absolute;inset:clamp(72px,10vh,118px) clamp(20px,3vw,52px) clamp(92px,13vh,160px);display:grid;place-items:center;pointer-events:none}
+.zoneMedia img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 28px 44px rgba(0,0,0,.55));transition:transform .85s var(--ease),filter .5s;animation:objectTremor 9.8s steps(1,end) infinite}
 .zone:hover .zoneMedia img{transform:translateZ(35px) scale(1.035);filter:drop-shadow(0 36px 54px rgba(0,0,0,.62))}
 .zoneCopy{position:absolute;z-index:4;left:clamp(18px,2.2vw,38px);right:clamp(18px,2.2vw,38px);bottom:clamp(16px,2.2vh,28px);display:flex;align-items:flex-end;justify-content:space-between;gap:18px;transform:translateZ(34px)}
-.zoneTitle{display:block;font-size:clamp(34px,4.7vw,80px);font-weight:800;line-height:.78;letter-spacing:-.065em;text-transform:lowercase;transform:skewX(-2deg) rotate(-.65deg);animation:textTremor 7.1s steps(1,end) infinite}
-.zone:nth-child(even) .zoneTitle{transform:skewX(1.5deg) rotate(.55deg);animation-delay:-3.2s}
-.zoneMeta{display:block;max-width:18ch;color:var(--muted);font-size:clamp(7px,.62vw,10px);line-height:1.5;letter-spacing:.18em;text-align:right;text-transform:uppercase}
-.zoneIndex{position:absolute;right:clamp(18px,2vw,34px);top:clamp(68px,10vh,120px);color:rgba(233,226,214,.09);font-size:clamp(70px,9vw,170px);font-weight:800;line-height:.8;letter-spacing:-.08em;pointer-events:none;transform:rotate(1deg)}
+.zoneTitle{display:block;font-size:clamp(38px,5vw,86px);font-weight:700;line-height:.78;letter-spacing:-.045em;text-transform:lowercase;transform:skewX(-2deg) rotate(-.55deg);animation:textTremor 8.5s steps(1,end) infinite}
+.zone:nth-child(even) .zoneTitle{transform:skewX(1.5deg) rotate(.45deg);animation-delay:-3.2s}
+.zoneMeta{display:block;max-width:18ch;color:var(--muted);font-size:clamp(9px,.7vw,12px);line-height:1.45;letter-spacing:.11em;text-align:right;text-transform:uppercase}
+.zoneIndex{position:absolute;right:clamp(18px,2vw,34px);top:clamp(68px,10vh,120px);color:rgba(233,226,214,.075);font-size:clamp(72px,9vw,176px);font-weight:700;line-height:.8;letter-spacing:-.04em;pointer-events:none;transform:rotate(1deg)}
 .visuals{grid-row:1/3}.game{grid-column:3;grid-row:1/3}.music{grid-column:2;grid-row:1}.back{grid-column:2;grid-row:2}
 .visuals .zoneSkin{background:linear-gradient(145deg,rgba(90,91,71,.12),rgba(255,255,255,.01))}
 .music .zoneSkin{background:linear-gradient(155deg,rgba(127,80,59,.12),rgba(255,255,255,.01))}
 .game .zoneSkin{background:linear-gradient(140deg,rgba(59,65,53,.14),rgba(255,255,255,.008))}
-.panel{position:fixed;inset:0;z-index:30;background:#0b0b09;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.985);clip-path:inset(6% 5% 6% 5% round 22px);transition:opacity .65s var(--ease),transform .9s var(--ease),clip-path .9s var(--ease),visibility .65s}
-.panel.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;clip-path:inset(0 round 0)}
-.panelInner{min-height:100svh;min-height:100dvh;padding:max(22px,env(safe-area-inset-top)) clamp(20px,5vw,84px) max(24px,env(safe-area-inset-bottom));display:grid;grid-template-rows:auto 1fr;background:radial-gradient(circle at 75% 18%,rgba(127,79,56,.14),transparent 30%),linear-gradient(180deg,#171713,#0b0b09);animation:worldTremor 12s steps(1,end) infinite}
+
+.panel{position:fixed;inset:0;z-index:30;background:#0b0b09;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.992);transition:opacity .5s var(--ease),transform .65s var(--ease),visibility .5s}
+.panel.on{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.panelInner{min-height:100svh;min-height:100dvh;padding:max(22px,env(safe-area-inset-top)) clamp(20px,5vw,84px) max(24px,env(safe-area-inset-bottom));display:grid;grid-template-rows:auto 1fr;background:radial-gradient(circle at 75% 18%,rgba(127,79,56,.14),transparent 30%),linear-gradient(180deg,#171713,#0b0b09);animation:worldTremor 14s steps(1,end) infinite}
 .panelHead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
-.panel h2{margin:0;font-size:clamp(58px,12vw,188px);font-weight:800;line-height:.72;letter-spacing:-.08em;text-transform:lowercase;transform:skewX(-2deg) rotate(-.45deg);animation:titleTremor 7.8s steps(1,end) infinite}
-.close{flex:0 0 auto;width:54px;height:54px;border:1px solid var(--line);border-radius:50%;background:rgba(255,255,255,.025);font-size:30px;cursor:pointer;transition:transform .5s var(--ease),background .35s}
-.close:hover{transform:rotate(90deg) scale(1.06);background:rgba(255,255,255,.08)}
+.panel h2{margin:0;font-size:clamp(60px,12vw,190px);font-weight:700;line-height:.72;letter-spacing:-.05em;text-transform:lowercase;transform:skewX(-2deg) rotate(-.4deg);animation:titleTremor 8.8s steps(1,end) infinite}
+.close{flex:0 0 auto;width:54px;height:54px;border:1px solid var(--line);border-radius:0;background:rgba(255,255,255,.025);font-size:30px;cursor:pointer;transition:transform .5s var(--ease),background .35s}
+.close:hover{transform:rotate(5deg) scale(1.06);background:rgba(255,255,255,.08)}
 .content{align-self:end;margin-top:32px;padding-top:30px;border-top:1px solid var(--line);display:grid;grid-template-columns:1.25fr .75fr;gap:clamp(26px,5vw,96px)}
-.content p{margin:0;max-width:35ch;font-size:clamp(18px,2.1vw,32px);line-height:1.34;transform:rotate(-.12deg);animation:textTremor 8.6s steps(1,end) infinite}
-.content aside{color:var(--muted);font-size:clamp(12px,1vw,15px);line-height:1.75}
-.transition{position:fixed;inset:0;z-index:60;pointer-events:none;visibility:hidden}
-.transition.active{visibility:visible}
-.transitionPane{position:absolute;top:0;bottom:0;width:50.5%;background:#080806;will-change:transform}
-.transitionPane.left{left:0;transform:translateX(-101%)}
-.transitionPane.right{right:0;transform:translateX(101%)}
-.transition.active:not(.reveal) .transitionPane.left{animation:curtainLeftIn .72s var(--ease) forwards}
-.transition.active:not(.reveal) .transitionPane.right{animation:curtainRightIn .72s var(--ease) forwards}
-.transition.active.reveal .transitionPane.left{transform:translateX(0);animation:curtainLeftOut .86s var(--ease) forwards}
-.transition.active.reveal .transitionPane.right{transform:translateX(0);animation:curtainRightOut .86s var(--ease) forwards}
-.transitionMark{position:absolute;z-index:2;left:50%;top:50%;font-size:clamp(38px,7vw,90px);font-weight:800;letter-spacing:-.07em;transform:translate(-50%,-50%) skewX(-2deg);opacity:0}
-.transition.active:not(.reveal) .transitionMark{animation:markIn .5s .2s var(--ease) forwards}
-.transition.active.reveal .transitionMark{opacity:1;animation:markOut .45s var(--ease) forwards}
-@keyframes curtainLeftIn{to{transform:translateX(0)}}
-@keyframes curtainRightIn{to{transform:translateX(0)}}
-@keyframes curtainLeftOut{to{transform:translateX(-101%)}}
-@keyframes curtainRightOut{to{transform:translateX(101%)}}
-@keyframes markIn{to{opacity:.7}}
-@keyframes markOut{to{opacity:0}}
-@keyframes worldTremor{0%,7%,13%,21%,31%,45%,54%,66%,77%,89%,100%{transform:translate3d(0,0,0)}8%{transform:translate3d(.7px,-.4px,0)}14%{transform:translate3d(-.6px,.5px,0)}46%{transform:translate3d(.5px,.6px,0)}67%{transform:translate3d(-.7px,-.3px,0)}90%{transform:translate3d(.6px,-.5px,0)}}
-@keyframes panelTremor{0%,16%,18%,49%,51%,79%,81%,100%{transform:translate3d(0,0,0)}17%{transform:translate3d(.8px,-.5px,0)}50%{transform:translate3d(-.7px,.6px,0)}80%{transform:translate3d(.5px,.7px,0)}}
-@keyframes textTremor{0%,10%,12%,37%,39%,64%,66%,88%,90%,100%{translate:0 0}11%{translate:.8px -.4px}38%{translate:-.7px .5px}65%{translate:.5px .7px}89%{translate:-.6px -.4px}}
-@keyframes titleTremor{0%,18%,20%,52%,54%,83%,85%,100%{translate:0 0}19%{translate:1px -.6px}53%{translate:-.8px .7px}84%{translate:.7px .5px}}
-@keyframes objectTremor{0%,24%,26%,58%,60%,92%,94%,100%{translate:0 0}25%{translate:.7px -.5px}59%{translate:-.6px .6px}93%{translate:.5px .4px}}
-@media(max-width:900px){body{overflow:hidden}.menu{overflow:auto;overscroll-behavior:contain;background:#0a0a08}.top{position:sticky;top:0;padding:18px 16px 16px;background:linear-gradient(#0a0a08 55%,transparent);pointer-events:none}.zones{position:relative;inset:auto;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,minmax(360px,48svh));min-height:calc(100dvh - 78px);padding:0 10px 10px}.visuals,.music,.back,.game{grid-column:auto;grid-row:auto}.zoneTitle{font-size:clamp(42px,8vw,72px)}.zoneMedia{inset:70px 22px 95px}.content{grid-template-columns:1fr}}
-@media(max-width:620px){h1{font-size:25vw}.timer{grid-template-columns:repeat(2,minmax(90px,125px));gap:24px 30px}.unit:nth-child(2)::after{display:none}.actions{flex-direction:column;align-items:stretch}.btn{width:100%;min-width:0}.hint{display:none}.zones{grid-template-columns:1fr;grid-template-rows:repeat(4,minmax(310px,68svh));padding:0 8px 8px;gap:8px}.zoneCopy{left:20px;right:20px;bottom:20px}.zoneTitle{font-size:clamp(48px,16vw,86px)}.zoneMeta{font-size:8px}.zoneIndex{top:72px;right:20px;font-size:34vw}.zoneMedia{inset:76px 18px 105px}.panel h2{font-size:21vw}.close{width:48px;height:48px}.content{align-self:start;padding-top:22px}.content p{font-size:20px}}
-@media(min-width:1900px){.zones{gap:14px;padding:14px}.zoneTitle{font-size:86px}.zoneCopy{left:42px;right:42px;bottom:34px}}
-@media(hover:none),(pointer:coarse){.zone{transform:none!important}.zone:hover{filter:none}.btn:hover{transform:none}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.stage__shake,.zoneSkin,.zoneTitle,h1,.brand,.panelInner,.panel h2{transform:none!important;translate:none!important}}
+.content p{margin:0;max-width:35ch;font-size:clamp(20px,2.25vw,36px);line-height:1.25;transform:rotate(-.12deg);animation:textTremor 9.6s steps(1,end) infinite}
+.content aside{color:var(--muted);font-size:clamp(13px,1.1vw,17px);line-height:1.6}
+
+.fade{position:fixed;inset:0;z-index:70;background:#070705;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s var(--ease),visibility .5s}
+.fade.active{opacity:1;visibility:visible;pointer-events:auto}
+
+@keyframes worldTremor{
+  0%,37%,37.4%,70%,70.4%,100%{transform:translate3d(0,0,0)}
+  37.1%{transform:translate3d(1px,0,0)}
+  37.2%{transform:translate3d(-1px,1px,0)}
+  70.1%{transform:translate3d(0,-1px,0)}
+  70.2%{transform:translate3d(1px,1px,0)}
+}
+@keyframes textTremor{
+  0%,43%,43.5%,81%,81.4%,100%{translate:0 0}
+  43.1%{translate:1px 0}
+  43.2%{translate:-1px 1px}
+  81.1%{translate:0 -1px}
+  81.2%{translate:1px 0}
+}
+@keyframes titleTremor{
+  0%,31%,31.5%,67%,67.5%,100%{translate:0 0}
+  31.1%{translate:2px 0}
+  31.2%{translate:-1px 1px}
+  67.1%{translate:0 -1px}
+  67.2%{translate:1px 1px}
+}
+@keyframes panelTremor{
+  0%,52%,52.4%,88%,88.3%,100%{translate:0 0}
+  52.1%{translate:1px 0}
+  52.2%{translate:-1px 1px}
+  88.1%{translate:0 -1px}
+}
+@keyframes objectTremor{
+  0%,46%,46.4%,76%,76.4%,100%{translate:0 0}
+  46.1%{translate:1px -1px}
+  46.2%{translate:-1px 0}
+  76.1%{translate:0 1px}
+}
+
+@media(max-width:900px){
+  body{overflow:auto}
+  .stage{position:relative;min-height:100dvh;overflow:visible}
+  .stage__shake{position:relative;inset:auto;min-height:100dvh}
+  .view{position:relative;inset:auto}
+  .start{min-height:100dvh}
+  .menu{min-height:100dvh;height:auto;padding-top:78px;overflow:visible}
+  .top{position:fixed}
+  .zones{position:relative;inset:auto;min-height:calc(100dvh - 78px);grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,minmax(280px,44vh))}
+  .visuals,.game,.music,.back{grid-column:auto;grid-row:auto}
+  .content{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  h1{font-size:25vw}
+  .timer{grid-template-columns:repeat(2,minmax(90px,120px));gap:24px 28px}
+  .unit:nth-child(2)::after{display:none}
+  .actions{flex-direction:column;align-items:stretch}
+  .btn{width:100%;min-width:0}
+  .hint{display:none}
+  .menu{padding-top:70px}
+  .zones{grid-template-columns:1fr;grid-template-rows:repeat(4,minmax(280px,46vh));padding:8px;gap:8px}
+  .zoneTitle{font-size:clamp(48px,16vw,82px)}
+  .zoneMeta{font-size:10px}
+  .zoneMedia{inset:70px 24px 100px}
+  .panel h2{font-size:21vw}
+  .close{width:48px;height:48px}
+  .content{align-self:start;padding-top:22px}
+  .content p{font-size:24px}
+}
+@media(min-width:1900px){
+  .zones{gap:14px;padding:14px}
+  .zoneTitle{font-size:92px}
+  .brand{font-size:50px}
+}
+@media(hover:none){.zone{transform:none!important}.btn:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
 </style>
 </head>
-<body class="loading">
-<div class="loader" id="loader" aria-live="polite"><div class="loader__inner"><div class="loader__name">inkivi</div><div class="loader__line"><span class="loader__bar" id="loaderBar"></span></div><div class="loader__status" id="loaderStatus">загрузка пространства</div></div></div>
-<div class="stage"><div class="stage__shake">
-<section class="view start" id="start"><div class="hero"><div class="eyebrow">ближайший релиз</div><h1>inkivi</h1><div class="release">предстоящий релиз</div><div class="date">01 сентября 2026</div><div class="timer" id="timer"></div><div class="actions"><a class="btn primary" href="#" id="presave">сделать пресейв</a><button class="btn" id="enter" type="button">войти</button></div></div></section>
-<main class="view menu off" id="menu"><header class="top"><div class="brand">inkivi<small>главное меню</small></div><div class="hint">выбери пространство<br>и нажми</div></header><section class="zones" aria-label="разделы сайта">
-<button class="zone visuals" type="button" data-panel="визуалы"><span class="zoneSkin"><span class="zoneIndex">01</span><span class="zoneMedia"><img src="assets/visuals.png" alt="" data-preload onerror="this.hidden=true"></span><span class="zoneCopy"><strong class="zoneTitle">визуалы</strong><span class="zoneMeta">TikTok<br>и видео</span></span></span></button>
-<button class="zone music" type="button" data-panel="релизы"><span class="zoneSkin"><span class="zoneIndex">02</span><span class="zoneMedia"><img src="assets/releases.png" alt="" data-preload onerror="this.hidden=true"></span><span class="zoneCopy"><strong class="zoneTitle">релизы</strong><span class="zoneMeta">музыка<br>и ссылки</span></span></span></button>
-<button class="zone back" type="button" id="back"><span class="zoneSkin"><span class="zoneIndex">00</span><span class="zoneMedia"><img src="assets/door.png" alt="" data-preload onerror="this.hidden=true"></span><span class="zoneCopy"><strong class="zoneTitle">назад</strong><span class="zoneMeta">к экрану<br>релиза</span></span></span></button>
-<button class="zone game" type="button" data-panel="игра"><span class="zoneSkin"><span class="zoneIndex">03</span><span class="zoneMedia"><img src="assets/game.png" alt="" data-preload onerror="this.hidden=true"></span><span class="zoneCopy"><strong class="zoneTitle">игра</strong><span class="zoneMeta">запустить<br>inkivi.exe</span></span></span></button>
-</section></main></div></div>
-<div class="transition" id="transition" aria-hidden="true"><div class="transitionPane left"></div><div class="transitionPane right"></div><div class="transitionMark">inkivi</div></div>
-<section class="panel" id="panel" aria-hidden="true"><div class="panelInner"><div class="panelHead"><h2 id="panelTitle">раздел</h2><button class="close" id="close" type="button" aria-label="закрыть">×</button></div><div class="content"><p id="panelText">Здесь будет содержимое раздела.</p><aside>PNG для главного меню: <b>assets/visuals.png</b>, <b>assets/releases.png</b>, <b>assets/door.png</b> и <b>assets/game.png</b>. Картинки автоматически впишутся в свободную область без изменения верстки.</aside></div></div></section>
+<body>
+<div class="loader" id="loader" aria-live="polite">
+  <div class="loader__inner">
+    <div class="loader__name">inkivi</div>
+    <div class="loader__line"><span class="loader__bar" id="loaderBar"></span></div>
+    <div class="loader__status" id="loaderStatus">загрузка 0%</div>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="stage__shake">
+    <section class="view start" id="start">
+      <div class="hero">
+        <div class="eyebrow">ближайший релиз</div>
+        <h1>inkivi</h1>
+        <div class="release">предстоящий релиз</div>
+        <div class="date">01 сентября 2026</div>
+        <div class="timer" id="timer"></div>
+        <div class="actions">
+          <a class="btn primary" href="#" id="presave">сделать пресейв</a>
+          <button class="btn" id="enter">войти</button>
+        </div>
+      </div>
+    </section>
+
+    <main class="view menu off" id="menu">
+      <header class="top">
+        <div class="brand">inkivi<small>главное меню</small></div>
+        <div class="hint">выбери раздел<br>и нажми</div>
+      </header>
+      <section class="zones">
+        <button class="zone visuals" data-panel="визуалы" aria-label="Открыть визуалы">
+          <span class="zoneSkin"></span>
+          <span class="zoneIndex">01</span>
+          <span class="zoneMedia"><img src="./assets/visuals.png" alt="" draggable="false"></span>
+          <span class="zoneCopy"><strong class="zoneTitle">визуалы</strong><span class="zoneMeta">TikTok / видео</span></span>
+        </button>
+        <button class="zone music" data-panel="релизы" aria-label="Открыть релизы">
+          <span class="zoneSkin"></span>
+          <span class="zoneIndex">02</span>
+          <span class="zoneMedia"><img src="./assets/releases.png" alt="" draggable="false"></span>
+          <span class="zoneCopy"><strong class="zoneTitle">релизы</strong><span class="zoneMeta">музыка / ссылки</span></span>
+        </button>
+        <button class="zone back" id="back" aria-label="Вернуться к экрану релиза">
+          <span class="zoneSkin"></span>
+          <span class="zoneIndex">03</span>
+          <span class="zoneMedia"><img src="./assets/door.png" alt="" draggable="false"></span>
+          <span class="zoneCopy"><strong class="zoneTitle">назад</strong><span class="zoneMeta">к экрану релиза</span></span>
+        </button>
+        <button class="zone game" data-panel="игра" aria-label="Открыть игру">
+          <span class="zoneSkin"></span>
+          <span class="zoneIndex">04</span>
+          <span class="zoneMedia"><img src="./assets/game.png" alt="" draggable="false"></span>
+          <span class="zoneCopy"><strong class="zoneTitle">игра</strong><span class="zoneMeta">запустить</span></span>
+        </button>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="fade" id="fade" aria-hidden="true"></div>
+
+<section class="panel" id="panel" aria-hidden="true">
+  <div class="panelInner">
+    <div class="panelHead">
+      <h2 id="panelTitle">раздел</h2>
+      <button class="close" id="close" aria-label="Закрыть">×</button>
+    </div>
+    <div class="content">
+      <p id="panelText">Здесь будет содержимое раздела.</p>
+      <aside>Изображения можно заменить собственными PNG в папке assets. Интерфейс и размеры подстроятся автоматически.</aside>
+    </div>
+  </div>
+</section>
+
 <script>
-const siteConfig={releaseDate:'2026-09-01T00:00:00',presaveUrl:'#',cursorUrl:'',panelText:{'визуалы':'Здесь будут визуалы, превью и ссылки на TikTok.','релизы':'Здесь будут обложки релизов и ссылки на музыкальные площадки.','игра':'Здесь будет запуск браузерной игры inkivi.exe.'}};
-const $=selector=>document.querySelector(selector);const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function setupCursor(){if(!siteConfig.cursorUrl)return;const style=document.createElement('style');style.textContent=`body,button,a{cursor:url("${siteConfig.cursorUrl}") 16 16,crosshair}`;document.head.append(style)}
-function renderTimer(){const target=new Date(siteConfig.releaseDate);const timer=$('#timer');const names=['дней','часов','минут','секунд'];const update=()=>{const diff=Math.max(0,target-Date.now());const values=[Math.floor(diff/86400000),Math.floor(diff/3600000)%24,Math.floor(diff/60000)%60,Math.floor(diff/1000)%60];timer.innerHTML=values.map((value,index)=>`<div class="unit"><b>${String(value).padStart(2,'0')}</b><span>${names[index]}</span></div>`).join('')};update();setInterval(update,1000)}
-async function preload(){const loader=$('#loader');const bar=$('#loaderBar');const status=$('#loaderStatus');const sources=[...document.querySelectorAll('[data-preload]')].map(img=>img.getAttribute('src')).filter(Boolean);const unique=[...new Set(sources)];let finished=0;const update=()=>{bar.style.width=`${Math.max(12,Math.round((finished/Math.max(1,unique.length))*100))}%`};const tasks=unique.map(src=>new Promise(resolve=>{const img=new Image();const done=()=>{finished+=1;update();resolve()};img.onload=done;img.onerror=done;img.src=src}));await Promise.race([Promise.allSettled(tasks),sleep(3200)]);await sleep(650);bar.style.width='100%';status.textContent='готово';await sleep(260);loader.classList.add('done');document.body.classList.remove('loading');await sleep(850);loader.remove()}
-let transitioning=false;async function switchView(from,to){if(transitioning)return;transitioning=true;const transition=$('#transition');transition.classList.remove('reveal');transition.classList.add('active');await sleep(reduceMotion?20:720);from.classList.add('off');to.classList.remove('off');await sleep(reduceMotion?20:80);transition.classList.add('reveal');await sleep(reduceMotion?20:900);transition.classList.remove('active','reveal');transitioning=false}
-function setupTilt(){if(reduceMotion||matchMedia('(hover:none),(pointer:coarse)').matches)return;document.querySelectorAll('.zone').forEach(zone=>{let frame=0;zone.addEventListener('pointermove',event=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{const rect=zone.getBoundingClientRect();const x=(event.clientX-rect.left)/rect.width-.5;const y=(event.clientY-rect.top)/rect.height-.5;zone.style.transform=`perspective(1100px) rotateX(${(-y*4.5).toFixed(2)}deg) rotateY(${(x*5.5).toFixed(2)}deg) translate3d(0,-5px,0)`})});zone.addEventListener('pointerleave',()=>{cancelAnimationFrame(frame);zone.style.transform='perspective(1100px) rotateX(0deg) rotateY(0deg) translate3d(0,0,0)'})})}
-function setupPanels(){const panel=$('#panel');const title=$('#panelTitle');const text=$('#panelText');const close=()=>{panel.classList.remove('on');panel.setAttribute('aria-hidden','true')};document.querySelectorAll('[data-panel]').forEach(button=>button.addEventListener('click',()=>{const key=button.dataset.panel;title.textContent=key;text.textContent=siteConfig.panelText[key]||'Раздел скоро появится.';panel.classList.add('on');panel.setAttribute('aria-hidden','false');$('#close').focus({preventScroll:true})}));$('#close').addEventListener('click',close);panel.addEventListener('click',event=>{if(event.target===panel)close()});addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.classList.contains('on'))close()})}
-$('#presave').addEventListener('click',event=>{if(!siteConfig.presaveUrl||siteConfig.presaveUrl==='#')event.preventDefault();else event.currentTarget.href=siteConfig.presaveUrl});$('#enter').addEventListener('click',()=>switchView($('#start'),$('#menu')));$('#back').addEventListener('click',()=>switchView($('#menu'),$('#start')));
-setupCursor();renderTimer();setupTilt();setupPanels();preload();
+const target = new Date('2026-09-01T00:00:00+03:00');
+const timer = document.getElementById('timer');
+function tick(){
+  const distance = Math.max(0,target-Date.now());
+  const values = [Math.floor(distance/86400000),Math.floor(distance/3600000)%24,Math.floor(distance/60000)%60,Math.floor(distance/1000)%60];
+  const names = ['дней','часов','минут','секунд'];
+  timer.innerHTML = values.map((value,index)=>`<div class="unit"><b>${String(value).padStart(2,'0')}</b><span>${names[index]}</span></div>`).join('');
+}
+tick();
+setInterval(tick,1000);
+
+const loader = document.getElementById('loader');
+const loaderBar = document.getElementById('loaderBar');
+const loaderStatus = document.getElementById('loaderStatus');
+const preloadSources = ['./assets/visuals.png','./assets/releases.png','./assets/door.png','./assets/game.png'];
+let completed = 0;
+function updateLoader(){
+  const percent = Math.round((completed/(preloadSources.length+1))*100);
+  loaderBar.style.width = `${Math.max(8,percent)}%`;
+  loaderStatus.textContent = `загрузка ${percent}%`;
+}
+function preloadImage(src){
+  return new Promise(resolve=>{
+    const image = new Image();
+    image.onload=image.onerror=()=>{completed+=1;updateLoader();resolve();};
+    image.src=src;
+  });
+}
+const fontReady = (document.fonts ? document.fonts.ready : Promise.resolve()).then(()=>{completed+=1;updateLoader();});
+Promise.all([fontReady,...preloadSources.map(preloadImage)]).then(()=>{
+  loaderBar.style.width='100%';
+  loaderStatus.textContent='готово';
+  setTimeout(()=>loader.classList.add('done'),260);
+});
+setTimeout(()=>loader.classList.add('done'),2800);
+
+document.querySelectorAll('.zoneMedia img').forEach(image=>{
+  image.addEventListener('error',()=>image.hidden=true);
+});
+
+const start = document.getElementById('start');
+const menu = document.getElementById('menu');
+const fade = document.getElementById('fade');
+let transitioning = false;
+function fadeSwap(from,to){
+  if(transitioning)return;
+  transitioning=true;
+  fade.classList.add('active');
+  setTimeout(()=>{
+    from.classList.add('off');
+    to.classList.remove('off');
+  },500);
+  setTimeout(()=>fade.classList.remove('active'),620);
+  setTimeout(()=>transitioning=false,1150);
+}
+document.getElementById('enter').addEventListener('click',()=>fadeSwap(start,menu));
+document.getElementById('back').addEventListener('click',()=>fadeSwap(menu,start));
+document.getElementById('presave').addEventListener('click',event=>{
+  if(event.currentTarget.getAttribute('href')==='#')event.preventDefault();
+});
+
+const panel = document.getElementById('panel');
+const panelTitle = document.getElementById('panelTitle');
+const panelText = document.getElementById('panelText');
+const copy = {
+  'визуалы':'Здесь будут визуалы, превью и ссылки на TikTok.',
+  'релизы':'Здесь будут релизы, обложки и ссылки на музыкальные площадки.',
+  'игра':'Здесь будет запуск браузерной игры.'
+};
+document.querySelectorAll('[data-panel]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    panelTitle.textContent=button.dataset.panel;
+    panelText.textContent=copy[button.dataset.panel] || '';
+    panel.classList.add('on');
+    panel.setAttribute('aria-hidden','false');
+  });
+});
+function closePanel(){panel.classList.remove('on');panel.setAttribute('aria-hidden','true');}
+document.getElementById('close').addEventListener('click',closePanel);
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closePanel();});
+
+const canTilt = matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(canTilt){
+  document.querySelectorAll('.zone').forEach(zone=>{
+    zone.addEventListener('pointermove',event=>{
+      const rect=zone.getBoundingClientRect();
+      const x=(event.clientX-rect.left)/rect.width-.5;
+      const y=(event.clientY-rect.top)/rect.height-.5;
+      zone.style.transform=`perspective(1100px) rotateX(${-y*4}deg) rotateY(${x*5}deg) translateY(-3px)`;
+    });
+    zone.addEventListener('pointerleave',()=>zone.style.transform='');
+  });
+}
 </script>
 </body>
 </html>
