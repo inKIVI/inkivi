@@ -1,0 +1,138 @@
+.release-screen {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--safe-top) + 18px) var(--safe-right) calc(var(--safe-bottom) + 18px) var(--safe-left);
+  overflow: hidden;
+  background: #171812;
+}
+.release-screen__atmosphere { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+.release-screen__backdrop { width: 100%; height: 100%; object-fit: cover; opacity: .94; }
+.release-screen__light {
+  position: absolute;
+  width: min(52vw, 720px);
+  aspect-ratio: 1;
+  left: var(--light-x, 52%);
+  top: var(--light-y, 42%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,185,145,.14), rgba(196,185,145,.045) 38%, transparent 70%);
+  pointer-events: none;
+}
+.release-screen__grain {
+  position: absolute;
+  inset: -20%;
+  opacity: .16;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+  animation: grain-shift 8s steps(2, end) infinite;
+}
+.release-screen__content {
+  width: min(940px, 100%);
+  display: grid;
+  justify-items: center;
+  gap: clamp(1.2rem, 3vh, 2.15rem);
+  text-align: center;
+}
+.release-screen__copy { display: grid; justify-items: center; gap: .45rem; }
+.release-title {
+  max-width: 15ch;
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(2.4rem, 7vw, 6.4rem);
+  font-weight: 650;
+  letter-spacing: -.055em;
+  line-height: .93;
+  text-wrap: balance;
+}
+.release-date { color: rgba(228,223,207,.7); font-family: var(--mono); font-size: .8rem; letter-spacing: .12em; }
+
+.countdown {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(.3rem, 1.8vw, 1.3rem);
+  width: 100%;
+  padding-block: .5rem;
+}
+.countdown__unit { min-width: clamp(58px, 12vw, 132px); display: grid; gap: .28rem; }
+.countdown__value {
+  font-family: var(--display);
+  font-size: clamp(3rem, 10vw, 8.75rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 300;
+  letter-spacing: -.06em;
+  line-height: .8;
+  text-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.countdown__label { color: rgba(228,223,207,.55); font-family: var(--mono); font-size: clamp(.58rem, 1vw, .72rem); letter-spacing: .12em; text-transform: uppercase; }
+.countdown__separator { margin-top: clamp(.55rem, 2vw, 1.25rem); color: rgba(196,185,145,.45); font-family: var(--display); font-size: clamp(2rem, 7vw, 6rem); font-weight: 200; line-height: .8; }
+
+.release-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; }
+.social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; min-height: 24px; }
+.social-links a { color: rgba(228,223,207,.58); font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; text-decoration: none; transition: color 180ms ease; }
+.social-links a:hover { color: var(--paper); }
+
+.release-art { position: relative; width: min(42vw, 300px); aspect-ratio: 1.45; margin-block: -.2rem; }
+.release-art img { position: relative; z-index: 2; width: 68%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; box-shadow: 0 18px 46px rgba(0,0,0,.5); }
+.release-art__disc {
+  position: absolute;
+  right: 0;
+  top: 8%;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--ink) 0 7%, #b7b6aa 7.5% 10%, transparent 10.5%), conic-gradient(from 120deg, #676a61, #d4d1bd, #686a62, #b4b2a4, #555850, #d7d3be, #676a61);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.25), 0 16px 38px rgba(0,0,0,.45);
+  opacity: .85;
+}
+
+.door-transition {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(10,11,9,.96);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.door-transition.is-active { visibility: visible; opacity: 1; }
+.door-transition__frame {
+  position: relative;
+  width: min(34vw, 310px);
+  aspect-ratio: .52;
+  overflow: hidden;
+  border: 5px solid #2d2c25;
+  background: #060706;
+  box-shadow: 0 0 0 1px rgba(196,185,145,.12), 0 40px 90px rgba(0,0,0,.65);
+  transform: scale(.94);
+}
+.door-transition__light { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(196,185,145,.34), rgba(64,67,47,.18) 50%, #090a08 90%); }
+.door-transition__leaf {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  background: linear-gradient(100deg, #24231e, #39362b 55%, #211f1a);
+  box-shadow: inset -18px 0 36px rgba(0,0,0,.4);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+.door-transition.is-opening .door-transition__frame { animation: door-camera-in 1.55s var(--ease) forwards; }
+.door-transition.is-opening .door-transition__leaf { animation: door-leaf-open 1.2s .15s var(--ease) forwards; }
+.door-transition.is-closing .door-transition__frame { animation: door-camera-out 1.25s var(--ease) forwards; }
+.door-transition.is-closing .door-transition__leaf { animation: door-leaf-close 1s .05s var(--ease) forwards; }
+
+.release-screen.is-leaving .release-screen__content { animation: release-fade-out 360ms ease forwards; }
+.release-screen.is-returning .release-screen__content { animation: release-fade-in 520ms var(--ease) both; }
+
+@keyframes grain-shift { 0%,100% { transform: translate(0,0); } 25% { transform: translate(-2%,1%); } 50% { transform: translate(1%,-2%); } 75% { transform: translate(2%,2%); } }
+@keyframes release-fade-out { to { opacity: 0; transform: translateY(-10px); } }
+@keyframes release-fade-in { from { opacity: 0; transform: translateY(10px); } }
+@keyframes door-leaf-open { 0% { clip-path: polygon(0 0,100% 0,100% 100%,0 100%); } 100% { clip-path: polygon(0 0,11% 3%,11% 97%,0 100%); } }
+@keyframes door-leaf-close { 0% { clip-path: polygon(0 0,11% 3%,11% 97%,0 100%); } 100% { clip-path: polygon(0 0,100% 0,100% 100%,0 100%); } }
+@keyframes door-camera-in { 0% { transform: scale(.9); opacity: .4; } 55% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.16); opacity: 0; } }
+@keyframes door-camera-out { 0% { transform: scale(1.1); opacity: 0; } 35% { opacity: 1; } 100% { transform: scale(.92); opacity: 0; } }

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>inkivi.exe</title>
+  <link rel="stylesheet" href="./game.css">
+</head>
+<body>
+  <main class="game-shell">
+    <canvas id="game" width="960" height="600" aria-label="Игра inkivi.exe"></canvas>
+    <div class="hud"><span>сигнал <b id="score">0</b>/7</span><span id="status">найдите свет</span></div>
+    <div class="touch-controls" aria-label="Экранное управление">
+      <button type="button" data-key="ArrowLeft" aria-label="Влево">←</button>
+      <button type="button" data-key="ArrowUp" aria-label="Вверх">↑</button>
+      <button type="button" data-key="ArrowDown" aria-label="Вниз">↓</button>
+      <button type="button" data-key="ArrowRight" aria-label="Вправо">→</button>
+    </div>
+  </main>
+  <script src="./game.js"></script>
+</body>
+</html>

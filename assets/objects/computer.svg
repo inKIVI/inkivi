@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 620">
+<defs><linearGradient id="plastic" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#89836c"/><stop offset="1" stop-color="#48483b"/></linearGradient><radialGradient id="screen"><stop stop-color="#8e9872" stop-opacity=".75"/><stop offset="1" stop-color="#172017"/></radialGradient></defs>
+<rect x="35" y="500" width="690" height="65" rx="8" fill="#2a2b21"/><rect x="94" y="472" width="575" height="38" rx="8" fill="#5e5c4b"/>
+<path d="M105 88h390c38 0 65 30 65 68v278c0 39-25 63-64 63H110c-38 0-62-25-62-63V154c0-39 22-66 57-66z" fill="url(#plastic)" stroke="#2b2c22" stroke-width="14"/>
+<rect x="84" y="124" width="438" height="300" rx="54" fill="#1c1e18" stroke="#656454" stroke-width="7"/><rect x="104" y="143" width="398" height="262" rx="42" fill="url(#screen)"/>
+<text x="303" y="283" fill="#d5d1b2" font-family="monospace" font-size="36" text-anchor="middle" opacity=".82">inkivi.exe</text>
+<path d="M226 497h165l20 42H205z" fill="#555445"/>
+<rect x="575" y="145" width="135" height="352" rx="10" fill="url(#plastic)" stroke="#292a21" stroke-width="12"/>
+<rect x="598" y="180" width="89" height="18" rx="4" fill="#2d2e25"/><rect x="598" y="222" width="89" height="8" rx="3" fill="#282920"/><circle cx="642" cy="444" r="13" fill="#a29b72"/><circle cx="642" cy="444" r="5" fill="#35362b"/>
+<path d="M145 530h430l72 52H83z" fill="#77745f" stroke="#303128" stroke-width="8"/><g fill="#35362d"><rect x="152" y="543" width="52" height="11" rx="2"/><rect x="216" y="543" width="52" height="11" rx="2"/><rect x="280" y="543" width="52" height="11" rx="2"/><rect x="344" y="543" width="52" height="11" rx="2"/><rect x="408" y="543" width="52" height="11" rx="2"/><rect x="472" y="543" width="52" height="11" rx="2"/></g>
+</svg>

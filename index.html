@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171812">
+  <meta name="color-scheme" content="dark">
+  <title>inkivi — официальный сайт</title>
+  <meta name="description" content="Официальный интерактивный сайт музыкального артиста inkivi: релизы, визуалы и игра.">
+  <link rel="canonical" href="https://inkivi.github.io/inkivi/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="inkivi — официальный сайт">
+  <meta property="og:description" content="Релизы, визуалы и интерактивный мир inkivi.">
+  <meta property="og:url" content="https://inkivi.github.io/inkivi/">
+  <meta property="og:image" content="https://inkivi.github.io/inkivi/assets/ui/og.svg">
+  <link rel="icon" href="./assets/ui/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/backgrounds/start.svg" as="image" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/start.css">
+  <link rel="stylesheet" href="./css/scene.css">
+  <link rel="stylesheet" href="./css/panels.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-world">Перейти к главному меню</a>
+
+  <main id="app" class="app-shell">
+    <section id="release-screen" class="release-screen" aria-labelledby="release-title">
+      <div class="release-screen__atmosphere" aria-hidden="true">
+        <img class="release-screen__backdrop" src="./assets/backgrounds/start.svg" alt="">
+        <div class="release-screen__light"></div>
+        <div class="release-screen__grain"></div>
+      </div>
+
+      <div class="release-screen__content">
+        <p class="artist-mark" data-artist>inkivi</p>
+        <div class="release-screen__copy">
+          <p id="release-kicker" class="eyebrow">ближайший релиз</p>
+          <h1 id="release-title" class="release-title">—</h1>
+          <time id="release-date" class="release-date" datetime="">—</time>
+        </div>
+
+        <div id="release-art" class="release-art" hidden>
+          <img id="release-cover" src="" alt="">
+          <span class="release-art__disc" aria-hidden="true"></span>
+        </div>
+
+        <div id="countdown" class="countdown" aria-label="До релиза осталось">
+          <div class="countdown__unit"><span id="countdown-days" class="countdown__value">00</span><span class="countdown__label">дней</span></div>
+          <span class="countdown__separator" aria-hidden="true">:</span>
+          <div class="countdown__unit"><span id="countdown-hours" class="countdown__value">00</span><span class="countdown__label">часов</span></div>
+          <span class="countdown__separator" aria-hidden="true">:</span>
+          <div class="countdown__unit"><span id="countdown-minutes" class="countdown__value">00</span><span class="countdown__label">минут</span></div>
+          <span class="countdown__separator" aria-hidden="true">:</span>
+          <div class="countdown__unit"><span id="countdown-seconds" class="countdown__value">00</span><span class="countdown__label">секунд</span></div>
+        </div>
+
+        <div class="release-actions">
+          <a id="release-primary-link" class="button button--primary" href="#" target="_blank" rel="noopener noreferrer">сделать пресейв</a>
+          <button id="enter-button" class="button button--ghost" type="button">войти</button>
+        </div>
+
+        <nav id="release-socials" class="social-links" aria-label="Социальные сети"></nav>
+      </div>
+    </section>
+
+    <div id="door-transition" class="door-transition" aria-hidden="true">
+      <div class="door-transition__frame">
+        <div class="door-transition__light"></div>
+        <div class="door-transition__leaf"></div>
+      </div>
+    </div>
+
+    <section id="main-world" class="main-world" aria-labelledby="world-title" hidden>
+      <h2 id="world-title" class="sr-only">Главное меню inkivi</h2>
+
+      <div id="desktop-scene" class="desktop-scene" aria-label="Интерактивное пространство inkivi">
+        <img class="desktop-scene__background" src="./assets/backgrounds/room.svg" alt="Тускло освещённая заброшенная комната">
+        <div class="desktop-scene__light" aria-hidden="true"></div>
+        <div class="desktop-scene__dust" aria-hidden="true"></div>
+
+        <button class="scene-object scene-object--door" type="button" data-action="back" aria-label="Вернуться к экрану релиза">
+          <img src="./assets/objects/door.svg" alt="">
+          <span class="scene-object__label">назад</span>
+        </button>
+
+        <button class="scene-object scene-object--tv" type="button" data-panel="visuals" aria-label="Открыть раздел визуалов">
+          <img src="./assets/objects/tv.svg" alt="">
+          <span class="scene-object__label">визуалы</span>
+        </button>
+
+        <button class="scene-object scene-object--releases" type="button" data-panel="releases" aria-label="Открыть раздел релизов">
+          <img src="./assets/objects/cd-stack.svg" alt="">
+          <span class="scene-object__label">релизы</span>
+        </button>
+
+        <button class="scene-object scene-object--computer" type="button" data-panel="game" aria-label="Открыть раздел игры">
+          <img src="./assets/objects/computer.svg" alt="">
+          <span class="scene-object__label">игра</span>
+        </button>
+
+        <div class="scene-mascot" aria-hidden="true">
+          <img src="./assets/objects/cat.svg" alt="">
+          <span class="cat-eye cat-eye--left"></span>
+          <span class="cat-eye cat-eye--right"></span>
+        </div>
+
+        <p class="scene-hint">выберите объект</p>
+      </div>
+
+      <div id="mobile-scene" class="mobile-scene">
+        <header class="mobile-scene__header">
+          <p class="artist-mark" data-artist>inkivi</p>
+          <img class="mobile-scene__cat" src="./assets/objects/cat.svg" alt="Кот — маскот inkivi">
+          <p>за дверью осталось только то, что звучит</p>
+        </header>
+
+        <nav class="mobile-portals" aria-label="Главное меню">
+          <button class="mobile-portal mobile-portal--visuals" type="button" data-panel="visuals">
+            <img src="./assets/objects/tv.svg" alt="">
+            <span><strong>визуалы</strong><small>экран помнит больше</small></span>
+          </button>
+          <button class="mobile-portal mobile-portal--releases" type="button" data-panel="releases">
+            <img src="./assets/objects/cd-stack.svg" alt="">
+            <span><strong>релизы</strong><small>диски на холодной полке</small></span>
+          </button>
+          <button class="mobile-portal mobile-portal--game" type="button" data-panel="game">
+            <img src="./assets/objects/computer.svg" alt="">
+            <span><strong>игра</strong><small>inkivi.exe ждёт сигнала</small></span>
+          </button>
+          <button class="mobile-portal mobile-portal--back" type="button" data-action="back">
+            <img src="./assets/objects/door.svg" alt="">
+            <span><strong>назад</strong><small>вернуться к релизу</small></span>
+          </button>
+        </nav>
+      </div>
+    </section>
+  </main>
+
+  <section id="panel-visuals" class="panel" role="dialog" aria-modal="true" aria-labelledby="visuals-heading" hidden>
+    <div class="panel__surface">
+      <header class="panel__header">
+        <div><p class="eyebrow">сигнал 01</p><h2 id="visuals-heading">визуалы</h2></div>
+        <button class="icon-button" type="button" data-close-panel aria-label="Закрыть раздел визуалов">×</button>
+      </header>
+      <div id="visuals-content" class="visuals-layout"></div>
+      <button class="panel__back button button--ghost" type="button" data-close-panel>вернуться в комнату</button>
+    </div>
+  </section>
+
+  <section id="panel-releases" class="panel" role="dialog" aria-modal="true" aria-labelledby="releases-heading" hidden>
+    <div class="panel__surface">
+      <header class="panel__header">
+        <div><p class="eyebrow">архив звука</p><h2 id="releases-heading">релизы</h2></div>
+        <button class="icon-button" type="button" data-close-panel aria-label="Закрыть раздел релизов">×</button>
+      </header>
+      <div id="releases-content" class="releases-layout"></div>
+      <button class="panel__back button button--ghost" type="button" data-close-panel>вернуться в комнату</button>
+    </div>
+  </section>
+
+  <section id="panel-game" class="panel" role="dialog" aria-modal="true" aria-labelledby="game-heading" hidden>
+    <div class="panel__surface">
+      <header class="panel__header">
+        <div><p class="eyebrow">локальный запуск</p><h2 id="game-heading">игра</h2></div>
+        <button class="icon-button" type="button" data-close-panel aria-label="Закрыть раздел игры">×</button>
+      </header>
+      <div id="game-content" class="game-layout"></div>
+      <button class="panel__back button button--ghost" type="button" data-close-panel>вернуться в комнату</button>
+    </div>
+  </section>
+
+  <noscript>Для работы интерактивных разделов сайта нужен JavaScript.</noscript>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

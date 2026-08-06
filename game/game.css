@@ -1,0 +1,11 @@
+:root { color-scheme: dark; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #090a08; color: #e4dfcf; overflow: hidden; }
+.game-shell { position: relative; min-height: 100svh; min-height: 100dvh; display: grid; place-items: center; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+canvas { display: block; width: min(100%, calc(100svh * 1.6)); width: min(100%, calc(100dvh * 1.6)); max-height: calc(100svh - 24px); max-height: calc(100dvh - 24px); aspect-ratio: 16 / 10; background: #12140f; border: 1px solid rgba(196,185,145,.25); touch-action: none; }
+.hud { position: absolute; top: max(20px, env(safe-area-inset-top)); left: max(20px, env(safe-area-inset-left)); right: max(20px, env(safe-area-inset-right)); display: flex; justify-content: space-between; gap: 1rem; color: #c4b991; font-size: clamp(.68rem, 2vw, .88rem); pointer-events: none; }
+.touch-controls { position: absolute; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(3, 48px); grid-template-areas: ". up ." "left down right"; gap: 5px; }
+.touch-controls button { width: 48px; height: 48px; border: 1px solid rgba(228,223,207,.3); border-radius: 50%; background: rgba(15,17,13,.72); color: #e4dfcf; font-size: 1.2rem; touch-action: none; }
+.touch-controls [data-key="ArrowUp"] { grid-area: up; }.touch-controls [data-key="ArrowLeft"] { grid-area: left; }.touch-controls [data-key="ArrowDown"] { grid-area: down; }.touch-controls [data-key="ArrowRight"] { grid-area: right; }
+@media (hover: hover) and (pointer: fine) { .touch-controls { opacity: .32; } }
+@media (max-width: 520px) { .hud { top: max(12px, env(safe-area-inset-top)); font-size: .62rem; }.touch-controls { grid-template-columns: repeat(3, 44px); }.touch-controls button { width: 44px; height: 44px; } }
