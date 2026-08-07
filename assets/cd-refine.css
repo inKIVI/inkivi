@@ -1,73 +1,121 @@
-/* CD presentation refinement */
+/* CD presentation refinement — spatial version */
 .releaseCoverBox{
   position:relative!important;
   overflow:hidden!important;
-  perspective:900px;
+  perspective:780px!important;
+  perspective-origin:48% 45%!important;
 }
 .cdScene{
   position:relative!important;
-  transform-style:preserve-3d;
-  width:176px!important;
-  height:176px!important;
+  width:178px!important;
+  height:178px!important;
+  transform-style:preserve-3d!important;
+  perspective:780px!important;
 }
 .cdCase{
-  z-index:3!important;
-  transform-origin:left center;
-  transition:transform .58s cubic-bezier(.22,.8,.25,1),filter .4s ease!important;
+  z-index:4!important;
+  transform-origin:18% 50%!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:hidden;
+  transition:transform .62s cubic-bezier(.2,.78,.22,1),filter .42s ease,box-shadow .42s ease!important;
+}
+.cdCase::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border:1px solid rgba(255,255,255,.08);
+  transform:translateZ(-5px)!important;
+  background:rgba(10,10,8,.9);
 }
 .cdDisc{
   z-index:2!important;
   left:14px!important;
-  top:8px!important;
-  width:158px!important;
-  height:158px!important;
-  transform-origin:center center;
-  transition:transform .62s cubic-bezier(.22,.8,.25,1),filter .35s ease!important;
+  top:10px!important;
+  width:156px!important;
+  height:156px!important;
+  transform-origin:50% 50%!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:visible!important;
+  transition:transform .68s cubic-bezier(.2,.78,.22,1),filter .4s ease,box-shadow .4s ease!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.18),
+    inset 0 0 30px rgba(255,255,255,.06),
+    0 14px 30px rgba(0,0,0,.5)!important;
 }
-.releaseCard:hover .cdCase{
-  transform:translateX(-26px) rotateY(-28deg)!important;
-  filter:brightness(.9);
-}
-.releaseCard:hover .cdDisc{
-  transform:translateX(62px) rotateY(48deg) rotateZ(18deg)!important;
-  filter:brightness(1.08);
-}
-.releaseCard.is-playing .cdCase{
-  transform:translateX(-30px) rotateY(-34deg)!important;
-  filter:brightness(.8) saturate(.85);
-}
-.releaseCard.is-playing .cdDisc{
-  transform:translateX(64px) rotateY(34deg)!important;
-  animation:none!important;
-}
-.releaseCard.is-playing .cdDisc::before{
+/* physical edge behind the disc */
+.cdDisc::before{
   content:"";
   position:absolute;
   inset:0;
   border-radius:50%;
-  background:inherit;
-  box-shadow:inherit;
-  animation:cdFaceSpin 2.7s linear infinite;
-  z-index:-1;
+  background:#35332f;
+  transform:translateZ(-5px)!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08);
+  z-index:-2;
+}
+.cdDisc::after{
+  z-index:1!important;
+}
+.cdRing,.cdLabel{transform-style:preserve-3d!important}
+.cdRing{transform:translate(-50%,-50%) translateZ(2px)!important}
+.cdLabel{transform:translate(-50%,-50%) translateZ(3px)!important}
+
+/* hover: case opens slightly, disc slides out and turns only a little */
+.releaseCard:hover .cdCase{
+  transform:translate3d(-18px,0,18px) rotateY(-24deg) rotateZ(-1deg)!important;
+  filter:brightness(.94)!important;
+  box-shadow:-12px 18px 36px rgba(0,0,0,.42)!important;
+}
+.releaseCard:hover .cdDisc{
+  transform:translate3d(54px,0,30px) rotateY(-16deg) rotateX(2deg) rotateZ(8deg)!important;
+  filter:brightness(1.08) contrast(1.03)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.2),
+    inset 0 0 30px rgba(255,255,255,.07),
+    16px 18px 34px rgba(0,0,0,.46)!important;
+}
+
+/* play: preserve the 3D pose; rotate an inner face instead of flattening the whole disc */
+.releaseCard.is-playing .cdCase{
+  transform:translate3d(-22px,0,14px) rotateY(-28deg) rotateZ(-1deg)!important;
+  filter:brightness(.84) saturate(.9)!important;
+  box-shadow:-14px 20px 40px rgba(0,0,0,.46)!important;
+}
+.releaseCard.is-playing .cdDisc{
+  transform:translate3d(58px,0,32px) rotateY(-14deg) rotateX(2deg)!important;
+  animation:none!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.2),
+    inset 0 0 32px rgba(255,255,255,.08),
+    18px 20px 38px rgba(0,0,0,.5)!important;
 }
 .releaseCard.is-playing .cdLabel{
-  animation:cdLabelSpin 2.7s linear infinite;
+  animation:cdLabelSpin3d 2.7s linear infinite!important;
 }
-@keyframes cdFaceSpin{to{transform:rotateZ(360deg)}}
-@keyframes cdLabelSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.releaseCard.is-playing .cdRing{
+  animation:cdRingSpin3d 2.7s linear infinite!important;
+}
+@keyframes cdLabelSpin3d{
+  to{transform:translate(-50%,-50%) translateZ(3px) rotateZ(360deg)}
+}
+@keyframes cdRingSpin3d{
+  to{transform:translate(-50%,-50%) translateZ(2px) rotateZ(360deg)}
+}
 
 @media(max-width:760px){
-  .cdScene{width:102px!important;height:102px!important}
+  .releaseCoverBox{perspective:620px!important}
+  .cdScene{width:102px!important;height:102px!important;perspective:620px!important}
   .cdDisc{width:92px!important;height:92px!important;left:7px!important;top:5px!important}
-  .releaseCard:hover .cdCase{transform:translateX(-12px) rotateY(-24deg)!important}
-  .releaseCard:hover .cdDisc{transform:translateX(34px) rotateY(44deg) rotateZ(16deg)!important}
-  .releaseCard.is-playing .cdCase{transform:translateX(-14px) rotateY(-30deg)!important}
-  .releaseCard.is-playing .cdDisc{transform:translateX(35px) rotateY(30deg)!important}
+  .releaseCard:hover .cdCase{transform:translate3d(-9px,0,10px) rotateY(-20deg)!important}
+  .releaseCard:hover .cdDisc{transform:translate3d(29px,0,16px) rotateY(-13deg) rotateZ(7deg)!important}
+  .releaseCard.is-playing .cdCase{transform:translate3d(-11px,0,9px) rotateY(-23deg)!important}
+  .releaseCard.is-playing .cdDisc{transform:translate3d(31px,0,18px) rotateY(-12deg)!important}
 }
 
 @media(max-width:480px){
   .cdScene{width:82px!important;height:82px!important}
   .cdDisc{width:74px!important;height:74px!important;left:5px!important;top:4px!important}
-  .releaseCard:hover .cdDisc{transform:translateX(25px) rotateY(42deg) rotateZ(14deg)!important}
-  .releaseCard.is-playing .cdDisc{transform:translateX(26px) rotateY(28deg)!important}
+  .releaseCard:hover .cdDisc{transform:translate3d(22px,0,12px) rotateY(-11deg) rotateZ(6deg)!important}
+  .releaseCard.is-playing .cdDisc{transform:translate3d(23px,0,13px) rotateY(-10deg)!important}
 }
