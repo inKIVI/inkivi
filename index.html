@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./assets/content-ui.css">
 <link rel="stylesheet" href="./assets/cd-refine.css">
+<link rel="stylesheet" href="./assets/cd-playback-fix.css">
 <style>
 :root{--bg:#0b0b08;--ink:#e8e0d2;--muted:#9b9285;--line:rgba(232,224,210,.15);--ease:cubic-bezier(.22,.8,.25,1)}
 *{box-sizing:border-box}
@@ -101,5 +102,6 @@ refreshGlyphs();
 const glow=document.getElementById('cursorGlow');if(glow&&matchMedia('(hover:hover) and (pointer:fine)').matches){let raf=0,x=0,y=0;addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY;glow.classList.add('on');if(!raf)raf=requestAnimationFrame(()=>{glow.style.left=x+'px';glow.style.top=y+'px';raf=0})},{passive:true});document.documentElement.addEventListener('mouseleave',()=>glow.classList.remove('on'))}
 </script>
 <script src="./assets/content-ui.js"></script>
+<script src="./assets/cd-playback-fix.js"></script>
 <!-- grain-jitter-tune-v1 -->
 </body></html>
