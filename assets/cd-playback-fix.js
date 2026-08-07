@@ -5,13 +5,23 @@
   document.head.appendChild(mobileCss);
 
   const player=document.createElement('script');
-  player.src='./assets/player-v3.js?v=20260808d';
+  player.src='./assets/player-v3.js?v=20260808e';
   player.defer=true;
   document.head.appendChild(player);
+
+  const PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+  const PAUSE='<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>';
+
+  function syncDockIcon(){
+    const dock=document.getElementById('globalAudioDock');
+    const btn=dock?.querySelector('.dockPlay');
+    if(btn)btn.innerHTML=dock.classList.contains('playing')?PAUSE:PLAY;
+  }
 
   function syncCardState(){
     const dock=document.getElementById('globalAudioDock');
     const playing=!!dock?.classList.contains('playing');
+    syncDockIcon();
     document.querySelectorAll('.releaseCard.is-active,.releaseCard.is-playing').forEach(card=>card.classList.remove('is-active','is-playing'));
     if(!playing)return;
     const active=document.querySelector('.trackPlay.active,.heroPlayStrip.active');
