@@ -1,14 +1,14 @@
-/* CD presentation refinement — fitted 3D version */
+/* CD presentation refinement — unified 3D scene */
 @property --cd-spin-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
+  syntax:"<angle>";
+  inherits:false;
+  initial-value:0deg;
 }
 
 .releaseCoverBox{
   position:relative!important;
   overflow:hidden!important;
-  perspective:720px!important;
+  perspective:760px!important;
   perspective-origin:48% 50%!important;
 }
 
@@ -17,18 +17,24 @@
   width:176px!important;
   height:176px!important;
   transform-style:preserve-3d!important;
+  transform-origin:center center!important;
+  transition:transform .68s cubic-bezier(.2,.78,.22,1)!important;
 }
 
-/* The cover stays almost where it is. */
-.cdCase{
-  z-index:4!important;
-  transform-origin:left center!important;
+.cdCase,
+.cdDisc{
   transform-style:preserve-3d!important;
   backface-visibility:hidden!important;
-  transition:transform .62s cubic-bezier(.2,.78,.22,1),filter .4s ease,box-shadow .4s ease!important;
 }
 
-/* The disc keeps one stable appearance in every state. */
+.cdCase{
+  z-index:4!important;
+  transform:translate3d(-5px,0,10px)!important;
+  transform-origin:center center!important;
+  transition:transform .68s cubic-bezier(.2,.78,.22,1),filter .4s ease,box-shadow .4s ease!important;
+  box-shadow:-8px 14px 30px rgba(0,0,0,.34)!important;
+}
+
 .cdDisc{
   --cd-spin-angle:0deg;
   z-index:3!important;
@@ -36,9 +42,8 @@
   top:10px!important;
   width:156px!important;
   height:156px!important;
+  transform:translate3d(0,0,-4px)!important;
   transform-origin:center center!important;
-  transform-style:preserve-3d!important;
-  backface-visibility:visible!important;
   background:conic-gradient(
     from var(--cd-spin-angle),
     rgba(255,255,255,.13),
@@ -55,7 +60,7 @@
     0 13px 28px rgba(0,0,0,.48)!important;
 }
 
-/* Thin physical edge. It never replaces the face artwork. */
+/* same physical edge in every state */
 .cdDisc::before{
   content:""!important;
   position:absolute!important;
@@ -69,66 +74,73 @@
   z-index:-1!important;
 }
 
-.cdRing{z-index:3!important;transform:translate(-50%,-50%) translateZ(3px)!important}
+.cdRing{
+  z-index:3!important;
+  transform:translate(-50%,-50%) translateZ(3px)!important;
+  animation:none!important;
+}
 .cdLabel{
   z-index:2!important;
   transform:translate(-50%,-50%) translateZ(4px)!important;
   animation:none!important;
 }
 
-/* Hover: left edge is closer to the viewer, right edge is farther away.
-   Strong perspective makes the disc narrower so cover + disc fit the same box. */
-.releaseCard:hover .cdCase{
-  transform:translate3d(-8px,0,10px) rotateY(-8deg)!important;
-  filter:brightness(.96)!important;
-  box-shadow:-7px 14px 28px rgba(0,0,0,.36)!important;
+/* One shared camera angle: left edge closer, right edge farther. */
+.releaseCard:hover .cdScene,
+.releaseCard.is-playing .cdScene{
+  transform:rotateY(27deg) rotateX(-2deg)!important;
 }
-.releaseCard:hover .cdDisc{
-  transform:translate3d(92px,0,18px) rotateY(58deg) rotateX(-2deg)!important;
+
+/* Cover and disc stay in the SAME coordinate system. */
+.releaseCard:hover .cdCase,
+.releaseCard.is-playing .cdCase{
+  transform:translate3d(-10px,0,14px)!important;
+  filter:brightness(.94)!important;
+  box-shadow:-12px 17px 34px rgba(0,0,0,.4)!important;
+}
+
+.releaseCard:hover .cdDisc,
+.releaseCard.is-playing .cdDisc{
+  transform:translate3d(78px,0,-8px)!important;
   filter:brightness(1.08) contrast(1.03)!important;
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.2),
     inset 0 0 30px rgba(255,255,255,.07),
-    18px 17px 30px rgba(0,0,0,.48)!important;
+    16px 18px 32px rgba(0,0,0,.48)!important;
 }
 
-/* Playing keeps exactly the same 3D pose. Only the disc surface spins. */
-.releaseCard.is-playing .cdCase{
-  transform:translate3d(-8px,0,10px) rotateY(-8deg)!important;
-  filter:brightness(.9) saturate(.94)!important;
-}
+/* Playback never changes the disc shape/icon; only its printed surface rotates. */
 .releaseCard.is-playing .cdDisc{
-  transform:translate3d(92px,0,18px) rotateY(58deg) rotateX(-2deg)!important;
-  animation:cdSurfaceSpin 2.5s linear infinite!important;
-  filter:brightness(1.08) contrast(1.03)!important;
+  animation:cdSurfaceSpin 2.45s linear infinite!important;
 }
 .releaseCard.is-playing .cdLabel{
-  animation:cdLabelSurfaceSpin 2.5s linear infinite!important;
-}
-.releaseCard.is-playing .cdRing{
-  animation:none!important;
+  animation:cdLabelSpin 2.45s linear infinite!important;
 }
 
 @keyframes cdSurfaceSpin{
   to{--cd-spin-angle:360deg}
 }
-@keyframes cdLabelSurfaceSpin{
+@keyframes cdLabelSpin{
   to{transform:translate(-50%,-50%) translateZ(4px) rotateZ(360deg)}
 }
 
 @media(max-width:760px){
-  .releaseCoverBox{perspective:560px!important}
+  .releaseCoverBox{perspective:620px!important}
   .cdScene{width:102px!important;height:102px!important}
   .cdDisc{width:92px!important;height:92px!important;left:5px!important;top:5px!important}
+  .releaseCard:hover .cdScene,
+  .releaseCard.is-playing .cdScene{transform:rotateY(25deg) rotateX(-2deg)!important}
   .releaseCard:hover .cdCase,
-  .releaseCard.is-playing .cdCase{transform:translate3d(-4px,0,6px) rotateY(-7deg)!important}
+  .releaseCard.is-playing .cdCase{transform:translate3d(-5px,0,8px)!important}
   .releaseCard:hover .cdDisc,
-  .releaseCard.is-playing .cdDisc{transform:translate3d(51px,0,11px) rotateY(58deg) rotateX(-2deg)!important}
+  .releaseCard.is-playing .cdDisc{transform:translate3d(43px,0,-5px)!important}
 }
 
 @media(max-width:480px){
   .cdScene{width:82px!important;height:82px!important}
   .cdDisc{width:74px!important;height:74px!important;left:4px!important;top:4px!important}
+  .releaseCard:hover .cdScene,
+  .releaseCard.is-playing .cdScene{transform:rotateY(23deg) rotateX(-2deg)!important}
   .releaseCard:hover .cdDisc,
-  .releaseCard.is-playing .cdDisc{transform:translate3d(39px,0,9px) rotateY(58deg) rotateX(-2deg)!important}
+  .releaseCard.is-playing .cdDisc{transform:translate3d(34px,0,-4px)!important}
 }
