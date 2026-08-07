@@ -1,0 +1,147 @@
+/* Mobile usability overrides: scrolling, panel controls and audio dock. */
+@media (max-width:760px){
+  html,body{overscroll-behavior-y:none}
+  body{touch-action:pan-y}
+
+  .panel{
+    width:100%!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    max-height:100dvh!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+  .panelHead{
+    position:absolute!important;
+    z-index:20!important;
+    left:0!important;
+    right:0!important;
+    top:0!important;
+    min-height:92px!important;
+    padding:14px 66px 12px 14px!important;
+    align-items:flex-start!important;
+    background:linear-gradient(#0b0b09 72%,rgba(11,11,9,.94) 88%,transparent)!important;
+    pointer-events:none;
+  }
+  .panelHead h2{
+    max-width:100%!important;
+    margin:0!important;
+    font-size:clamp(42px,14vw,72px)!important;
+    line-height:.82!important;
+    overflow-wrap:anywhere!important;
+    pointer-events:auto;
+  }
+  .close{
+    position:absolute!important;
+    z-index:30!important;
+    top:max(12px,env(safe-area-inset-top))!important;
+    right:12px!important;
+    width:46px!important;
+    height:46px!important;
+    min-width:46px!important;
+    min-height:46px!important;
+    padding:0!important;
+    display:grid!important;
+    place-items:center!important;
+    line-height:1!important;
+    font-size:27px!important;
+    background:rgba(11,11,9,.94)!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  .content{
+    position:absolute!important;
+    top:92px!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    width:auto!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:14px 12px calc(118px + env(safe-area-inset-bottom))!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-y:contain!important;
+    touch-action:pan-y!important;
+    scroll-behavior:smooth;
+    scrollbar-gutter:stable;
+  }
+  .content>*{max-width:100%}
+  .releaseListRich,.visualGridRich{width:100%!important;max-width:100%!important}
+
+  .releaseCard{
+    grid-template-columns:110px minmax(0,1fr)!important;
+    width:100%!important;
+  }
+  .releaseCoverBox{width:110px!important;min-width:110px!important}
+  .releaseInfo{padding:12px 10px 9px!important;gap:10px!important}
+  .releaseInfo h3{font-size:clamp(19px,6vw,25px)!important;overflow-wrap:anywhere!important}
+  .platformRow{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important;gap:5px!important}
+  .platformLink{
+    min-width:0!important;
+    width:100%!important;
+    padding:7px 5px!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    line-height:1.15!important;
+  }
+  .playerArea{padding:0 10px 11px!important}
+  .trackLite{min-width:0!important}
+  .trackLite b{min-width:0!important}
+
+  .visualGridRich{grid-template-columns:1fr!important;gap:12px!important}
+  .visualTikTok,.visualYouTube,.visualOther{grid-column:1!important;width:min(100%,340px)!important;justify-self:center!important}
+  .visualYouTube{width:100%!important}
+  .visualCard{max-width:100%!important}
+  .visualMedia{position:relative!important}
+
+  .audioDock{
+    left:6px!important;
+    right:6px!important;
+    bottom:max(6px,env(safe-area-inset-bottom))!important;
+    transform:none!important;
+    width:auto!important;
+    max-width:none!important;
+    grid-template-columns:40px 40px minmax(0,1fr) 36px!important;
+    gap:6px!important;
+    padding:7px!important;
+    align-items:center!important;
+  }
+  .dockPlay{width:40px!important;height:40px!important;min-width:40px!important;padding:0!important}
+  .dockCover{width:40px!important;height:40px!important;min-width:40px!important}
+  .dockMain{min-width:0!important;overflow:hidden!important}
+  .dockTop,.dockBottom{gap:6px!important;min-width:0!important}
+  .dockTop b{font-size:9px!important;min-width:0!important}
+  .dockLabel{font-size:7px!important;white-space:nowrap!important}
+  .dockTime{font-size:7px!important;white-space:nowrap!important}
+  .dockProgress{height:16px!important;margin:0!important}
+  .dockVolume{display:none!important}
+  .dockClose{
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    padding:0!important;
+    display:grid!important;
+    place-items:center!important;
+    font-size:22px!important;
+    line-height:1!important;
+    touch-action:manipulation!important;
+  }
+  .audioDockOpen .content{padding-bottom:calc(122px + env(safe-area-inset-bottom))!important}
+}
+
+@media (max-width:390px){
+  .panelHead{min-height:84px!important;padding-left:10px!important}
+  .panelHead h2{font-size:clamp(36px,13vw,54px)!important}
+  .content{top:84px!important;padding-left:8px!important;padding-right:8px!important}
+  .releaseCard{grid-template-columns:92px minmax(0,1fr)!important}
+  .releaseCoverBox{width:92px!important;min-width:92px!important}
+  .platformRow{grid-template-columns:1fr!important}
+  .audioDock{grid-template-columns:38px minmax(0,1fr) 34px!important}
+  .dockCover{display:none!important}
+  .dockPlay{width:38px!important;height:38px!important;min-width:38px!important}
+  .dockClose{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
+}
