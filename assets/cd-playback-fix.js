@@ -4,6 +4,11 @@
   mobileCss.href='./assets/mobile-fix.css?v=20260808';
   document.head.appendChild(mobileCss);
 
+  const player=document.createElement('script');
+  player.src='./assets/player-v2.js?v=20260808b';
+  player.defer=true;
+  document.head.appendChild(player);
+
   function syncCardState(){
     const dock=document.getElementById('globalAudioDock');
     const playing=!!dock?.classList.contains('playing');
