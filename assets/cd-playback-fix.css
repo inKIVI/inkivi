@@ -2,3 +2,4 @@
 .cdLabel::before{content:"";position:absolute;inset:0;border-radius:50%;background-image:var(--cd-label-art);background-size:cover;background-position:center;transform-origin:50% 50%;transform:rotate(0deg);will-change:transform}
 .releaseCard.is-playing .cdLabel::before{animation:cdCenterArtSpin 2.45s linear infinite!important}
 @keyframes cdCenterArtSpin{to{transform:rotate(360deg)}}
+.zoneMeta{display:none!important}
