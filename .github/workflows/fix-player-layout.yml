@@ -1,0 +1,43 @@
+name: Fix player and layout
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-player-layout.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Patch working UI safely
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('assets/content-ui.js')
+          s=p.read_text()
+          s=s.replace("scDuration=0,activeMode='',activeButton=null", "scDuration=0,scStarted=false,activeMode='',activeButton=null")
+          s=s.replace("scWidget.bind(SC.Widget.Events.PLAY,()=>d._state(true))", "scWidget.bind(SC.Widget.Events.PLAY,()=>{scStarted=true;d._state(true)})")
+          s=s.replace("if(index>0)scWidget.skip(index);resolve(scWidget)", "if(index>0)scWidget.skip(index);setTimeout(()=>{try{scWidget.play()}catch{}},120);resolve(scWidget)")
+          s=s.replace("if(index>=0)scWidget.skip(index);resolve(scWidget);return", "if(index>=0)scWidget.skip(index);setTimeout(()=>{try{scWidget.play()}catch{}},80);resolve(scWidget);return")
+          s=s.replace("auto_play:'false'", "auto_play:'true'")
+          old="if(soundcloud){try{activeMode='soundcloud';const w=await prepareSC(soundcloud,Number(scIndex)||0);w.play();return}catch(e){console.warn('SoundCloud fallback:',e)}}"
+          new="if(soundcloud){try{activeMode='soundcloud';scStarted=false;await prepareSC(soundcloud,Number(scIndex)||0);await new Promise(r=>setTimeout(r,1500));if(scStarted)return;throw new Error('soundcloud did not start')}catch(e){console.warn('SoundCloud fallback:',e)}}"
+          if old not in s: raise SystemExit('playTrack pattern not found')
+          s=s.replace(old,new)
+          s=s.replace("d.hidden=false;d.querySelector('.dockTitle')", "d.hidden=false;document.body.classList.add('audioDockOpen');d.querySelector('.dockTitle')")
+          s=s.replace("d.hidden=true;clearActive()", "d.hidden=true;document.body.classList.remove('audioDockOpen');clearActive()")
+          p.write_text(s)
+
+          c=Path('assets/content-ui.css')
+          css=c.read_text()
+          css += '''\n/* layout refinement 2026-08-07 */\n.hero h1{font-size:clamp(58px,11vw,150px)!important;margin:14px 0 8px!important;line-height:.78!important}\n.heroReleaseCover{width:clamp(170px,20vw,250px)!important;margin:14px auto 8px!important;box-shadow:0 24px 70px rgba(0,0,0,.48)!important}\n.hero .timer{margin:24px auto!important}\n.releaseCard{grid-template-columns:240px minmax(0,1fr)!important;min-height:210px!important;overflow:hidden!important}\n.releaseCoverBox{width:240px!important;min-height:210px!important;overflow:hidden!important}\n.cdScene{width:164px!important;height:164px!important}\n.cdDisc{width:148px!important;height:148px!important;top:8px!important;left:13px!important}\n.cdLabel{width:62px!important;height:62px!important}\n.releaseCard:hover .cdDisc{transform:translateX(48px) rotate(35deg)!important}\n.releaseCard.is-playing .cdDisc{transform:translateX(48px)!important;animation:cdSpinCompact 2.8s linear infinite!important}\n@keyframes cdSpinCompact{to{transform:translateX(48px) rotate(360deg)}}\n.audioDockOpen .zones{padding-bottom:112px!important}\n.audioDockOpen .content{padding-bottom:124px!important}\n.audioDock{bottom:16px!important;width:min(900px,calc(100% - 32px))!important}\n@media(max-width:760px){.hero h1{font-size:18vw!important;margin:8px 0 5px!important}.heroReleaseCover{width:clamp(145px,46vw,220px)!important;margin:10px auto 7px!important}.hero .timer{margin:18px auto!important}.releaseCard{grid-template-columns:118px minmax(0,1fr)!important}.releaseCoverBox{width:118px!important;min-height:150px!important}.cdScene{width:98px!important;height:98px!important}.cdDisc{width:88px!important;height:88px!important;top:5px!important;left:8px!important}.cdLabel{width:38px!important;height:38px!important}.releaseCard:hover .cdDisc,.releaseCard.is-playing .cdDisc{transform:translateX(26px)!important}@keyframes cdSpinCompact{to{transform:translateX(26px) rotate(360deg)}}.audioDockOpen .zones{padding-bottom:96px!important}.audioDock{bottom:8px!important;width:calc(100% - 16px)!important}}\n'''
+          c.write_text(css)
+          PY
+          node --check assets/content-ui.js
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/content-ui.js assets/content-ui.css
+          git rm .github/workflows/fix-player-layout.yml
+          git commit -m 'Fix SoundCloud playback and refine release layout'
+          git push
