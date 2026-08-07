@@ -49,15 +49,15 @@
 .cdLabel{z-index:2!important;transform:translate(-50%,-50%) translateZ(4px)!important;animation:none!important;transform-origin:50% 50%!important}
 
 /* one coherent perspective: cover and disc share the same angle */
-.releaseCard:hover .cdScene,.releaseCard.is-playing .cdScene{
+.releaseCard:hover .cdScene,.releaseCard.is-active .cdScene{
   transform:translateX(-5px) rotateY(34deg) rotateX(-2deg)!important;
 }
-.releaseCard:hover .cdCase,.releaseCard.is-playing .cdCase{
+.releaseCard:hover .cdCase,.releaseCard.is-active .cdCase{
   transform:translate3d(-18px,0,18px)!important;
   filter:brightness(.95)!important;
   box-shadow:-13px 16px 34px rgba(0,0,0,.42)!important;
 }
-.releaseCard:hover .cdDisc,.releaseCard.is-playing .cdDisc{
+.releaseCard:hover .cdDisc,.releaseCard.is-active .cdDisc{
   transform:translate3d(66px,0,-8px)!important;
   filter:brightness(1.08) contrast(1.03)!important;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 0 0 28px rgba(255,255,255,.07),15px 17px 30px rgba(0,0,0,.48)!important;
@@ -65,19 +65,23 @@
 .releaseCard.is-playing .cdDisc{animation:cdSurfaceSpin 2.45s linear infinite!important}
 .releaseCard.is-playing .cdLabel{animation:cdLabelSpin 2.45s linear infinite!important}
 @keyframes cdSurfaceSpin{to{--cd-spin-angle:360deg}}
-@keyframes cdLabelSpin{to{transform:translate(-50%,-50%) translateZ(4px) rotateZ(360deg)}}
+@keyframes cdLabelSpin{0%{transform:translate(-50%,-50%) translateZ(4px) rotateZ(0deg)}100%{transform:translate(-50%,-50%) translateZ(4px) rotateZ(360deg)}}
 
 @media(max-width:760px){
   .releaseCoverBox{perspective:700px!important}
   .cdScene{width:96px!important;height:96px!important}
   .cdDisc{width:86px!important;height:86px!important;left:5px!important;top:5px!important}
-  .releaseCard:hover .cdScene,.releaseCard.is-playing .cdScene{transform:translateX(-2px) rotateY(32deg) rotateX(-2deg)!important}
-  .releaseCard:hover .cdCase,.releaseCard.is-playing .cdCase{transform:translate3d(-9px,0,10px)!important}
-  .releaseCard:hover .cdDisc,.releaseCard.is-playing .cdDisc{transform:translate3d(36px,0,-5px)!important}
+  .releaseCard:hover .cdScene,.releaseCard.is-active .cdScene{transform:translateX(-2px) rotateY(32deg) rotateX(-2deg)!important}
+  .releaseCard:hover .cdCase,.releaseCard.is-active .cdCase{transform:translate3d(-9px,0,10px)!important}
+  .releaseCard:hover .cdDisc,.releaseCard.is-active .cdDisc{transform:translate3d(36px,0,-5px)!important}
 }
 @media(max-width:480px){
   .cdScene{width:76px!important;height:76px!important}
   .cdDisc{width:68px!important;height:68px!important;left:4px!important;top:4px!important}
-  .releaseCard:hover .cdScene,.releaseCard.is-playing .cdScene{transform:translateX(-1px) rotateY(31deg) rotateX(-2deg)!important}
-  .releaseCard:hover .cdDisc,.releaseCard.is-playing .cdDisc{transform:translate3d(28px,0,-4px)!important}
+  .releaseCard:hover .cdScene,.releaseCard.is-active .cdScene{transform:translateX(-1px) rotateY(31deg) rotateX(-2deg)!important}
+  .releaseCard:hover .cdDisc,.releaseCard.is-active .cdDisc{transform:translate3d(28px,0,-4px)!important}
 }
+
+/* persistent active pose; spin only while audio is actually playing */
+.releaseCard.is-active .cdLabel{will-change:transform!important}
+.releaseCard.is-playing .cdLabel{animation:cdLabelSpin 2.45s linear infinite!important}
