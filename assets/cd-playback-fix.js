@@ -1,4 +1,9 @@
 (()=>{
+  const mobileCss=document.createElement('link');
+  mobileCss.rel='stylesheet';
+  mobileCss.href='./assets/mobile-fix.css?v=20260808';
+  document.head.appendChild(mobileCss);
+
   let expectedPreview='';
   let expectedSoundcloud='';
   let expectedMode='';
@@ -54,7 +59,6 @@
   }
   function scan(root=document){root.querySelectorAll?.('.cdLabel').forEach(prepareLabel)}
 
-  /* Capture track switches before content-ui starts a new async SoundCloud request. */
   document.addEventListener('click',e=>{
     const b=e.target.closest?.('.trackPlay');
     if(!b)return;
@@ -65,7 +69,6 @@
     setTimeout(bindSoundcloudGuard,0);
   },true);
 
-  /* A late fallback from the previously clicked track must never start. */
   document.addEventListener('play',e=>{
     const a=e.target;
     if(!(a instanceof HTMLMediaElement)||a.tagName!=='AUDIO')return;
