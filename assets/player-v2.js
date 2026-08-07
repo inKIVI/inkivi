@@ -6,11 +6,9 @@
   let scWidget=null;
   let scApiPromise=null;
   let scDuration=0;
-  const scMetaCache=new Map();
 
   const playIcon='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
   const pauseIcon='<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>';
-  const norm=s=>String(s||'').toLowerCase().replace(/^inkivi\s*[-—–:]\s*/i,'').replace(/\s*[-—–:]\s*(сингл|single|альбом|album|ep|эп)\s*$/i,'').replace(/[^a-zа-яё0-9]+/gi,' ').trim();
   const fmt=n=>{if(!Number.isFinite(n))return'0:00';return Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0')};
 
   function dock(){return document.getElementById('globalAudioDock')}
@@ -49,8 +47,6 @@
     if(window.SC?.Widget)return Promise.resolve();if(scApiPromise)return scApiPromise;
     scApiPromise=new Promise((resolve,reject)=>{const existing=[...document.scripts].find(s=>/w\.soundcloud\.com\/player\/api\.js/.test(s.src));if(existing){if(window.SC?.Widget){resolve();return}existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',reject,{once:true});return}const s=document.createElement('script');s.src='https://w.soundcloud.com/player/api.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});return scApiPromise
   }
-  async function scMetadata(url){if(scMetaCache.has(url))return scMetaCache.get(url);let data=null;try{const r=await fetch('https://soundcloud.com/oembed?format=json&url='+encodeURIComponent(url));if(r.ok)data=await r.json()}catch{}scMetaCache.set(url,data);return data}
-  async function scMatches(url,trackTitle,releaseTitle){if(!url)return false;const data=await scMetadata(url);if(!data)return false;const actual=norm(data.title||''),track=norm(trackTitle||''),release=norm(releaseTitle||'');return !!(actual&&((track&&(actual.includes(track)||track.includes(actual)))||(release&&(actual.includes(release)||release.includes(actual)))))}
 
   function applyVolumeEverywhere(){const a=audio();if(a)a.volume=volume/100;const v=volumeInput();if(v&&Number(v.value)!==volume)v.value=String(volume);if(scWidget)try{scWidget.setVolume(volume)}catch{}}
 
@@ -61,28 +57,74 @@
   }
 
   async function startSoundCloud(token){
-    if(token!==seq||!active?.soundcloud)return false;await loadSCAPI();if(token!==seq)return false;const f=frame();if(!f)return false;const url=active.soundcloud,index=Math.max(0,Number(active.scIndex)||0);
+    if(token!==seq||!active?.soundcloud)return false;
+    try{await loadSCAPI()}catch{return false}
+    if(token!==seq)return false;
+    const f=frame();if(!f)return false;
+    const url=active.soundcloud,index=Math.max(0,Number(active.scIndex)||0);
     return new Promise(resolve=>{
-      let settled=false,cancelled=false;const finish=ok=>{if(settled)return;settled=true;if(!ok)cancelled=true;resolve(ok)},stale=()=>cancelled||token!==seq;
+      let settled=false,cancelled=false;
+      const finish=ok=>{if(settled)return;settled=true;if(!ok)cancelled=true;resolve(ok)};
+      const stale=()=>cancelled||token!==seq;
       const playerUrl='https://w.soundcloud.com/player/?'+new URLSearchParams({url,auto_play:'false',hide_related:'true',show_comments:'false',show_user:'false',show_reposts:'false',visual:'false',buying:'false',sharing:'false',download:'false'}).toString();
-      f.onload=()=>{if(stale()){finish(false);return}try{scWidget=window.SC.Widget(f)}catch{finish(false);return}
-        scWidget.bind(window.SC.Widget.Events.READY,()=>{if(stale()){try{scWidget.pause()}catch{}finish(false);return}try{scWidget.setVolume(volume)}catch{}try{scWidget.getDuration(ms=>{if(!stale())scDuration=Number(ms)||0})}catch{}if(index>0)try{scWidget.skip(index)}catch{}setTimeout(()=>{if(stale()){finish(false);return}try{scWidget.setVolume(volume)}catch{}try{scWidget.play()}catch{finish(false)}},100)});
-        scWidget.bind(window.SC.Widget.Events.PLAY,()=>{if(stale()){try{scWidget.pause()}catch{}return}try{scWidget.setVolume(volume)}catch{}stopNative(false);active.mode='soundcloud';if(label())label().textContent='soundcloud · full';setRowStatus(active.button,'full');setPlaying(true);finish(true)});
-        scWidget.bind(window.SC.Widget.Events.PLAY_PROGRESS,e=>{if(stale()||active?.mode!=='soundcloud')return;const dur=scDuration||Number(e.duration)||0,pos=Number(e.currentPosition)||0;if(fill())fill().style.width=(dur?Math.min(1,pos/dur):0)*100+'%';if(time())time().textContent=fmt(pos/1000)+' / '+fmt(dur/1000)});
-        scWidget.bind(window.SC.Widget.Events.PAUSE,()=>{if(!stale()&&active?.mode==='soundcloud')setPlaying(false)});scWidget.bind(window.SC.Widget.Events.FINISH,()=>{if(!stale()&&active?.mode==='soundcloud')setPlaying(false)})};
-      f.src=playerUrl;setTimeout(()=>finish(false),6500)
+      f.onload=()=>{
+        if(stale()){finish(false);return}
+        try{scWidget=window.SC.Widget(f)}catch{finish(false);return}
+        scWidget.bind(window.SC.Widget.Events.READY,()=>{
+          if(stale()){try{scWidget.pause()}catch{}finish(false);return}
+          try{scWidget.setVolume(volume)}catch{}
+          try{scWidget.getDuration(ms=>{if(!stale())scDuration=Number(ms)||0})}catch{}
+          if(index>0)try{scWidget.skip(index)}catch{}
+          setTimeout(()=>{
+            if(stale()){finish(false);return}
+            try{scWidget.setVolume(volume)}catch{}
+            try{scWidget.play()}catch{finish(false)}
+          },120)
+        });
+        scWidget.bind(window.SC.Widget.Events.PLAY,()=>{
+          if(stale()){try{scWidget.pause()}catch{}return}
+          try{scWidget.setVolume(volume)}catch{}
+          stopNative(false);active.mode='soundcloud';
+          if(label())label().textContent='soundcloud · full';
+          setRowStatus(active.button,'full');setPlaying(true);finish(true)
+        });
+        scWidget.bind(window.SC.Widget.Events.PLAY_PROGRESS,e=>{
+          if(stale()||active?.mode!=='soundcloud')return;
+          const dur=scDuration||Number(e.duration)||0,pos=Number(e.currentPosition)||0;
+          if(fill())fill().style.width=(dur?Math.min(1,pos/dur):0)*100+'%';
+          if(time())time().textContent=fmt(pos/1000)+' / '+fmt(dur/1000)
+        });
+        scWidget.bind(window.SC.Widget.Events.PAUSE,()=>{if(!stale()&&active?.mode==='soundcloud')setPlaying(false)});
+        scWidget.bind(window.SC.Widget.Events.FINISH,()=>{if(!stale()&&active?.mode==='soundcloud')setPlaying(false)})
+      };
+      f.src=playerUrl;
+      setTimeout(()=>finish(false),10000)
     })
   }
 
   async function playFromButton(button){
-    const title=button.dataset.title||button.querySelector('span')?.textContent||document.getElementById('releaseTitle')?.textContent||'трек',preview=button.dataset.preview||'',soundcloud=button.dataset.sc||'',cover=button.dataset.cover||document.getElementById('heroReleaseCover')?.src||'',scIndex=button.dataset.scIndex||0,releaseTitle=button.closest('.releaseCard')?.querySelector('h3')?.textContent||document.getElementById('releaseTitle')?.textContent||title;
-    stopAll(true);const token=seq;active={button,title,preview,soundcloud,cover,scIndex,releaseTitle,mode:''};setActiveClasses(button);setMeta(title,cover,'загрузка…');applyVolumeEverywhere();setRowStatus(button,'загрузка…');
-    if(soundcloud){const valid=await scMatches(soundcloud,title,releaseTitle);if(token!==seq)return;if(valid){if(label())label().textContent='soundcloud · загрузка…';const ok=await startSoundCloud(token);if(token!==seq)return;if(ok)return;stopSC()}}
+    const title=button.dataset.title||button.querySelector('span')?.textContent||document.getElementById('releaseTitle')?.textContent||'трек';
+    const preview=button.dataset.preview||'';
+    const soundcloud=button.dataset.sc||'';
+    const cover=button.dataset.cover||document.getElementById('heroReleaseCover')?.src||'';
+    const scIndex=button.dataset.scIndex||0;
+    stopAll(true);
+    const token=seq;
+    active={button,title,preview,soundcloud,cover,scIndex,mode:''};
+    setActiveClasses(button);setMeta(title,cover,'загрузка…');applyVolumeEverywhere();setRowStatus(button,'загрузка…');
+    if(soundcloud){
+      if(label())label().textContent='soundcloud · загрузка…';
+      const ok=await startSoundCloud(token);
+      if(token!==seq)return;
+      if(ok)return;
+      stopSC();
+    }
     await startPreview(token)
   }
 
   function bindDock(){
-    const d=dock();if(!d||d.dataset.playerV2==='1')return;d.dataset.playerV2='1';const oldPlay=d.querySelector('.dockPlay'),oldClose=d.querySelector('.dockClose'),oldVol=d.querySelector('.dockVolume input'),oldBar=d.querySelector('.dockProgress');if(!oldPlay||!oldClose||!oldVol||!oldBar)return;
+    const d=dock();if(!d||d.dataset.playerV2==='1')return;d.dataset.playerV2='1';
+    const oldPlay=d.querySelector('.dockPlay'),oldClose=d.querySelector('.dockClose'),oldVol=d.querySelector('.dockVolume input'),oldBar=d.querySelector('.dockProgress');if(!oldPlay||!oldClose||!oldVol||!oldBar)return;
     const p=oldPlay.cloneNode(true);oldPlay.replaceWith(p);const c=oldClose.cloneNode(true);oldClose.replaceWith(c);const v=oldVol.cloneNode(true);oldVol.replaceWith(v);const b=oldBar.cloneNode(true);oldBar.replaceWith(b);v.value=String(volume);applyVolumeEverywhere();
     v.oninput=()=>{volume=clampVolume(v.value);localStorage.setItem('inkiviVolume',String(volume));applyVolumeEverywhere()};
     p.onclick=()=>{if(!active)return;if(active.mode==='soundcloud'&&scWidget){try{scWidget.isPaused(paused=>{if(paused){scWidget.setVolume(volume);scWidget.play()}else scWidget.pause()})}catch{}return}const a=audio();if(!a)return;if(a.paused){a.volume=volume/100;a.play().then(()=>{a.volume=volume/100;setPlaying(true)}).catch(()=>{})}else{a.pause();setPlaying(false)}};
