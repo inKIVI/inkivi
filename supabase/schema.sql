@@ -37,6 +37,17 @@ alter table releases enable row level security;
 alter table visuals enable row level security;
 alter table site_settings enable row level security;
 
-create policy "public read releases" on releases for select using (published = true);
-create policy "public read visuals" on visuals for select using (published = true);
+drop policy if exists "public read releases" on releases;
+drop policy if exists "public read visuals" on visuals;
+drop policy if exists "public read settings" on site_settings;
+drop policy if exists "admin write releases" on releases;
+drop policy if exists "admin write visuals" on visuals;
+drop policy if exists "admin write settings" on site_settings;
+
+create policy "public read releases" on releases for select using (published = true or auth.role() = 'authenticated');
+create policy "public read visuals" on visuals for select using (published = true or auth.role() = 'authenticated');
 create policy "public read settings" on site_settings for select using (true);
+
+create policy "admin write releases" on releases for all to authenticated using (true) with check (true);
+create policy "admin write visuals" on visuals for all to authenticated using (true) with check (true);
+create policy "admin write settings" on site_settings for all to authenticated using (true) with check (true);
