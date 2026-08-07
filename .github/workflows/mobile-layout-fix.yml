@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Refine visual effects
+      - name: Apply film grain and glyph jitter
         shell: python
         run: |
           from pathlib import Path
@@ -21,66 +21,94 @@ jobs:
 
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          marker = '<!-- soft-pixel-grain-v2 -->'
+          marker = '<!-- film-grain-glyph-jitter-v3 -->'
           if marker in s:
               raise SystemExit(0)
 
-          # Stop shaking the whole page/camera.
+          # No full-frame camera movement.
           s = re.sub(r'(\.stage\{[^}]*?)animation:cameraJitter[^;}]*;?', r'\1', s, count=1)
           s = s.replace('.stage{position:fixed;inset:-3px;', '.stage{position:fixed;inset:0;')
           s = s.replace('.view{position:absolute;inset:3px;', '.view{position:absolute;inset:0;')
           s = s.replace('.stage{position:relative;inset:-2px;min-height:calc(100dvh + 4px);', '.stage{position:relative;inset:0;min-height:100dvh;')
 
-          # Replace strong full-frame movement with tiny, rare 1px element jitter.
-          soft_css = r'''
-@keyframes pixelJitter{
-  0%,18%,18.35%,46%,46.35%,74%,74.35%,100%{translate:0 0}
-  18.10%{translate:1px 0}
-  18.20%{translate:0 1px}
-  46.10%{translate:-1px 0}
-  46.20%{translate:0 -1px}
-  74.10%{translate:1px 0}
-  74.20%{translate:0 0}
-}
-.foundFootage{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden;mix-blend-mode:soft-light}
-.foundFootage:before{content:"";position:absolute;inset:-24px;opacity:.13;background-image:radial-gradient(circle,rgba(255,255,255,.34) 0 .45px,transparent .7px),radial-gradient(circle,rgba(0,0,0,.55) 0 .55px,transparent .8px);background-size:5px 7px,9px 11px;background-position:0 0,3px 4px;animation:softGrain .34s steps(2,end) infinite}
-.foundFootage:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 52%,rgba(0,0,0,.16) 80%,rgba(0,0,0,.30) 100%);opacity:.72}
-@keyframes softGrain{0%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(1px,1px)}100%{transform:translate(0,-1px)}}
-.cursorGlow{position:fixed;z-index:49;left:0;top:0;width:240px;height:240px;border-radius:50%;pointer-events:none;opacity:0;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(225,210,170,.12) 0%,rgba(190,170,120,.055) 32%,rgba(120,110,80,.018) 58%,transparent 72%);filter:blur(8px);mix-blend-mode:screen;transition:opacity .22s ease}
-.cursorGlow.on{opacity:1}
-h1,.zoneTitle,.unit,.loader b,.eyebrow,.release{animation:pixelJitter 5.8s steps(1,end) infinite}
-.zoneMedia img{animation:pixelJitter 7.2s steps(1,end) infinite}
-.scratch{display:none!important}
-@media(hover:none),(pointer:coarse){.cursorGlow{display:none}}
-'''
-
-          # Disable old strong effect declarations without relying on exact formatting.
+          # Remove old whole-word/object jitter and exposure jumps.
           s = re.sub(r'h1,\.zoneTitle,\.unit,\.loader b,\.eyebrow,\.release\{animation:tremor[^}]*\}', '', s)
           s = re.sub(r'\.zoneMedia img\{([^}]*)animation:objectJitter[^;}]*;?([^}]*)\}', r'.zoneMedia img{\1\2}', s)
           s = re.sub(r'\.zoneSkin\{([^}]*)animation:exposurePulse[^;}]*;?([^}]*)\}', r'.zoneSkin{\1\2}', s)
 
-          s = s.replace('</style>', soft_css + '\n</style>', 1)
+          # Replace prior effect CSS if a previous soft patch landed.
+          s = re.sub(r'@keyframes pixelJitter\{.*?@media\(hover:none\),\(pointer:coarse\)\{\.cursorGlow\{display:none\}\}\n?', '', s, flags=re.S)
 
+          film_css = r'''
+/* Film-like texture: visible grain, no scanlines or RGB split. */
+.foundFootage{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden;mix-blend-mode:soft-light}
+.foundFootage:before{content:"";position:absolute;inset:-40px;opacity:.28;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.95'/%3E%3C/svg%3E");background-size:180px 180px;filter:contrast(175%) brightness(82%);animation:filmGrain .16s steps(2,end) infinite}
+.foundFootage:after{content:"";position:absolute;inset:0;opacity:.78;background:radial-gradient(ellipse at 50% 44%,transparent 45%,rgba(0,0,0,.13) 72%,rgba(0,0,0,.31) 100%),radial-gradient(circle at 28% 22%,rgba(235,219,178,.028),transparent 28%),radial-gradient(circle at 77% 68%,rgba(255,255,255,.018),transparent 34%)}
+@keyframes filmGrain{0%{transform:translate3d(0,0,0)}20%{transform:translate3d(-4px,2px,0)}40%{transform:translate3d(3px,-3px,0)}60%{transform:translate3d(-2px,-1px,0)}80%{transform:translate3d(4px,3px,0)}100%{transform:translate3d(1px,-4px,0)}}
+.glyph{display:inline-block;will-change:transform;transform:translate3d(0,0,0)}
+.cursorGlow{position:fixed;z-index:49;left:0;top:0;width:260px;height:260px;border-radius:50%;pointer-events:none;opacity:0;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(230,211,165,.13) 0%,rgba(190,166,112,.065) 30%,rgba(125,112,78,.022) 57%,transparent 73%);filter:blur(10px);mix-blend-mode:screen;transition:opacity .24s ease}
+.cursorGlow.on{opacity:1}
+.scratch{display:none!important}
+@media(hover:none),(pointer:coarse){.cursorGlow{display:none}}
+@media(prefers-reduced-motion:reduce){.foundFootage:before{animation:none!important}.glyph{transform:none!important}}
+'''
+          s = s.replace('</style>', film_css + '\n</style>', 1)
+
+          # Ensure overlay and glow exist once.
+          if 'class="foundFootage"' not in s:
+              s = s.replace('</body>', '<div class="foundFootage"></div></body>', 1)
           if 'class="cursorGlow"' not in s:
-              s = s.replace('<div class="foundFootage"></div>', '<div class="foundFootage"></div><div class="cursorGlow" id="cursorGlow"></div>')
-              if 'class="foundFootage"' not in s:
-                  s = s.replace('</body>', '<div class="foundFootage"></div><div class="cursorGlow" id="cursorGlow"></div></body>')
+              s = s.replace('<div class="foundFootage"></div>', '<div class="foundFootage"></div><div class="cursorGlow" id="cursorGlow"></div>', 1)
 
-          glow_js = r'''
+          effect_js = r'''
 <script>
 (()=>{
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const selectors='h1,.release,.eyebrow,.zoneTitle,.zoneMeta,.panel h2,.loader b';
+
+  function splitGlyphs(el){
+    if(el.dataset.glyphs==='1')return;
+    const text=el.textContent;
+    el.textContent='';
+    [...text].forEach(ch=>{
+      const span=document.createElement('span');
+      span.className='glyph';
+      span.textContent=ch===' ' ? '\u00a0' : ch;
+      el.appendChild(span);
+    });
+    el.dataset.glyphs='1';
+  }
+
+  document.querySelectorAll(selectors).forEach(splitGlyphs);
+
+  if(!reduced){
+    const glyphs=[...document.querySelectorAll('.glyph')];
+    const twitch=(g)=>{
+      const delay=650+Math.random()*3200;
+      setTimeout(()=>{
+        const amount=.35+Math.random()*.45;
+        const x=(Math.random()<.5?-1:1)*amount;
+        const y=(Math.random()<.5?-1:1)*(Math.random()*.55);
+        g.style.transform=`translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;
+        setTimeout(()=>{g.style.transform='translate3d(0,0,0)';twitch(g)},45+Math.random()*85);
+      },delay);
+    };
+    glyphs.forEach((g,i)=>setTimeout(()=>twitch(g),Math.random()*1500+i*7));
+  }
+
   const glow=document.getElementById('cursorGlow');
-  if(!glow || !matchMedia('(hover:hover) and (pointer:fine)').matches)return;
-  let raf=0,x=0,y=0;
-  addEventListener('pointermove',e=>{
-    x=e.clientX;y=e.clientY;glow.classList.add('on');
-    if(!raf)raf=requestAnimationFrame(()=>{glow.style.left=x+'px';glow.style.top=y+'px';raf=0;});
-  },{passive:true});
-  addEventListener('pointerleave',()=>glow.classList.remove('on'));
+  if(glow && matchMedia('(hover:hover) and (pointer:fine)').matches){
+    let raf=0,x=0,y=0;
+    addEventListener('pointermove',e=>{
+      x=e.clientX;y=e.clientY;glow.classList.add('on');
+      if(!raf)raf=requestAnimationFrame(()=>{glow.style.left=x+'px';glow.style.top=y+'px';raf=0;});
+    },{passive:true});
+    document.documentElement.addEventListener('mouseleave',()=>glow.classList.remove('on'));
+  }
 })();
 </script>
 '''
-          s = s.replace('</body>', glow_js + marker + '</body>')
+          s = s.replace('</body>', effect_js + marker + '</body>', 1)
           p.write_text(s, encoding='utf-8')
 
       - name: Commit patch and remove temporary workflow
@@ -90,5 +118,5 @@ h1,.zoneTitle,.unit,.loader b,.eyebrow,.release{animation:pixelJitter 5.8s steps
           rm -f .github/workflows/mobile-layout-fix.yml
           git add index.html .github/workflows/mobile-layout-fix.yml
           git diff --cached --quiet && exit 0
-          git commit -m "Refine grain, pixel jitter and cursor glow"
+          git commit -m "Add film grain and independent glyph jitter"
           git push
