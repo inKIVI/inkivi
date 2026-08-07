@@ -70,24 +70,37 @@
   .content>*{max-width:100%}
   .releaseListRich,.visualGridRich{width:100%!important;max-width:100%!important}
 
+  /* Mobile release card: give the artwork more visual weight and compress metadata/actions. */
   .releaseCard{
-    grid-template-columns:110px minmax(0,1fr)!important;
+    grid-template-columns:138px minmax(0,1fr)!important;
     width:100%!important;
   }
-  .releaseCoverBox{width:110px!important;min-width:110px!important}
-  .releaseInfo{padding:12px 10px 9px!important;gap:10px!important}
-  .releaseInfo h3{font-size:clamp(19px,6vw,25px)!important;overflow-wrap:anywhere!important}
-  .platformRow{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important;gap:5px!important}
+  .releaseCoverBox{
+    width:138px!important;
+    min-width:138px!important;
+    min-height:168px!important;
+  }
+  .cdScene{width:118px!important;height:118px!important}
+  .cdDisc{width:106px!important;height:106px!important;top:6px!important;left:9px!important}
+  .cdLabel{width:45px!important;height:45px!important}
+  .releaseCard:hover .cdDisc,.releaseCard.is-playing .cdDisc{transform:translateX(31px)!important}
+  @keyframes cdSpinCompact{to{transform:translateX(31px) rotate(360deg)}}
+
+  .releaseInfo{padding:10px 8px 7px!important;gap:7px!important}
+  .releaseInfo h3{font-size:clamp(18px,5.5vw,24px)!important;line-height:.92!important;overflow-wrap:anywhere!important}
+  .releaseDateSmall{font-size:7px!important;line-height:1.15!important}
+  .platformRow{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important;gap:4px!important}
   .platformLink{
     min-width:0!important;
     width:100%!important;
-    padding:7px 5px!important;
+    padding:5px 4px!important;
     text-align:center!important;
     white-space:normal!important;
     overflow-wrap:anywhere!important;
-    line-height:1.15!important;
+    font-size:7px!important;
+    line-height:1.05!important;
   }
-  .playerArea{padding:0 10px 11px!important}
+  .playerArea{padding:0 8px 9px!important}
   .trackLite{min-width:0!important}
   .trackLite b{min-width:0!important}
 
@@ -137,9 +150,22 @@
   .panelHead{min-height:84px!important;padding-left:10px!important}
   .panelHead h2{font-size:clamp(36px,13vw,54px)!important}
   .content{top:84px!important;padding-left:8px!important;padding-right:8px!important}
-  .releaseCard{grid-template-columns:92px minmax(0,1fr)!important}
-  .releaseCoverBox{width:92px!important;min-width:92px!important}
-  .platformRow{grid-template-columns:1fr!important}
+
+  /* Keep artwork substantial even on narrow iPhones. */
+  .releaseCard{grid-template-columns:124px minmax(0,1fr)!important}
+  .releaseCoverBox{width:124px!important;min-width:124px!important;min-height:156px!important}
+  .cdScene{width:108px!important;height:108px!important}
+  .cdDisc{width:96px!important;height:96px!important;top:6px!important;left:9px!important}
+  .cdLabel{width:41px!important;height:41px!important}
+  .releaseCard:hover .cdDisc,.releaseCard.is-playing .cdDisc{transform:translateX(27px)!important}
+  @keyframes cdSpinCompact{to{transform:translateX(27px) rotate(360deg)}}
+
+  .releaseInfo{padding:9px 7px 6px!important;gap:6px!important}
+  .releaseInfo h3{font-size:18px!important}
+  .platformRow{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:3px!important}
+  .platformLink{font-size:6.5px!important;padding:4px 3px!important;letter-spacing:0!important}
+  .playerArea{padding-left:7px!important;padding-right:7px!important}
+
   .audioDock{grid-template-columns:38px minmax(0,1fr) 34px!important}
   .dockCover{display:none!important}
   .dockPlay{width:38px!important;height:38px!important;min-width:38px!important}
