@@ -5,7 +5,7 @@
   document.head.appendChild(mobileCss);
 
   const player=document.createElement('script');
-  player.src='./assets/player-v3.js?v=20260808a';
+  player.src='./assets/player-v3.js?v=20260808b';
   player.defer=true;
   document.head.appendChild(player);
 
