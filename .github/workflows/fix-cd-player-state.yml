@@ -1,0 +1,46 @@
+name: Fix CD player state
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-cd-player-state.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Patch player state and CD animation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p=Path('assets/content-ui.js')
+          s=p.read_text()
+          old="const state=x=>{p.innerHTML=x?pauseIcon:playIcon;d.classList.toggle('playing',x);document.querySelectorAll('.releaseCard.is-playing').forEach(c=>c.classList.toggle('is-playing',x&&c.contains(activeButton)))};"
+          new="const state=x=>{p.innerHTML=x?pauseIcon:playIcon;d.classList.toggle('playing',x);document.querySelectorAll('.releaseCard.is-playing').forEach(c=>c.classList.remove('is-playing'));const card=activeButton?.closest('.releaseCard');if(x&&card)card.classList.add('is-playing')};"
+          if old not in s: raise SystemExit('state pattern not found')
+          s=s.replace(old,new,1)
+          old="function clearActive(){document.querySelectorAll('.trackPlay.active,.heroPlayStrip.active').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.releaseCard.is-playing').forEach(x=>x.classList.remove('is-playing'));activeButton=null}"
+          new="function clearActive(){document.querySelectorAll('.trackPlay.active,.heroPlayStrip.active').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.releaseCard.is-playing,.releaseCard.is-active').forEach(x=>x.classList.remove('is-playing','is-active'));activeButton=null}"
+          if old not in s: raise SystemExit('clearActive pattern not found')
+          s=s.replace(old,new,1)
+          s=s.replace("btn?.closest('.releaseCard')?.classList.add('is-playing')","btn?.closest('.releaseCard')?.classList.add('is-active')")
+          p.write_text(s)
+
+          c=Path('assets/cd-refine.css')
+          css=c.read_text()
+          css=css.replace('.releaseCard:hover .cdScene,.releaseCard.is-playing .cdScene','.releaseCard:hover .cdScene,.releaseCard.is-active .cdScene')
+          css=css.replace('.releaseCard:hover .cdCase,.releaseCard.is-playing .cdCase','.releaseCard:hover .cdCase,.releaseCard.is-active .cdCase')
+          css=css.replace('.releaseCard:hover .cdDisc,.releaseCard.is-playing .cdDisc','.releaseCard:hover .cdDisc,.releaseCard.is-active .cdDisc')
+          css=css.replace('@keyframes cdLabelSpin{to{transform:translate(-50%,-50%) translateZ(4px) rotateZ(360deg)}}','@keyframes cdLabelSpin{0%{transform:translate(-50%,-50%) translateZ(4px) rotateZ(0deg)}100%{transform:translate(-50%,-50%) translateZ(4px) rotateZ(360deg)}}')
+          css += '\n/* persistent active pose; spin only while audio is actually playing */\n.releaseCard.is-active .cdLabel{will-change:transform!important}\n.releaseCard.is-playing .cdLabel{animation:cdLabelSpin 2.45s linear infinite!important}\n'
+          c.write_text(css)
+          PY
+          node --check assets/content-ui.js
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/content-ui.js assets/cd-refine.css
+          git rm .github/workflows/fix-cd-player-state.yml
+          git commit -m 'Keep CD active on pause and sync label rotation'
+          git push
