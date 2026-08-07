@@ -1,7 +1,7 @@
 (()=>{
   const mobileCss=document.createElement('link');
   mobileCss.rel='stylesheet';
-  mobileCss.href='./assets/mobile-fix.css?v=20260808';
+  mobileCss.href='./assets/mobile-fix.css?v=20260808b';
   document.head.appendChild(mobileCss);
 
   const player=document.createElement('script');
