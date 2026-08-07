@@ -1,4 +1,4 @@
-name: Apply mobile layout fix
+name: Apply visual effects patch
 
 on:
   push:
@@ -13,39 +13,82 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch mobile layout
+      - name: Refine visual effects
         shell: python
         run: |
           from pathlib import Path
+          import re
+
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          marker = '<!-- mobile-layout-fix-v1 -->'
+          marker = '<!-- soft-pixel-grain-v2 -->'
           if marker in s:
               raise SystemExit(0)
 
-          s = s.replace(
-              '  .view{position:relative;inset:auto}\n',
-              '  .view{position:relative;inset:auto}\n  .view.off{display:none}\n'
-          )
-          s = s.replace(
-              '  .zones{\n    grid-template-columns:1fr;grid-template-rows:repeat(4,minmax(260px,44vh));\n    padding:8px;gap:8px;\n  }\n',
-              '  .zones{\n    grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:clamp(260px,72vw,360px);\n    min-height:0;padding:8px;gap:8px;\n  }\n  .zone{height:auto;min-height:0}\n'
-          )
-          s = s.replace(
-              '  .zoneMedia{inset:54px 22px 92px}\n',
-              '  .zoneMedia{inset:42px 18px 78px;overflow:hidden}\n  .zoneMedia img{width:auto;height:auto;max-width:88%;max-height:88%;object-position:center center}\n  .zoneCopy{left:18px;right:18px;bottom:16px}\n  .zoneIndex{top:20px;right:18px}\n'
-          )
-          s = s.replace(
-              'draggable="false">',
-              'draggable="false" onerror="this.hidden=true">'
-          )
-          s = s.replace('</body>', marker + '\n</body>')
+          # Stop shaking the whole page/camera.
+          s = re.sub(r'(\.stage\{[^}]*?)animation:cameraJitter[^;}]*;?', r'\1', s, count=1)
+          s = s.replace('.stage{position:fixed;inset:-3px;', '.stage{position:fixed;inset:0;')
+          s = s.replace('.view{position:absolute;inset:3px;', '.view{position:absolute;inset:0;')
+          s = s.replace('.stage{position:relative;inset:-2px;min-height:calc(100dvh + 4px);', '.stage{position:relative;inset:0;min-height:100dvh;')
+
+          # Replace strong full-frame movement with tiny, rare 1px element jitter.
+          soft_css = r'''
+@keyframes pixelJitter{
+  0%,18%,18.35%,46%,46.35%,74%,74.35%,100%{translate:0 0}
+  18.10%{translate:1px 0}
+  18.20%{translate:0 1px}
+  46.10%{translate:-1px 0}
+  46.20%{translate:0 -1px}
+  74.10%{translate:1px 0}
+  74.20%{translate:0 0}
+}
+.foundFootage{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden;mix-blend-mode:soft-light}
+.foundFootage:before{content:"";position:absolute;inset:-24px;opacity:.13;background-image:radial-gradient(circle,rgba(255,255,255,.34) 0 .45px,transparent .7px),radial-gradient(circle,rgba(0,0,0,.55) 0 .55px,transparent .8px);background-size:5px 7px,9px 11px;background-position:0 0,3px 4px;animation:softGrain .34s steps(2,end) infinite}
+.foundFootage:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 52%,rgba(0,0,0,.16) 80%,rgba(0,0,0,.30) 100%);opacity:.72}
+@keyframes softGrain{0%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(1px,1px)}100%{transform:translate(0,-1px)}}
+.cursorGlow{position:fixed;z-index:49;left:0;top:0;width:240px;height:240px;border-radius:50%;pointer-events:none;opacity:0;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(225,210,170,.12) 0%,rgba(190,170,120,.055) 32%,rgba(120,110,80,.018) 58%,transparent 72%);filter:blur(8px);mix-blend-mode:screen;transition:opacity .22s ease}
+.cursorGlow.on{opacity:1}
+h1,.zoneTitle,.unit,.loader b,.eyebrow,.release{animation:pixelJitter 5.8s steps(1,end) infinite}
+.zoneMedia img{animation:pixelJitter 7.2s steps(1,end) infinite}
+.scratch{display:none!important}
+@media(hover:none),(pointer:coarse){.cursorGlow{display:none}}
+'''
+
+          # Disable old strong effect declarations without relying on exact formatting.
+          s = re.sub(r'h1,\.zoneTitle,\.unit,\.loader b,\.eyebrow,\.release\{animation:tremor[^}]*\}', '', s)
+          s = re.sub(r'\.zoneMedia img\{([^}]*)animation:objectJitter[^;}]*;?([^}]*)\}', r'.zoneMedia img{\1\2}', s)
+          s = re.sub(r'\.zoneSkin\{([^}]*)animation:exposurePulse[^;}]*;?([^}]*)\}', r'.zoneSkin{\1\2}', s)
+
+          s = s.replace('</style>', soft_css + '\n</style>', 1)
+
+          if 'class="cursorGlow"' not in s:
+              s = s.replace('<div class="foundFootage"></div>', '<div class="foundFootage"></div><div class="cursorGlow" id="cursorGlow"></div>')
+              if 'class="foundFootage"' not in s:
+                  s = s.replace('</body>', '<div class="foundFootage"></div><div class="cursorGlow" id="cursorGlow"></div></body>')
+
+          glow_js = r'''
+<script>
+(()=>{
+  const glow=document.getElementById('cursorGlow');
+  if(!glow || !matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+  let raf=0,x=0,y=0;
+  addEventListener('pointermove',e=>{
+    x=e.clientX;y=e.clientY;glow.classList.add('on');
+    if(!raf)raf=requestAnimationFrame(()=>{glow.style.left=x+'px';glow.style.top=y+'px';raf=0;});
+  },{passive:true});
+  addEventListener('pointerleave',()=>glow.classList.remove('on'));
+})();
+</script>
+'''
+          s = s.replace('</body>', glow_js + marker + '</body>')
           p.write_text(s, encoding='utf-8')
-      - name: Commit fix
+
+      - name: Commit patch and remove temporary workflow
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          rm -f .github/workflows/mobile-layout-fix.yml
+          git add index.html .github/workflows/mobile-layout-fix.yml
           git diff --cached --quiet && exit 0
-          git commit -m "Fix mobile menu layout"
+          git commit -m "Refine grain, pixel jitter and cursor glow"
           git push
