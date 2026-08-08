@@ -11,7 +11,7 @@
 
   const themeCss=document.createElement('link');
   themeCss.rel='stylesheet';
-  themeCss.href='./assets/win98-ps1-theme.css?v=20260808b';
+  themeCss.href='./assets/win98-ps1-theme.css?v=20260808c';
   document.head.appendChild(themeCss);
 
   const customCursor=document.createElement('script');
