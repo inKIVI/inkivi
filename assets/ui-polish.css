@@ -62,8 +62,10 @@ body,
     display: block;
     background-image: var(--cursor-image);
     background-repeat: no-repeat;
-    background-position: center;
-    background-size: 64px 64px;
+    /* The JS keeps the actual pointer at the 64px box centre. Move the hand
+       down/right so the raised fingertip becomes the real hotspot. */
+    background-position: calc(50% + 13px) calc(50% + 13px);
+    background-size: 50px 50px;
     image-rendering: pixelated;
   }
   .inkiviCursor > i:first-child { z-index: 3; }
@@ -72,13 +74,13 @@ body,
   .inkiviCursor > i:nth-child(2) {
     z-index: 4;
     opacity: .52;
-    clip-path: inset(17px 0 34px 0);
+    clip-path: inset(20px 0 31px 0);
     animation: inkiviCursorSliceA 1.35s steps(1,end) infinite;
   }
   .inkiviCursor > i:nth-child(3) {
     z-index: 5;
     opacity: .38;
-    clip-path: inset(38px 0 11px 0);
+    clip-path: inset(39px 0 10px 0);
     animation: inkiviCursorSliceB 1.8s steps(1,end) infinite;
   }
   .inkiviCursor.is-hot > i:nth-child(2) { animation-duration: 1.05s; }
