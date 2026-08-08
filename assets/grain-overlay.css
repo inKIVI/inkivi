@@ -1,98 +1,39 @@
-/* BIOS BLUE old-computer display treatment: unified pixel jitter, no VHS banding. */
-
-/* Disable legacy global film layers. */
+/* Emergency-safe display layer: no pseudo-element may cover the application. */
 .foundFootage,.inkiviGrain{display:none!important}
 
-/* One continuous background effect across the site. It lives in backgrounds, not above media. */
-html,body,.stage,.panel,.content{
-  background-image:
-    linear-gradient(rgba(4,31,92,.985),rgba(4,31,92,.985)),
-    repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),
-    repeating-linear-gradient(90deg,rgba(80,145,255,.020) 0 1px,transparent 1px 4px)!important;
-  background-blend-mode:normal,screen,screen!important;
-  background-position:0 0,0 0,0 0!important;
+/* Remove every experimental screen overlay from app containers. */
+.stage::before,.stage::after,
+.panel::before,.panel::after,
+.content::before,.content::after,
+.zones::before,.zones::after,
+.releaseListRich::before,.releaseListRich::after,
+.visualGridRich::before,.visualGridRich::after{
+  content:none!important;
+  display:none!important;
 }
 
-/* Tiny digital cell structure: deliberately not VHS scan bars. */
-.stage,.panel,.content,.zones,.releaseListRich,.visualGridRich{
-  position:relative!important;
-}
-.stage::before,.panel::before,.content::before,.zones::before,.releaseListRich::before,.visualGridRich::before{
+/* Restore the original stage vignette only behind the views. */
+.stage::after{
   content:""!important;
+  display:block!important;
   position:absolute!important;
   inset:0!important;
+  z-index:0!important;
   pointer-events:none!important;
-  z-index:6!important;
-  opacity:.30!important;
-  background:
-    radial-gradient(circle at 1px 1px,rgba(180,214,255,.12) 0 .48px,transparent .7px) 0 0/3px 3px,
-    radial-gradient(circle at 1px 1px,rgba(243,220,84,.035) 0 .42px,transparent .66px) 1px 1px/5px 5px!important;
-  mix-blend-mode:screen!important;
-  animation:inkiviPixelPhase .46s steps(6,end) infinite!important;
+  background:radial-gradient(circle,transparent 38%,rgba(0,0,0,.28))!important;
 }
+.stage>.view{position:absolute!important;z-index:2!important}
 
-/* Sparse 1px row jitter: old digital/CRT instability without travelling VHS bands. */
-.stage::after,.panel::after,.content::after,.zones::after,.releaseListRich::after,.visualGridRich::after{
-  content:""!important;
-  position:absolute!important;
-  inset:0!important;
-  pointer-events:none!important;
-  z-index:7!important;
-  opacity:.16!important;
-  background:
-    repeating-linear-gradient(0deg,
-      transparent 0 7px,
-      rgba(210,232,255,.05) 7px 8px,
-      transparent 8px 17px,
-      rgba(0,0,25,.10) 17px 18px,
-      transparent 18px 29px)!important;
-  animation:inkiviRowJitter .31s steps(7,end) infinite!important;
-}
-
-@keyframes inkiviPixelPhase{
-  0%{transform:translate3d(0,0,0);opacity:.28}
-  16%{transform:translate3d(1px,0,0);opacity:.31}
-  33%{transform:translate3d(0,1px,0);opacity:.27}
-  50%{transform:translate3d(-1px,0,0);opacity:.32}
-  66%{transform:translate3d(0,-1px,0);opacity:.29}
-  83%{transform:translate3d(1px,1px,0);opacity:.30}
-  100%{transform:translate3d(0,0,0);opacity:.28}
-}
-@keyframes inkiviRowJitter{
-  0%{transform:translateX(0);background-position:0 0}
-  14%{transform:translateX(.35px);background-position:0 1px}
-  28%{transform:translateX(-.55px);background-position:0 -1px}
-  42%{transform:translateX(.7px);background-position:0 0}
-  57%{transform:translateX(-.35px);background-position:0 1px}
-  71%{transform:translateX(.45px);background-position:0 -1px}
-  85%{transform:translateX(-.65px);background-position:0 0}
-  100%{transform:translateX(0);background-position:0 0}
-}
-
-/* Clean media guardrails: covers, discs, video/image media and hero artwork never receive the display texture. */
+/* Keep all media completely clean. */
 .releaseCoverBox,.cdScene,.cdDisc,.cdCase,.cdLabel,.cdRing,.releaseCover,.releaseCoverFallback,
 .dockCover,#heroReleaseCover,.heroReleaseCover,.heroCover,.hero img,.hero picture,.hero video,
 .visualMedia,.visualMedia iframe,.visualMedia img,.visualCard iframe,.visualCard img,.zoneMedia,.zoneMedia img{
   filter:none!important;
   mix-blend-mode:normal!important;
   isolation:isolate!important;
-  position:relative!important;
-  z-index:20!important;
-}
-.releaseCoverBox::before,.releaseCoverBox::after,
-.cdScene::before,.cdScene::after,.cdCase::before,.cdCase::after,.releaseCover::before,.releaseCover::after,
-.dockCover::before,.dockCover::after,.visualMedia::before,.visualMedia::after,.zoneMedia::before,.zoneMedia::after{
-  content:none!important;
-  display:none!important;
 }
 
-/* Interface itself stays above the texture. */
-.panelHead,.zoneCopy,.zoneIndex,.releaseRight,.visualCaption,.audioDock,.hero>*:not(img):not(picture):not(video):not(#heroReleaseCover):not(.heroReleaseCover):not(.heroCover){
-  position:relative!important;
-  z-index:12!important;
-}
-
-/* Keep current PNG cursors. */
+/* Keep the current cursors for now; no screen-effect CSS is tied to them. */
 @media (pointer:fine){
   html,body,.stage,.panel,.content,.releaseCard,.releaseRight,.trackLite,.visualCard,.visualItem{
     cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAqUlEQVR4nL3WQQ6EMAgF0I+Z+1+ZWYxMKgWkRWRnbXhAGyPwUnBX4qMbGQEwMz8NHXrhZzyHTIAgZzc9wACVRxYCJ4IKcgtUkRQgyM7I0sAIrSCfuw1E5FoA3JcS2UOOkHCDCRBRVLkHmTGNyErMzLK+pAKqA53cwJavqncGBFXt7pfDAi6Jq11oQGf7Py8e+pQgutNexSlROtgrLxHZxGMXLcW0/RSU4wvO9j4Tm3VPLAAAAABJRU5ErkJggg==") 1 1,default!important;
@@ -102,13 +43,4 @@ html,body,.stage,.panel,.content{
     cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAf0lEQVR4nOVVQQ7AIAiDZf//cndZIhoRZJK4rWeg0tJIlAx21iHYR4e3EAABLc9CgijSCc5gn9uT0AYzfmwhkeepqmRLNhhJpm1QVcvm2SyoEkVC1cOHg8ZcsmPIxTS4NI1AJtM0g+VrGrzfA+vjgOdcb4W6s34g0dNZ6Ruk4wJ1XyodKsFppQAAAABJRU5ErkJggg==") 9 2,pointer!important;
   }
   input[type='text'],input[type='email'],input[type='password'],input[type='search'],textarea,select{cursor:text!important}
-}
-
-@media(max-width:760px){
-  .stage::before,.panel::before,.content::before,.zones::before,.releaseListRich::before,.visualGridRich::before{opacity:.20!important}
-  .stage::after,.panel::after,.content::after,.zones::after,.releaseListRich::after,.visualGridRich::after{opacity:.10!important}
-}
-@media(prefers-reduced-motion:reduce){
-  .stage::before,.panel::before,.content::before,.zones::before,.releaseListRich::before,.visualGridRich::before,
-  .stage::after,.panel::after,.content::after,.zones::after,.releaseListRich::after,.visualGridRich::after{animation:none!important}
 }
