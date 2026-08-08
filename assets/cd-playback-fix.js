@@ -102,6 +102,12 @@
     base?.setAttribute('width',String(w));base?.setAttribute('height',String(h));
     if(!holes)return;
     holes.replaceChildren();
+
+    /* During the black scene transition the VCR overlay remains above .fade.
+       Cutting media holes at that moment exposes the black fade as rectangles.
+       Keep the mask solid until the transition is over, then recalculate. */
+    if(document.getElementById('fade')?.classList.contains('active'))return;
+
     document.querySelectorAll(protectedSelectors).forEach(el=>{
       if(!isActuallyVisible(el))return;
       const r=el.getBoundingClientRect();
