@@ -27,18 +27,50 @@
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260809d'),
     addCss('./assets/visual-tuning.css?v=20260809b'),
-    addCss('./assets/grain-overlay.css?v=20260809g')
+    addCss('./assets/grain-overlay.css?v=20260809h')
   ];
 
-  if(!document.querySelector('.inkiviGrain')){
-    const grain=document.createElement('div');
-    grain.className='inkiviGrain';
-    grain.setAttribute('aria-hidden','true');
-    document.body.appendChild(grain);
-  }
-
+  document.querySelector('.inkiviGrain')?.remove();
   document.documentElement.classList.remove('inkivi-custom-cursor');
   document.querySelectorAll('.inkiviCursor').forEach(x=>x.remove());
+
+  const ensureFx=el=>{
+    if(!el||el.querySelector(':scope > .retroFx'))return;
+    const fx=document.createElement('div');
+    fx.className='retroFx';
+    fx.setAttribute('aria-hidden','true');
+    el.appendChild(fx);
+  };
+  ['start','menu','panel'].forEach(id=>ensureFx(document.getElementById(id)));
+
+  if(matchMedia('(pointer:fine)').matches){
+    const old=document.querySelector('.retroCursor');
+    if(old)old.remove();
+    const c=document.createElement('div');
+    c.className='retroCursor';
+    c.setAttribute('aria-hidden','true');
+    c.innerHTML=`
+      <svg class="cursorArrow" viewBox="0 0 28 32" aria-hidden="true">
+        <path d="M2 1v24l6-6 5 11 5-2-5-10h9L2 1Z" fill="#fff" stroke="#050505" stroke-width="2" stroke-linejoin="miter"/>
+      </svg>
+      <svg class="cursorHand" viewBox="0 0 28 32" aria-hidden="true">
+        <path d="M11 2h5v11h2V8h4v7h2v-4h3v12h-2v5H10l-2-3-4-6v-5h4l3 4V2Z" fill="#fff" stroke="#050505" stroke-width="2" stroke-linejoin="miter"/>
+        <path d="M12 4h2v11h-2zM19 10h1v7h-1zM24 13h1v6h-1z" fill="#050505"/>
+      </svg>`;
+    document.body.appendChild(c);
+    document.documentElement.classList.add('retroCursorOn');
+    const interactive='a,button,[role="button"],input[type="button"],input[type="submit"],input[type="range"],.zone,.platformLink,.trackPlay,.trackToggle,.dockPlay,.dockClose,.btn';
+    let x=-80,y=-80;
+    const move=e=>{
+      x=e.clientX;y=e.clientY;
+      c.style.setProperty('transform',`translate3d(${x}px,${y}px,0)`,'important');
+      c.classList.toggle('is-pointer',!!e.target.closest?.(interactive));
+    };
+    window.addEventListener('pointermove',move,{passive:true});
+    window.addEventListener('pointerdown',()=>c.classList.add('is-down'),{passive:true});
+    window.addEventListener('pointerup',()=>c.classList.remove('is-down'),{passive:true});
+    window.addEventListener('blur',()=>{c.style.setProperty('transform','translate3d(-80px,-80px,0)','important')});
+  }
 
   const playerReady=new Promise(resolve=>{
     const player=document.createElement('script');
@@ -66,7 +98,11 @@
   function syncTrackButtons(active){document.querySelectorAll('.releaseCard .trackPlay').forEach(btn=>{const on=!!active&&btn===active&&isPlaying();btn.innerHTML=on?PAUSE:PLAY;btn.classList.toggle('active',on);btn.setAttribute('aria-label',on?'пауза':'воспроизвести')})}
   function syncCardState(){syncDockIcon();document.querySelectorAll('.releaseCard.is-active,.releaseCard.is-playing').forEach(card=>card.classList.remove('is-active','is-playing'));const active=findReleaseTrackButton();syncTrackButtons(active);if(!active)return;const card=active.closest('.releaseCard');if(card)card.classList.add('is-active');if(isPlaying()&&card)card.classList.add('is-playing')}
   function prepareLabel(label){if(label.dataset.spinFace==='1')return;const art=label.style.backgroundImage;if(art&&art!=='none')label.style.setProperty('--cd-label-art',art);label.style.backgroundImage='none';label.dataset.spinFace='1'}
-  function scan(root=document){root.querySelectorAll?.('.cdLabel').forEach(prepareLabel)}
+  function scan(root=document){
+    root.querySelectorAll?.('.cdLabel').forEach(prepareLabel);
+    if(root.id==='globalAudioDock')ensureFx(root);
+    root.querySelectorAll?.('#globalAudioDock').forEach(ensureFx);
+  }
   let syncQueued=false;
   function queueSync(){if(syncQueued)return;syncQueued=true;requestAnimationFrame(()=>{syncQueued=false;syncCardState()})}
   const observer=new MutationObserver(mutations=>{let dirty=false;for(const m of mutations){if(m.type==='childList'){m.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)});if(m.addedNodes.length||m.removedNodes.length)dirty=true}if(m.type==='attributes'&&m.target.id==='globalAudioDock')dirty=true}if(dirty)queueSync()});
