@@ -5,7 +5,7 @@ let requestId=0,active=null,scWidget=null,scApiPromise=null,scReady=false,scLoad
 let readyWait=null,playWait=null;
 const catalogCache=new Map();
 const PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-const PAUSE='<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>';
+const PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
 const fmt=n=>!Number.isFinite(n)?'0:00':Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');
 const norm=s=>String(s||'').toLowerCase().replace(/^inkivi\s*[-—–:]\s*/i,'').replace(/\s*[\[(](feat\.?|ft\.?)[^\])]*[\])]/gi,'').replace(/\s+(feat\.?|ft\.?)\s+.+$/gi,'').replace(/[^a-zа-яё0-9]+/gi,' ').trim();
 const tokens=s=>new Set(norm(s).split(/\s+/).filter(Boolean));
@@ -17,6 +17,14 @@ const fill=()=>dock()?.querySelector('.dockProgress i');
 const time=()=>dock()?.querySelector('.dockTime');
 const volInput=()=>dock()?.querySelector('.dockVolume input');
 
+function buttonKey(button){
+  if(!button)return'';
+  const title=norm(button.dataset.title||button.textContent||'');
+  const sc=String(button.dataset.sc||'');
+  const idx=String(button.dataset.scIndex||'0');
+  const preview=String(button.dataset.preview||'');
+  return [title,sc,idx,preview].join('|');
+}
 function setPlaying(on){
   const d=dock();if(!d)return;
   d.classList.toggle('playing',!!on);
@@ -49,7 +57,7 @@ function loadSCAPI(){
   return scApiPromise;
 }
 function bindEvents(){
-  if(!scWidget||scWidget.__inkiviResolved)return;scWidget.__inkiviResolved=true;const E=window.SC.Widget.Events;
+  if(!scWidget||scWidget.__inkiviResolvedV2)return;scWidget.__inkiviResolvedV2=true;const E=window.SC.Widget.Events;
   scWidget.bind(E.READY,()=>{scReady=true;try{scWidget.setVolume(volume)}catch{};if(readyWait){clearTimeout(readyWait.timer);readyWait.resolve(true);readyWait=null}});
   scWidget.bind(E.PLAY,()=>{if(!active||!String(active.mode).startsWith('soundcloud'))return;try{scWidget.setVolume(volume)}catch{};stopNative(false);active.mode='soundcloud';if(label())label().textContent='soundcloud · full';rowStatus(active.button,'full');setPlaying(true);try{scWidget.getDuration(ms=>{scDuration=Number(ms)||0})}catch{};if(playWait){clearTimeout(playWait.timer);playWait.resolve(true);playWait=null}});
   scWidget.bind(E.PLAY_PROGRESS,e=>{if(active?.mode!=='soundcloud')return;const dur=scDuration||Number(e.duration)||0,pos=Number(e.currentPosition)||0;if(fill())fill().style.width=(dur?Math.min(1,pos/dur):0)*100+'%';if(time())time().textContent=fmt(pos/1000)+' / '+fmt(dur/1000)});
@@ -65,7 +73,8 @@ async function initWidget(id){
   try{scWidget=window.SC.Widget(f);bindEvents();return true}catch{return false}
 }
 function getSounds(){return new Promise(resolve=>{if(!scWidget){resolve([]);return}try{scWidget.getSounds(s=>resolve(Array.isArray(s)?s:[]))}catch{resolve([])}})}
-function loadIntoWidget(url,id,timeout=9000){
+function loadIntoWidget(url,id,timeout=8000){
+  if(scReady&&scLoadedUrl===url)return Promise.resolve(id===requestId);
   return new Promise(async resolve=>{
     if(!await initWidget(id)||id!==requestId)return resolve(false);
     let done=false;const finish=ok=>{if(done)return;done=true;if(readyWait?.resolve===finish)readyWait=null;resolve(ok)};
@@ -86,7 +95,7 @@ function findSound(title,sounds,fallbackIndex){
 async function resolveTrackUrl(setUrl,title,fallbackIndex,id){
   let sounds=catalogCache.get(setUrl);
   if(!sounds){
-    if(!await loadIntoWidget(setUrl,id,10000)||id!==requestId)return null;
+    if(!await loadIntoWidget(setUrl,id,9000)||id!==requestId)return null;
     sounds=await getSounds();if(id!==requestId)return null;
     if(!sounds.length)return null;
     catalogCache.set(setUrl,sounds);
@@ -95,42 +104,70 @@ async function resolveTrackUrl(setUrl,title,fallbackIndex,id){
   const direct=match.sound?.permalink_url||match.sound?.uri||'';
   return direct?{url:direct,index:match.index}:null;
 }
+function startLoadedSoundCloud(id){
+  active.mode='soundcloud-pending';
+  return new Promise(resolve=>{
+    const finish=ok=>{if(playWait?.resolve===finish)playWait=null;resolve(ok)};
+    const timer=setTimeout(()=>{if(playWait?.resolve===finish)playWait=null;resolve(false)},6000);playWait={resolve:finish,timer};
+    try{scWidget.setVolume(volume);scWidget.seekTo(0);scWidget.play()}catch{clearTimeout(timer);playWait=null;resolve(false)}
+  });
+}
 async function playSoundCloud(id){
   if(id!==requestId||!active?.soundcloud)return false;
   const resolved=await resolveTrackUrl(active.soundcloud,active.title,active.scIndex,id);if(!resolved||id!==requestId)return false;
-  active.mode='soundcloud-pending';
   if(label())label().textContent='soundcloud · загрузка…';
-  if(!await loadIntoWidget(resolved.url,id,9000)||id!==requestId)return false;
-  return new Promise(resolve=>{
-    const finish=ok=>{if(playWait?.resolve===finish)playWait=null;resolve(ok)};
-    const timer=setTimeout(()=>{if(playWait?.resolve===finish)playWait=null;resolve(false)},7000);playWait={resolve:finish,timer};
-    try{scWidget.setVolume(volume);scWidget.seekTo(0);scWidget.play()}catch{clearTimeout(timer);playWait=null;resolve(false)}
-  });
+
+  // If the set itself is already loaded and the requested track is its first item,
+  // do not load the exact same audio a second time.
+  if(scReady&&scLoadedUrl===active.soundcloud&&resolved.index===0){
+    return startLoadedSoundCloud(id);
+  }
+
+  if(!await loadIntoWidget(resolved.url,id,8000)||id!==requestId)return false;
+  return startLoadedSoundCloud(id);
 }
 async function playPreview(id){
   if(id!==requestId||!active)return false;const a=audio();if(!a||!active.preview){if(label())label().textContent='audio недоступно';rowStatus(active.button,'нет audio');setPlaying(false);return false}
   stopSC();active.mode='preview';a.src=active.preview;a.volume=volume/100;if(label())label().textContent='preview';rowStatus(active.button,'preview');
   try{await a.play();if(id!==requestId){a.pause();return false}a.volume=volume/100;setPlaying(true);return true}catch{if(id===requestId){if(label())label().textContent='preview недоступно';setPlaying(false)}return false}
 }
+function toggleActive(){
+  if(!active)return;
+  if(active.mode==='soundcloud'&&scWidget){
+    try{scWidget.isPaused(paused=>{if(paused){try{scWidget.setVolume(volume);scWidget.play();setPlaying(true)}catch{}}else{try{scWidget.pause();setPlaying(false)}catch{}}})}catch{}
+    return;
+  }
+  if(active.mode==='preview'){
+    const a=audio();if(!a)return;
+    if(a.paused){a.volume=volume/100;a.play().then(()=>setPlaying(true)).catch(()=>{})}else{a.pause();setPlaying(false)}
+  }
+}
 async function choose(button){
   requestId++;const id=requestId;cancelWaiters();stopNative(true);stopSC();setPlaying(false);
   const title=button.dataset.title||button.querySelector('span')?.textContent||document.getElementById('releaseTitle')?.textContent||'трек';
-  active={button,title,preview:button.dataset.preview||'',soundcloud:button.dataset.sc||'',cover:button.dataset.cover||document.getElementById('heroReleaseCover')?.src||'',scIndex:button.dataset.scIndex||0,mode:''};
+  active={button,key:buttonKey(button),title,preview:button.dataset.preview||'',soundcloud:button.dataset.sc||'',cover:button.dataset.cover||document.getElementById('heroReleaseCover')?.src||'',scIndex:button.dataset.scIndex||0,mode:'loading'};
   setClasses(button);meta(title,active.cover,active.soundcloud?'soundcloud · загрузка…':'preview · загрузка…');rowStatus(button,'загрузка…');applyVolume();
   if(active.soundcloud){const full=await playSoundCloud(id);if(id!==requestId)return;if(full)return;stopSC()}
   await playPreview(id);
 }
 function bindDock(){
-  const d=dock();if(!d||d.dataset.playerResolved==='1')return;d.dataset.playerResolved='1';
+  const d=dock();if(!d||d.dataset.playerResolvedV2==='1')return;d.dataset.playerResolvedV2='1';
   const op=d.querySelector('.dockPlay'),oc=d.querySelector('.dockClose'),ov=d.querySelector('.dockVolume input'),ob=d.querySelector('.dockProgress');if(!op||!oc||!ov||!ob)return;
   const p=op.cloneNode(true);op.replaceWith(p);const c=oc.cloneNode(true);oc.replaceWith(c);const v=ov.cloneNode(true);ov.replaceWith(v);const b=ob.cloneNode(true);ob.replaceWith(b);v.value=String(volume);applyVolume();
   v.oninput=()=>{volume=clamp(v.value);localStorage.setItem('inkiviVolume',String(volume));applyVolume()};
-  p.onclick=()=>{if(!active)return;if(String(active.mode).startsWith('soundcloud')&&scWidget){try{scWidget.isPaused(paused=>{if(paused){scWidget.setVolume(volume);scWidget.play()}else scWidget.pause()})}catch{}return}const a=audio();if(!a)return;if(a.paused){a.volume=volume/100;a.play().then(()=>setPlaying(true)).catch(()=>{})}else{a.pause();setPlaying(false)}};
+  p.onclick=()=>toggleActive();
   b.onpointerdown=e=>{const r=b.getBoundingClientRect(),x=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));if(active?.mode==='soundcloud'&&scWidget){try{scWidget.seekTo(x*(scDuration||0))}catch{}return}const a=audio();if(a&&Number.isFinite(a.duration))a.currentTime=x*a.duration};
   c.onclick=()=>{requestId++;cancelWaiters();stopNative(true);stopSC();active=null;setClasses(null);d.hidden=true;document.body.classList.remove('audioDockOpen')};
   const a=audio();if(a){a.volume=volume/100;a.ontimeupdate=()=>{if(active?.mode!=='preview')return;const dur=a.duration||0,pc=dur?Math.min(1,a.currentTime/dur):0;if(fill())fill().style.width=(pc*100)+'%';if(time())time().textContent=fmt(a.currentTime)+' / '+fmt(dur)};a.onloadedmetadata=()=>a.volume=volume/100;a.onplay=()=>{a.volume=volume/100;setPlaying(true)};a.onpause=()=>{if(active?.mode==='preview')setPlaying(false)};a.onended=()=>setPlaying(false)}
 }
-document.addEventListener('click',e=>{const b=e.target.closest?.('.trackPlay,.heroPlayStrip');if(!b||b.disabled)return;e.preventDefault();e.stopImmediatePropagation();bindDock();choose(b)},true);
+document.addEventListener('click',e=>{
+  const b=e.target.closest?.('.trackPlay,.heroPlayStrip');if(!b||b.disabled)return;
+  e.preventDefault();e.stopImmediatePropagation();bindDock();
+  const same=!!active&&active.key===buttonKey(b);
+  if(same&&(active.mode==='soundcloud'||active.mode==='preview')){active.button=b;setClasses(b);toggleActive();return}
+  if(same&&active.mode==='loading')return;
+  choose(b);
+},true);
 function init(){bindDock();loadSCAPI().catch(()=>{})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));else setTimeout(init,0);
 })();
