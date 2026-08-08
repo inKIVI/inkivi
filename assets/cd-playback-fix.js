@@ -26,15 +26,23 @@
     addCss('./assets/ui-polish.css?v=20260808c'),
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260808c'),
-    addCss('./assets/visual-tuning.css?v=20260809b')
+    addCss('./assets/visual-tuning.css?v=20260809b'),
+    addCss('./assets/grain-overlay.css?v=20260809a')
   ];
+
+  if(!document.querySelector('.inkiviGrain')){
+    const grain=document.createElement('div');
+    grain.className='inkiviGrain';
+    grain.setAttribute('aria-hidden','true');
+    document.body.appendChild(grain);
+  }
 
   document.documentElement.classList.remove('inkivi-custom-cursor');
   document.querySelectorAll('.inkiviCursor').forEach(x=>x.remove());
 
   const playerReady=new Promise(resolve=>{
     const player=document.createElement('script');
-    player.src='./assets/player-v3.js?v=20260809a';player.defer=true;
+    player.src='./assets/player-v3.js?v=20260809c';player.defer=true;
     player.onload=()=>resolve(true);player.onerror=()=>resolve(false);document.head.appendChild(player);
   });
 
