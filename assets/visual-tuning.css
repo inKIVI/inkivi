@@ -1,50 +1,56 @@
 /* Final visual cleanup: quieter header, true overlay dock, metallic CD. */
 
+/* Slightly stronger contrast without adding extra colors. */
+:root{
+  --ink:#eadfb7!important;
+  --muted:#97896a!important;
+  --line:#554832!important;
+}
+
 /* Header: calm monochrome system bar, no orange wash. */
 .panelHead{
   background:#17110c!important;
-  border-bottom:1px solid #4f432f!important;
-  box-shadow:inset 0 1px 0 rgba(221,211,170,.08)!important;
+  border-bottom:1px solid #554832!important;
+  box-shadow:inset 0 1px 0 rgba(234,223,183,.08)!important;
 }
 .panelHead h2,.panel h2{
-  color:#ddd3aa!important;
+  color:#eadfb7!important;
   text-shadow:1px 1px 0 #070503!important;
 }
 .close{
-  background:#9f8f65!important;
+  background:#aa9868!important;
   color:#151008!important;
 }
 
-/* Dock is a real fixed overlay. Do not make the page reserve a coloured strip for it. */
+/* The scrolling surface must reach the viewport edge. No permanent strip below it. */
+.panel{padding-bottom:0!important}
+.content{
+  bottom:0!important;
+  background:#0b0806!important;
+}
+
+/* Dock is a true overlay: opaque, no blur/pseudo layer below it. */
 .audioDock{
-  position:fixed!important;
   background:#100c08!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
-  border:1px solid #61543c!important;
+  border:1px solid #6a5a40!important;
   box-shadow:0 8px 22px rgba(0,0,0,.72)!important;
   overflow:hidden!important;
   z-index:1000!important;
-  isolation:isolate!important;
 }
 .audioDock::before,.audioDock::after{content:none!important;display:none!important}
-
-/* Remove all layout reservation that used to appear as the brown block below/behind the dock. */
-.content{padding-bottom:18px!important}
+/* Never reserve a permanent colored band for the fixed dock. */
 .audioDockOpen .content{padding-bottom:18px!important}
-.audioDockOpen .zones{padding-bottom:7px!important}
-
-/* Only add scroll room at the END of a list so the final card can be brought above the floating dock. */
 .audioDockOpen .releaseListRich::after,
 .audioDockOpen .visualGridRich::after{
   content:"";
   display:block;
-  height:92px;
   grid-column:1/-1;
+  height:82px;
   pointer-events:none;
   background:transparent;
 }
-
 .dockProgress{
   height:10px!important;
   margin:2px 0!important;
@@ -54,72 +60,87 @@
 .dockProgress:before{
   top:4px!important;
   height:1px!important;
-  background:#4a4131!important;
+  background:#514633!important;
 }
 .dockProgress i{
   top:3px!important;
   height:3px!important;
-  background:#b89a3b!important;
+  background:#c2a13d!important;
 }
 
-/* A late-90s pressed CD: mostly graphite/silver, spectrum only as a faint optical sheen. */
+/* Controls / release chrome: a little brighter for readability. */
+.platformLink{background:#aa9868!important;color:#171109!important}
+.platformLink.allPlatforms{background:#95845d!important}
+.trackPlay{background:#c0ad78!important;color:#171109!important}
+.trackToggle{background:#a29063!important;color:#171109!important}
+.releaseInfo h3,.trackLite b{color:#eadfb7!important}
+.releaseDateSmall,.trackNo,.dockLabel,.dockTime{color:#97896a!important}
+.releaseCard{border-color:#554832!important}
+
+/* Real pressed CD: neutral silver first, with faint violet/green/cyan diffraction. */
 .cdDisc{
   background:
-    radial-gradient(circle at 34% 28%,rgba(255,255,255,.34) 0 7%,transparent 20%),
-    radial-gradient(circle at 62% 68%,rgba(255,255,255,.10),transparent 34%),
-    conic-gradient(from 18deg,
-      #8d8f8d 0deg,
-      #b7b8b4 38deg,
-      #777b7d 74deg,
-      #c0c0ba 112deg,
-      #8a8c8b 150deg,
-      #aeb0ad 198deg,
-      #74787a 242deg,
-      #bdbdb7 286deg,
-      #858888 330deg,
-      #8d8f8d 360deg)!important;
-  border:1px solid rgba(220,220,211,.42)!important;
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.27) 0 5%,transparent 18%),
+    radial-gradient(circle at 60% 70%,rgba(255,255,255,.07),transparent 35%),
+    conic-gradient(from 12deg,
+      #858a8c 0deg,
+      #b8bcba 34deg,
+      #929899 63deg,
+      #c5c7c3 96deg,
+      #8d9293 132deg,
+      #b4b7b4 169deg,
+      #818789 207deg,
+      #c0c2bf 246deg,
+      #969a99 285deg,
+      #b8bbb8 326deg,
+      #858a8c 360deg)!important;
+  border:1px solid rgba(220,222,218,.42)!important;
   box-shadow:
-    inset 0 0 0 1px rgba(35,35,32,.46),
-    inset 0 0 24px rgba(255,255,255,.10),
+    inset 0 0 0 1px rgba(30,32,31,.48),
+    inset 0 0 24px rgba(255,255,255,.09),
     0 10px 22px rgba(0,0,0,.46)!important;
 }
 .cdDisc:before{
   content:""!important;
   position:absolute!important;
-  inset:8%!important;
+  inset:7%!important;
   border-radius:50%!important;
-  background:repeating-radial-gradient(circle,transparent 0 5px,rgba(255,255,255,.045) 6px,transparent 7px 10px)!important;
-  mix-blend-mode:soft-light!important;
-  opacity:.72!important;
+  background:
+    repeating-radial-gradient(circle,transparent 0 5px,rgba(255,255,255,.035) 6px,transparent 7px 10px),
+    conic-gradient(from 102deg,
+      transparent 0 42deg,
+      rgba(121,171,178,.12) 48deg 62deg,
+      transparent 69deg 126deg,
+      rgba(145,112,176,.11) 132deg 148deg,
+      transparent 155deg 214deg,
+      rgba(114,165,126,.10) 220deg 236deg,
+      transparent 243deg 310deg,
+      rgba(187,154,107,.07) 316deg 329deg,
+      transparent 336deg 360deg)!important;
+  mix-blend-mode:screen!important;
+  opacity:.85!important;
+  pointer-events:none!important;
 }
 .cdDisc:after{
   content:""!important;
   position:absolute!important;
-  inset:0!important;
+  inset:17%!important;
   border-radius:50%!important;
-  background:linear-gradient(118deg,
-    transparent 29%,
-    rgba(95,145,160,.07) 36%,
-    rgba(170,116,145,.055) 43%,
-    transparent 50%,
-    rgba(176,151,82,.055) 62%,
-    transparent 70%)!important;
-  mix-blend-mode:screen!important;
-  opacity:.9!important;
+  border:1px solid rgba(55,58,57,.34)!important;
+  box-shadow:inset 0 0 18px rgba(28,29,28,.24)!important;
+  background:transparent!important;
+  pointer-events:none!important;
 }
 .cdRing{
-  background:rgba(155,157,153,.72)!important;
-  border-color:rgba(55,56,53,.48)!important;
+  background:rgba(150,154,152,.74)!important;
+  border-color:rgba(48,51,50,.52)!important;
+  box-shadow:0 0 0 2px rgba(220,221,215,.16),inset 0 0 5px rgba(255,255,255,.14)!important;
 }
-.cdLabel{opacity:.68!important}
+.cdLabel{opacity:.66!important}
 
 @media(max-width:760px){
-  .content,.audioDockOpen .content{
-    padding-bottom:calc(18px + env(safe-area-inset-bottom))!important;
-  }
+  .content{bottom:0!important}
+  .audioDockOpen .content{padding-bottom:calc(18px + env(safe-area-inset-bottom))!important}
   .audioDockOpen .releaseListRich::after,
-  .audioDockOpen .visualGridRich::after{
-    height:calc(88px + env(safe-area-inset-bottom));
-  }
+  .audioDockOpen .visualGridRich::after{height:92px}
 }
