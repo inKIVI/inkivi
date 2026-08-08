@@ -44,13 +44,19 @@
   will-change:transform;
 }
 
-/* Start title only: slightly smaller and clean white. */
+/* Start screen proportions. */
 .start h1{
   color:#fff!important;
-  font-size:clamp(68px,15vw,205px)!important;
+  font-size:clamp(54px,11vw,160px)!important;
+  margin:10px 0 7px!important;
+}
+.start .heroReleaseCover{
+  width:clamp(220px,24vw,310px)!important;
+  margin:12px auto 8px!important;
 }
 @media(max-width:620px){
-  .start h1{font-size:20vw!important}
+  .start h1{font-size:16vw!important}
+  .start .heroReleaseCover{width:clamp(180px,58vw,260px)!important}
 }
 
 /* Win95/98 cursor sprites derived from the supplied reference.
