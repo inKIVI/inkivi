@@ -27,7 +27,7 @@
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260809d'),
     addCss('./assets/visual-tuning.css?v=20260809b'),
-    addCss('./assets/grain-overlay.css?v=20260809e')
+    addCss('./assets/grain-overlay.css?v=20260809f')
   ];
 
   if(!document.querySelector('.inkiviGrain')){
