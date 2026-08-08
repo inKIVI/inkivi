@@ -16,14 +16,19 @@
 
   const headerFixCss=document.createElement('link');
   headerFixCss.rel='stylesheet';
-  headerFixCss.href='./assets/panel-header-fix.css?v=20260808a';
+  headerFixCss.href='./assets/panel-header-fix.css?v=20260808b';
   document.head.appendChild(headerFixCss);
+
+  const visualTuningCss=document.createElement('link');
+  visualTuningCss.rel='stylesheet';
+  visualTuningCss.href='./assets/visual-tuning.css?v=20260808a';
+  document.head.appendChild(visualTuningCss);
 
   document.documentElement.classList.remove('inkivi-custom-cursor');
   document.querySelectorAll('.inkiviCursor').forEach(x=>x.remove());
 
   const player=document.createElement('script');
-  player.src='./assets/player-v3.js?v=20260808h';
+  player.src='./assets/player-v3.js?v=20260808i';
   player.defer=true;
   document.head.appendChild(player);
 
