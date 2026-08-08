@@ -1,18 +1,12 @@
-/* Emergency-safe display layer: no pseudo-element may cover the application. */
+/* BIOS BLUE: visible animated screen noise without touching cover art. */
 .foundFootage,.inkiviGrain{display:none!important}
 
-/* Remove every experimental screen overlay from app containers. */
-.stage::before,.stage::after,
-.panel::before,.panel::after,
-.content::before,.content::after,
-.zones::before,.zones::after,
-.releaseListRich::before,.releaseListRich::after,
-.visualGridRich::before,.visualGridRich::after{
+/* Never reuse experimental container pseudo-overlays. */
+.stage::before,.panel::before,.content::before,.zones::before,.releaseListRich::before,.visualGridRich::before,
+.panel::after,.content::after,.zones::after,.releaseListRich::after,.visualGridRich::after{
   content:none!important;
   display:none!important;
 }
-
-/* Restore the original stage vignette only behind the views. */
 .stage::after{
   content:""!important;
   display:block!important;
@@ -20,27 +14,113 @@
   inset:0!important;
   z-index:0!important;
   pointer-events:none!important;
-  background:radial-gradient(circle,transparent 38%,rgba(0,0,0,.28))!important;
+  background:radial-gradient(circle,transparent 40%,rgba(0,3,22,.26))!important;
 }
 .stage>.view{position:absolute!important;z-index:2!important}
 
-/* Keep all media completely clean. */
+/* The effect is injected INSIDE each screen. This keeps it in the same stacking
+   context as the artwork, so clean media can genuinely sit above it. */
+.retroFx{
+  position:absolute!important;
+  inset:0!important;
+  z-index:20!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+.retroFx::before{
+  content:""!important;
+  position:absolute!important;
+  inset:-34px!important;
+  opacity:.30!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='148' height='148' viewBox='0 0 148 148'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' seed='13' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")!important;
+  background-repeat:repeat!important;
+  filter:contrast(190%) brightness(120%)!important;
+  mix-blend-mode:screen!important;
+  animation:retroNoiseJump .17s steps(2,end) infinite!important;
+}
+.retroFx::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  opacity:.42!important;
+  background:
+    repeating-linear-gradient(to bottom,rgba(0,0,0,.17) 0 1px,rgba(190,218,255,.024) 1px 2px,transparent 2px 4px),
+    repeating-linear-gradient(to right,rgba(92,155,255,.020) 0 1px,transparent 1px 3px)!important;
+  background-position:0 0,0 0!important;
+  mix-blend-mode:soft-light!important;
+  animation:retroRasterJitter .72s steps(9,end) infinite,retroFlicker 3.7s steps(1,end) infinite!important;
+}
+@keyframes retroNoiseJump{
+  0%{transform:translate3d(-9px,-7px,0)}
+  20%{transform:translate3d(7px,-11px,0)}
+  40%{transform:translate3d(-12px,8px,0)}
+  60%{transform:translate3d(10px,5px,0)}
+  80%{transform:translate3d(-5px,12px,0)}
+  100%{transform:translate3d(8px,-5px,0)}
+}
+@keyframes retroRasterJitter{
+  0%{background-position:0 0,0 0;transform:translateX(0)}
+  12%{background-position:0 1px,1px 0;transform:translateX(.35px)}
+  25%{background-position:0 0,-1px 0;transform:translateX(-.45px)}
+  37%{background-position:0 2px,0 0;transform:translateX(.55px)}
+  50%{background-position:0 1px,1px 0;transform:translateX(-.25px)}
+  62%{background-position:0 3px,0 0;transform:translateX(.45px)}
+  75%{background-position:0 1px,-1px 0;transform:translateX(-.55px)}
+  87%{background-position:0 2px,0 0;transform:translateX(.25px)}
+  100%{background-position:0 4px,0 0;transform:translateX(0)}
+}
+@keyframes retroFlicker{
+  0%,14%,17%,46%,49%,73%,100%{opacity:.42}
+  15%{opacity:.34}
+  16%{opacity:.48}
+  47%{opacity:.38}
+  48%{opacity:.45}
+  74%{opacity:.47}
+}
+
+/* Interface stays under the glass/noise. Media is deliberately above it. */
+#start>.hero,#menu>.zones,.panelHead,.content,.audioDock>*:not(.retroFx){position:relative!important;z-index:10!important}
 .releaseCoverBox,.cdScene,.cdDisc,.cdCase,.cdLabel,.cdRing,.releaseCover,.releaseCoverFallback,
 .dockCover,#heroReleaseCover,.heroReleaseCover,.heroCover,.hero img,.hero picture,.hero video,
 .visualMedia,.visualMedia iframe,.visualMedia img,.visualCard iframe,.visualCard img,.zoneMedia,.zoneMedia img{
   filter:none!important;
   mix-blend-mode:normal!important;
   isolation:isolate!important;
+  position:relative!important;
+  z-index:30!important;
+}
+.releaseCoverBox::before,.releaseCoverBox::after,
+.cdScene::before,.cdScene::after,.cdCase::before,.cdCase::after,.releaseCover::before,.releaseCover::after,
+.dockCover::before,.dockCover::after,.visualMedia::before,.visualMedia::after{
+  content:none!important;
+  display:none!important;
 }
 
-/* Keep the current cursors for now; no screen-effect CSS is tied to them. */
+/* Completely new cursor implementation. Native cursor is hidden only after JS
+   has created the DOM cursor, so there is always a safe fallback. */
 @media (pointer:fine){
-  html,body,.stage,.panel,.content,.releaseCard,.releaseRight,.trackLite,.visualCard,.visualItem{
-    cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAqUlEQVR4nL3WQQ6EMAgF0I+Z+1+ZWYxMKgWkRWRnbXhAGyPwUnBX4qMbGQEwMz8NHXrhZzyHTIAgZzc9wACVRxYCJ4IKcgtUkRQgyM7I0sAIrSCfuw1E5FoA3JcS2UOOkHCDCRBRVLkHmTGNyErMzLK+pAKqA53cwJavqncGBFXt7pfDAi6Jq11oQGf7Py8e+pQgutNexSlROtgrLxHZxGMXLcW0/RSU4wvO9j4Tm3VPLAAAAABJRU5ErkJggg==") 1 1,default!important;
+  html.retroCursorOn,html.retroCursorOn body,html.retroCursorOn body *{cursor:none!important}
+  .retroCursor{
+    position:fixed!important;
+    left:0!important;top:0!important;
+    width:28px!important;height:32px!important;
+    z-index:12000!important;
+    pointer-events:none!important;
+    transform:translate3d(-80px,-80px,0)!important;
+    will-change:transform!important;
+    image-rendering:pixelated!important;
   }
-  a,button,[role='button'],input[type='button'],input[type='submit'],input[type='range'],
-  .zone,.platformLink,.trackPlay,.trackToggle,.dockPlay,.dockClose,.btn{
-    cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAf0lEQVR4nOVVQQ7AIAiDZf//cndZIhoRZJK4rWeg0tJIlAx21iHYR4e3EAABLc9CgijSCc5gn9uT0AYzfmwhkeepqmRLNhhJpm1QVcvm2SyoEkVC1cOHg8ZcsmPIxTS4NI1AJtM0g+VrGrzfA+vjgOdcb4W6s34g0dNZ6Ruk4wJ1XyodKsFppQAAAABJRU5ErkJggg==") 9 2,pointer!important;
-  }
-  input[type='text'],input[type='email'],input[type='password'],input[type='search'],textarea,select{cursor:text!important}
+  .retroCursor svg{display:block!important;width:28px!important;height:32px!important;overflow:visible!important;shape-rendering:crispEdges!important}
+  .retroCursor .cursorHand{display:none!important}
+  .retroCursor.is-pointer .cursorArrow{display:none!important}
+  .retroCursor.is-pointer .cursorHand{display:block!important}
+  .retroCursor.is-down{transform-origin:2px 2px!important}
 }
+@media (pointer:coarse){.retroCursor{display:none!important}}
+
+@media(max-width:760px){
+  .retroFx::before{opacity:.21!important}
+  .retroFx::after{opacity:.30!important}
+}
+@media(prefers-reduced-motion:reduce){.retroFx::before,.retroFx::after{animation:none!important}}
