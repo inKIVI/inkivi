@@ -1,4 +1,4 @@
-/* Final visual cleanup: quieter header, opaque dock, metallic CD. */
+/* Final visual cleanup: quieter header, true overlay dock, metallic CD. */
 
 /* Header: calm monochrome system bar, no orange wash. */
 .panelHead{
@@ -15,18 +15,36 @@
   color:#151008!important;
 }
 
-/* Dock is a true overlay: opaque, no brown blur/pseudo layer below it. */
+/* Dock is a real fixed overlay. Do not make the page reserve a coloured strip for it. */
 .audioDock{
+  position:fixed!important;
   background:#100c08!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   border:1px solid #61543c!important;
   box-shadow:0 8px 22px rgba(0,0,0,.72)!important;
   overflow:hidden!important;
-  z-index:700!important;
+  z-index:1000!important;
+  isolation:isolate!important;
 }
 .audioDock::before,.audioDock::after{content:none!important;display:none!important}
-.audioDockOpen .content{padding-bottom:96px!important}
+
+/* Remove all layout reservation that used to appear as the brown block below/behind the dock. */
+.content{padding-bottom:18px!important}
+.audioDockOpen .content{padding-bottom:18px!important}
+.audioDockOpen .zones{padding-bottom:7px!important}
+
+/* Only add scroll room at the END of a list so the final card can be brought above the floating dock. */
+.audioDockOpen .releaseListRich::after,
+.audioDockOpen .visualGridRich::after{
+  content:"";
+  display:block;
+  height:92px;
+  grid-column:1/-1;
+  pointer-events:none;
+  background:transparent;
+}
+
 .dockProgress{
   height:10px!important;
   margin:2px 0!important;
@@ -97,5 +115,11 @@
 .cdLabel{opacity:.68!important}
 
 @media(max-width:760px){
-  .audioDockOpen .content{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+  .content,.audioDockOpen .content{
+    padding-bottom:calc(18px + env(safe-area-inset-bottom))!important;
+  }
+  .audioDockOpen .releaseListRich::after,
+  .audioDockOpen .visualGridRich::after{
+    height:calc(88px + env(safe-area-inset-bottom));
+  }
 }
