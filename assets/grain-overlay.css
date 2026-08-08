@@ -1,91 +1,36 @@
-/* BIOS BLUE: dark animated VCR/CRT texture lives in BACKGROUNDS only.
-   Nothing here can render above cover artwork, discs or video/image media. */
+/* BIOS BLUE: safe animated monitor noise.
+   This file must NEVER mutate artwork, CD, card or component internals. */
+
+/* Old overlay experiments stay disabled. */
 .foundFootage,.inkiviGrain,.retroFx{display:none!important}
 
-/* Kill every older overlay experiment. */
-.stage::before,.stage::after,
-.panel::before,.panel::after,
-.content::before,.content::after,
-.zones::before,.zones::after,
-.releaseListRich::before,.releaseListRich::after,
-.visualGridRich::before,.visualGridRich::after,
-.zone::before,.zone::after,
-.panelHead::before,.panelHead::after,
-.releaseRight::before,.releaseRight::after,
-.audioDock::before,.audioDock::after,
-.hero::before,.hero::after,
-.timer::before,.timer::after,
-.actions::before,.actions::after{
-  content:none!important;
-  display:none!important;
-}
-
-/* Dark monochrome noise tile. With multiply/soft-light it only darkens and
-   roughens the BIOS blue; there is no bright white snow. */
-html,body,.stage,.panel,.panelHead,.content,.zone,.releaseRight,.audioDock,.visualCaption,.timer,.actions{
-  --vcr-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' seed='17' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='.44' intercept='.04'/%3E%3CfeFuncG type='linear' slope='.50' intercept='.05'/%3E%3CfeFuncB type='linear' slope='.64' intercept='.08'/%3E%3CfeFuncA type='linear' slope='.55' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* Page-level living monitor texture. It is a background, so all DOM/media is
-   painted above it by definition. */
+/*
+  The monitor treatment exists ONLY as background paint on the outer screens.
+  Background paint is behind descendants by definition, so covers/discs/media
+  cannot be tinted, filtered, flattened or have their own texture replaced.
+*/
 html,body,.stage,.panel{
+  --monitor-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='144' viewBox='0 0 144 144'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.76' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='.34' intercept='.03'/%3E%3CfeFuncG type='linear' slope='.40' intercept='.04'/%3E%3CfeFuncB type='linear' slope='.54' intercept='.06'/%3E%3CfeFuncA type='linear' slope='.48' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-image:
-    var(--vcr-noise),
-    repeating-linear-gradient(to bottom,rgba(0,0,0,.16) 0 1px,transparent 1px 4px),
-    radial-gradient(ellipse at 50% 45%,transparent 52%,rgba(0,7,38,.22) 100%)!important;
-  background-size:128px 128px,100% 4px,100% 100%!important;
+    var(--monitor-noise),
+    repeating-linear-gradient(to bottom,rgba(0,0,0,.14) 0 1px,transparent 1px 4px),
+    radial-gradient(ellipse at 50% 46%,transparent 54%,rgba(0,5,34,.20) 100%)!important;
+  background-size:144px 144px,100% 4px,100% 100%!important;
   background-repeat:repeat,repeat,no-repeat!important;
   background-blend-mode:multiply,soft-light,normal!important;
-  animation:vcrBackgroundDrift .34s steps(5,end) infinite,vcrPulse 5.7s steps(1,end) infinite!important;
+  background-position:0 0,0 0,center!important;
+  animation:inkiviMonitorNoise .24s steps(5,end) infinite!important;
 }
 
-/* UI surfaces get the same dark texture as their BACKGROUND, never as an
-   overlay. This gives one coherent monitor feel while covers remain clean. */
-.panelHead,.content,.zone,.releaseRight,.audioDock,.visualCaption,.timer,.actions{
-  background-image:
-    var(--vcr-noise),
-    repeating-linear-gradient(to bottom,rgba(0,0,0,.11) 0 1px,transparent 1px 4px)!important;
-  background-size:128px 128px,100% 4px!important;
-  background-repeat:repeat,repeat!important;
-  background-blend-mode:multiply,soft-light!important;
-  animation:vcrSurfaceDrift .41s steps(6,end) infinite!important;
-}
-
-@keyframes vcrBackgroundDrift{
+/* Dark VCR/CRT instability: only the texture phase moves. No element filter,
+   transform, opacity or brightness is animated, so child media remains exact. */
+@keyframes inkiviMonitorNoise{
   0%{background-position:0 0,0 0,center}
-  20%{background-position:-7px 5px,0 1px,center}
-  40%{background-position:9px -6px,0 0,center}
-  60%{background-position:-4px -9px,0 2px,center}
-  80%{background-position:6px 8px,0 1px,center}
+  20%{background-position:-8px 5px,0 1px,center}
+  40%{background-position:7px -6px,0 0,center}
+  60%{background-position:-5px -8px,0 2px,center}
+  80%{background-position:6px 7px,0 1px,center}
   100%{background-position:0 0,0 0,center}
-}
-@keyframes vcrSurfaceDrift{
-  0%{background-position:0 0,0 0}
-  17%{background-position:5px -4px,0 1px}
-  34%{background-position:-6px 6px,0 0}
-  51%{background-position:8px 3px,0 1px}
-  68%{background-position:-4px -7px,0 2px}
-  85%{background-position:3px 5px,0 0}
-  100%{background-position:0 0,0 0}
-}
-@keyframes vcrPulse{
-  0%,13%,16%,44%,47%,70%,100%{filter:brightness(1)}
-  14%{filter:brightness(.975)}
-  15%{filter:brightness(1.018)}
-  45%{filter:brightness(.985)}
-  46%{filter:brightness(1.012)}
-  71%{filter:brightness(.982)}
-}
-
-/* Absolutely clean media. No filter, blend or inherited animation is applied. */
-.releaseCoverBox,.cdScene,.cdDisc,.cdCase,.cdLabel,.cdRing,.releaseCover,.releaseCoverFallback,
-.dockCover,#heroReleaseCover,.heroReleaseCover,.heroCover,.hero img,.hero picture,.hero video,
-.visualMedia,.visualMedia iframe,.visualMedia img,.visualCard iframe,.visualCard img,.zoneMedia,.zoneMedia img{
-  background-image:none!important;
-  animation:none!important;
-  filter:none!important;
-  mix-blend-mode:normal!important;
-  isolation:isolate!important;
 }
 
 /* DOM cursor from JS. No cursor:url assets. */
@@ -105,12 +50,11 @@ html,body,.stage,.panel{
   .retroCursor.is-pointer .cursorArrow{display:none!important}
   .retroCursor.is-pointer .cursorHand{display:block!important}
 }
-@media (pointer:coarse){.retroCursor{display:none!important}}
+@media(pointer:coarse){.retroCursor{display:none!important}}
 
 @media(max-width:760px){
-  html,body,.stage,.panel{background-size:160px 160px,100% 5px,100% 100%!important}
-  .panelHead,.content,.zone,.releaseRight,.audioDock,.visualCaption,.timer,.actions{background-size:160px 160px,100% 5px!important}
+  html,body,.stage,.panel{background-size:176px 176px,100% 5px,100% 100%!important}
 }
 @media(prefers-reduced-motion:reduce){
-  html,body,.stage,.panel,.panelHead,.content,.zone,.releaseRight,.audioDock,.visualCaption,.timer,.actions{animation:none!important}
+  html,body,.stage,.panel{animation:none!important}
 }
