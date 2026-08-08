@@ -1,0 +1,101 @@
+/* Final visual cleanup: quieter header, opaque dock, metallic CD. */
+
+/* Header: calm monochrome system bar, no orange wash. */
+.panelHead{
+  background:#17110c!important;
+  border-bottom:1px solid #4f432f!important;
+  box-shadow:inset 0 1px 0 rgba(221,211,170,.08)!important;
+}
+.panelHead h2,.panel h2{
+  color:#ddd3aa!important;
+  text-shadow:1px 1px 0 #070503!important;
+}
+.close{
+  background:#9f8f65!important;
+  color:#151008!important;
+}
+
+/* Dock is a true overlay: opaque, no brown blur/pseudo layer below it. */
+.audioDock{
+  background:#100c08!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  border:1px solid #61543c!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.72)!important;
+  overflow:hidden!important;
+  z-index:700!important;
+}
+.audioDock::before,.audioDock::after{content:none!important;display:none!important}
+.audioDockOpen .content{padding-bottom:96px!important}
+.dockProgress{
+  height:10px!important;
+  margin:2px 0!important;
+  background:transparent!important;
+  border:0!important;
+}
+.dockProgress:before{
+  top:4px!important;
+  height:1px!important;
+  background:#4a4131!important;
+}
+.dockProgress i{
+  top:3px!important;
+  height:3px!important;
+  background:#b89a3b!important;
+}
+
+/* A late-90s pressed CD: mostly graphite/silver, spectrum only as a faint optical sheen. */
+.cdDisc{
+  background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.34) 0 7%,transparent 20%),
+    radial-gradient(circle at 62% 68%,rgba(255,255,255,.10),transparent 34%),
+    conic-gradient(from 18deg,
+      #8d8f8d 0deg,
+      #b7b8b4 38deg,
+      #777b7d 74deg,
+      #c0c0ba 112deg,
+      #8a8c8b 150deg,
+      #aeb0ad 198deg,
+      #74787a 242deg,
+      #bdbdb7 286deg,
+      #858888 330deg,
+      #8d8f8d 360deg)!important;
+  border:1px solid rgba(220,220,211,.42)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(35,35,32,.46),
+    inset 0 0 24px rgba(255,255,255,.10),
+    0 10px 22px rgba(0,0,0,.46)!important;
+}
+.cdDisc:before{
+  content:""!important;
+  position:absolute!important;
+  inset:8%!important;
+  border-radius:50%!important;
+  background:repeating-radial-gradient(circle,transparent 0 5px,rgba(255,255,255,.045) 6px,transparent 7px 10px)!important;
+  mix-blend-mode:soft-light!important;
+  opacity:.72!important;
+}
+.cdDisc:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  border-radius:50%!important;
+  background:linear-gradient(118deg,
+    transparent 29%,
+    rgba(95,145,160,.07) 36%,
+    rgba(170,116,145,.055) 43%,
+    transparent 50%,
+    rgba(176,151,82,.055) 62%,
+    transparent 70%)!important;
+  mix-blend-mode:screen!important;
+  opacity:.9!important;
+}
+.cdRing{
+  background:rgba(155,157,153,.72)!important;
+  border-color:rgba(55,56,53,.48)!important;
+}
+.cdLabel{opacity:.68!important}
+
+@media(max-width:760px){
+  .audioDockOpen .content{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+}
