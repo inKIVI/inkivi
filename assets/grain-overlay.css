@@ -53,8 +53,8 @@
   .start h1{font-size:20vw!important}
 }
 
-/* Classic Win95/98 cursor. The SVG uses integer pixel geometry only:
-   no filters, shadows, strokes or browser-scaled cursor assets. */
+/* Win95/98 cursor sprites derived from the supplied reference.
+   Nearest-neighbour 32px PNGs: no SVG strokes, shadows or anti-aliasing. */
 @media (pointer:fine){
   html.retroCursorOn,html.retroCursorOn body,html.retroCursorOn body *{cursor:none!important}
   .retroCursor{
@@ -67,22 +67,20 @@
     pointer-events:none!important;
     transform:translate3d(-80px,-80px,0)!important;
     will-change:transform!important;
-  }
-  .retroCursor svg{
-    display:none!important;
-    position:absolute!important;
-    left:0!important;
-    top:0!important;
-    width:32px!important;
-    height:32px!important;
-    overflow:visible!important;
-    shape-rendering:crispEdges!important;
+    background-repeat:no-repeat!important;
+    background-position:0 0!important;
+    background-size:32px 32px!important;
     image-rendering:pixelated!important;
+    background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAjklEQVR42uWWQQ7AIAgE2cb/f5leejAkto0FF6yJB0/i7KCKiOg1KeMQ8ugLUHYBYMRBj6CZNUwc2J6APOSubALhYqaTcEQhTMz0EoaLOUPAVcwSEoaKWVJCVzG9CEyLWVJC+j2wlIAOWgzbE1Bjd39qeL6M7Wbjf/yKYdoKL9oPnsRSSAh2BF9uQpSX8ASe2iE8HXMTmwAAAABJRU5ErkJggg==")!important;
   }
-  .retroCursor .cursorArrow{display:block!important}
-  .retroCursor.is-pointer .cursorArrow{display:none!important}
-  .retroCursor.is-pointer .cursorHand{display:block!important}
-  .retroCursor::before,.retroCursor::after{content:none!important;display:none!important}
+  .retroCursor.is-pointer{
+    background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAhklEQVR42u2WwQ7AIAhDfYv//8vsusOGJLPopj3pRZqWghQfdjlTkmE3d+td5CiDsQlsAvVlOlhSAZxZQQaBKCGWTgHRsV17+BggQS8FUKXA62yvOIoY0iAiUUiy6yPvDo9h6xf0fwWmI4CwIWXLyPOf6S1QJsI+2YRT2mBK+7YFNSkRjzgBrQUcPJdxC98AAAAASUVORK5CYII=")!important;
+  }
+  .retroCursor svg,
+  .retroCursor .cursorArrow,
+  .retroCursor .cursorHand,
+  .retroCursor::before,
+  .retroCursor::after{display:none!important;content:none!important}
 }
 @media(pointer:coarse){.retroCursor{display:none!important}}
 @media(prefers-reduced-motion:reduce){
