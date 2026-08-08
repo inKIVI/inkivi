@@ -1,93 +1,116 @@
-/* inkivi visual tuning: brighter late-90s palette + optical CD + soft pixel typography. */
+/* inkivi visual tuning: warmer late-90s palette + restrained optical CD. */
 :root{
-  --ink:#f0dfaa!important;
-  --muted:#b7a477!important;
-  --line:#715b37!important;
-  --xp-panel:#b99f68!important;
-  --xp-panel-hi:#ead79b!important;
-  --xp-panel-lo:#594426!important;
-  --xp-yellow:#d2ad3f!important;
-  --xp-amber:#b87827!important;
-  --xp-dark:#130d08!important;
+  --ink:#f3e7bd!important;
+  --muted:#c2ad7d!important;
+  --line:#80683d!important;
+  --xp-panel:#c2a96d!important;
+  --xp-panel-hi:#f0dda0!important;
+  --xp-panel-lo:#684d27!important;
+  --xp-yellow:#ddb94a!important;
+  --xp-amber:#c6842e!important;
+  --xp-dark:#181008!important;
 }
 
+/* Slightly rough old-computer typography, but still fully readable. */
 html,body,button,a,input,select,textarea{
-  font-family:"Pixelify Sans",Tahoma,"MS Sans Serif",Arial,sans-serif!important;
-  font-optical-sizing:auto;
+  font-family:"IBM Plex Mono","Lucida Console",monospace!important;
+  font-variant-ligatures:none!important;
+  letter-spacing:.005em;
 }
 .eyebrow,.date,.unit span,.releaseDateSmall,.dockLabel,.dockTime,.trackNo{
-  font-family:"Pixelify Sans",Tahoma,sans-serif!important;
+  font-family:"IBM Plex Mono","Lucida Console",monospace!important;
   letter-spacing:.035em!important;
 }
-.loader b,h1,.panel h2,.zoneTitle,.releaseInfo h3{
-  font-family:"Pixelify Sans",Tahoma,sans-serif!important;
+h1,.panel h2,.zoneTitle,.releaseInfo h3{
+  font-family:"IBM Plex Mono","Lucida Console",monospace!important;
   font-weight:700!important;
+  letter-spacing:-.045em!important;
 }
 
-html,body{background:#120c07!important;color:var(--ink)!important}
-body{background:radial-gradient(circle at 22% 4%,rgba(210,173,63,.10),transparent 31%),linear-gradient(#1c120a,#0e0906 76%)!important}
-.stage{background:radial-gradient(circle at 50% 2%,rgba(210,173,63,.12),transparent 34%),linear-gradient(#21150c,#0f0906 78%)!important}
-.panel{background:#120c08!important;padding-bottom:0!important}
-.content{bottom:0!important;background:#120c08!important}
-.panelHead{background:#21160e!important;border-bottom:1px solid #715b37!important;box-shadow:inset 0 1px 0 rgba(240,223,170,.10)!important}
-.panelHead h2,.panel h2{color:#f0dfaa!important;text-shadow:1px 1px 0 #080503!important}.close{background:#bca36c!important;color:#171008!important}
+/* A little brighter and warmer, without turning the UI beige. */
+html,body{background:#171008!important;color:var(--ink)!important}
+body{background:radial-gradient(circle at 22% 4%,rgba(221,185,74,.13),transparent 31%),linear-gradient(#28190d,#120b06 78%)!important}
+.stage{background:radial-gradient(circle at 50% 2%,rgba(221,185,74,.15),transparent 35%),linear-gradient(#2c1c0f,#120b07 80%)!important}
+.panel{background:#181009!important;padding-bottom:0!important}
+.content{bottom:0!important;background:#181009!important}
+.panelHead{background:#281b10!important;border-bottom:1px solid #80683d!important;box-shadow:inset 0 1px 0 rgba(243,231,189,.12)!important}
+.panelHead h2,.panel h2{color:#f3e7bd!important;text-shadow:1px 1px 0 #090603!important}.close{background:#c4ad76!important;color:#1b1209!important}
 
-.releaseCard{background:linear-gradient(90deg,#1a120c,#120c08)!important;border-color:#715b37!important}
-.releaseCoverBox{background:#100a07!important;border-color:#59472b!important}
-.releaseInfo h3,.trackLite b{color:#f0dfaa!important}
-.releaseDateSmall,.trackNo,.dockLabel,.dockTime{color:#b7a477!important}
-.platformLink{background:#b99f68!important;color:#1a1108!important;border-color:#e0cb91 #5d492a #5d492a #e0cb91!important}
-.platformLink.allPlatforms{background:#a58c5e!important}.trackPlay{background:#c8ae74!important;color:#171008!important}.trackToggle{background:#ad9362!important;color:#171008!important}.trackLite{background:#100a07!important;border-color:#665231!important}
+.releaseCard{background:linear-gradient(90deg,#21160d,#181009)!important;border-color:#80683d!important}
+.releaseCoverBox{background:#140d08!important;border-color:#6b5633!important}
+.releaseInfo h3,.trackLite b{color:#f3e7bd!important}
+.releaseDateSmall,.trackNo,.dockLabel,.dockTime{color:#c2ad7d!important}
+.platformLink{background:#c8ad70!important;color:#1c1309!important;border-color:#f1dda1 #6b532d #6b532d #f1dda1!important}
+.platformLink:hover{background:#e0b947!important;color:#171008!important}
+.platformLink.allPlatforms{background:#b79c66!important}
+.trackPlay{background:#d0b477!important;color:#171008!important}
+.trackLite{background:#140d08!important;border-color:#755f38!important}
 
-.audioDock{background:#15100b!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid #78623c!important;box-shadow:0 8px 22px rgba(0,0,0,.68)!important;overflow:hidden!important;z-index:1000!important}
+/* Tracklist header: dark enough that count/arrow never disappear into the surface. */
+.trackToggle{
+  background:#594421!important;
+  color:#f3e7bd!important;
+  border-color:#8d7443!important;
+}
+.trackToggle:hover{background:#6a5125!important}
+.trackToggle span{color:#f0ce68!important;font-weight:700!important}
+
+.audioDock{background:#1a120c!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid #80683d!important;box-shadow:0 8px 22px rgba(0,0,0,.64)!important;overflow:hidden!important;z-index:1000!important}
 .audioDock::before,.audioDock::after{content:none!important;display:none!important}.audioDockOpen .content{padding-bottom:18px!important}.audioDockOpen .releaseListRich::after,.audioDockOpen .visualGridRich::after{content:"";display:block;grid-column:1/-1;height:82px;pointer-events:none;background:transparent}
-.dockProgress{height:10px!important;margin:2px 0!important;background:transparent!important;border:0!important}.dockProgress:before{top:4px!important;height:1px!important;background:#685738!important}.dockProgress i{top:3px!important;height:3px!important;background:#d2ad3f!important}
+.dockProgress{height:10px!important;margin:2px 0!important;background:transparent!important;border:0!important}.dockProgress:before{top:4px!important;height:1px!important;background:#76613d!important}.dockProgress i{top:3px!important;height:3px!important;background:#ddb94a!important}
 
-/* Optical polycarbonate CD. The base stays translucent pearl; colour lives in thin diffraction sectors. */
+/* Darker polycarbonate CD with restrained oil-slick diffraction. */
 .cdDisc{
   background:
-    radial-gradient(circle at 34% 28%,rgba(255,255,255,.64) 0 3%,rgba(255,255,255,.22) 9%,transparent 20%),
-    radial-gradient(circle at 66% 72%,rgba(255,255,255,.15),transparent 38%),
-    conic-gradient(from 14deg,
-      #d7dddd 0deg,#bfc8ca 30deg,#e2e5e2 62deg,#b9c2c4 92deg,
-      #dce1df 124deg,#b7c0c3 155deg,#e3e4df 188deg,#bcc5c6 221deg,
-      #dfe2df 255deg,#b9c2c5 289deg,#e2e5e1 325deg,#d7dddd 360deg)!important;
-  border:1px solid rgba(247,248,244,.70)!important;
-  box-shadow:inset 0 0 0 1px rgba(72,78,78,.34),inset 0 0 26px rgba(255,255,255,.20),0 10px 22px rgba(0,0,0,.46)!important;
+    radial-gradient(circle at 31% 25%,rgba(255,255,255,.28) 0 3%,rgba(255,255,255,.07) 10%,transparent 20%),
+    conic-gradient(from 28deg,
+      rgba(76,207,170,.20) 0 17deg,
+      rgba(74,154,221,.22) 22deg 43deg,
+      rgba(148,91,205,.24) 49deg 67deg,
+      rgba(213,99,166,.16) 73deg 86deg,
+      transparent 92deg 126deg,
+      rgba(160,213,86,.18) 134deg 151deg,
+      rgba(75,181,206,.20) 158deg 176deg,
+      rgba(137,89,196,.19) 183deg 203deg,
+      transparent 211deg 248deg,
+      rgba(202,166,72,.14) 255deg 269deg,
+      rgba(74,196,163,.18) 276deg 291deg,
+      rgba(91,125,211,.18) 298deg 318deg,
+      transparent 326deg 360deg),
+    radial-gradient(circle at 50% 50%,#aab2b2 0 32%,#7e898b 48%,#a3acad 66%,#737e80 84%,#9ca5a6 100%)!important;
+  border:1px solid rgba(220,226,223,.42)!important;
+  box-shadow:inset 0 0 0 1px rgba(35,42,42,.48),inset 0 0 22px rgba(255,255,255,.08),0 10px 22px rgba(0,0,0,.48)!important;
 }
 .cdDisc:before{
-  content:""!important;position:absolute!important;inset:3%!important;border-radius:50%!important;
+  content:""!important;position:absolute!important;inset:4%!important;border-radius:50%!important;
   background:
-    conic-gradient(from 44deg,
-      transparent 0 12deg,
-      rgba(91,235,190,.58) 17deg 28deg,
-      rgba(88,186,255,.52) 33deg 45deg,
-      rgba(158,103,248,.55) 50deg 63deg,
-      rgba(238,103,192,.38) 68deg 78deg,
-      rgba(255,208,97,.28) 82deg 91deg,
-      transparent 96deg 128deg,
-      rgba(113,242,139,.45) 134deg 146deg,
-      rgba(85,210,240,.47) 151deg 163deg,
-      rgba(142,106,245,.48) 168deg 181deg,
-      transparent 187deg 218deg,
-      rgba(235,119,210,.34) 224deg 235deg,
-      rgba(120,238,178,.46) 241deg 253deg,
-      rgba(99,171,255,.44) 258deg 271deg,
-      rgba(186,113,246,.42) 276deg 288deg,
-      transparent 294deg 327deg,
-      rgba(255,209,112,.25) 333deg 342deg,
-      rgba(97,229,195,.42) 347deg 356deg,
-      transparent 359deg 360deg),
-    repeating-radial-gradient(circle,transparent 0 3px,rgba(255,255,255,.075) 4px,transparent 5px 8px)!important;
-  mix-blend-mode:screen!important;filter:saturate(1.15) blur(.2px)!important;opacity:.92!important;pointer-events:none!important
+    conic-gradient(from 66deg,
+      transparent 0 26deg,
+      rgba(86,220,178,.30) 31deg 42deg,
+      rgba(93,163,231,.29) 47deg 59deg,
+      rgba(167,102,223,.31) 64deg 77deg,
+      rgba(220,113,174,.19) 82deg 91deg,
+      transparent 97deg 154deg,
+      rgba(139,218,103,.23) 160deg 174deg,
+      rgba(83,190,216,.25) 180deg 193deg,
+      rgba(150,99,214,.25) 199deg 213deg,
+      transparent 220deg 286deg,
+      rgba(213,176,83,.16) 293deg 305deg,
+      rgba(86,207,172,.23) 311deg 324deg,
+      transparent 331deg 360deg),
+    repeating-radial-gradient(circle,transparent 0 4px,rgba(255,255,255,.035) 5px,transparent 6px 9px)!important;
+  mix-blend-mode:screen!important;
+  opacity:.58!important;
+  pointer-events:none!important
 }
 .cdDisc:after{
-  content:""!important;position:absolute!important;inset:10%!important;border-radius:50%!important;
-  background:
-    radial-gradient(circle,transparent 0 31%,rgba(255,255,255,.16) 33%,transparent 37%),
-    linear-gradient(118deg,transparent 20%,rgba(167,118,244,.18) 32%,rgba(77,230,181,.16) 42%,transparent 52%,rgba(90,180,255,.13) 63%,transparent 75%)!important;
-  border:1px solid rgba(82,89,88,.27)!important;box-shadow:inset 0 0 18px rgba(51,55,54,.15)!important;mix-blend-mode:screen!important;pointer-events:none!important
+  content:""!important;position:absolute!important;inset:11%!important;border-radius:50%!important;
+  background:linear-gradient(118deg,transparent 18%,rgba(157,103,221,.11) 31%,rgba(77,205,167,.11) 42%,transparent 52%,rgba(83,156,218,.09) 64%,transparent 76%)!important;
+  border:1px solid rgba(58,67,66,.32)!important;
+  box-shadow:inset 0 0 18px rgba(25,31,30,.23)!important;
+  mix-blend-mode:screen!important;
+  pointer-events:none!important
 }
-.cdRing{background:rgba(205,211,209,.58)!important;border-color:rgba(83,90,88,.38)!important;box-shadow:0 0 0 2px rgba(247,248,244,.25),inset 0 0 7px rgba(255,255,255,.24)!important}.cdLabel{opacity:.60!important}
+.cdRing{background:rgba(139,149,148,.67)!important;border-color:rgba(46,55,54,.52)!important;box-shadow:0 0 0 2px rgba(220,226,222,.16),inset 0 0 6px rgba(255,255,255,.12)!important}.cdLabel{opacity:.60!important}
 
 @media(max-width:760px){.content{bottom:0!important}.audioDockOpen .content{padding-bottom:calc(18px + env(safe-area-inset-bottom))!important}.audioDockOpen .releaseListRich::after,.audioDockOpen .visualGridRich::after{height:92px}}
