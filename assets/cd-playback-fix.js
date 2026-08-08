@@ -3,10 +3,10 @@
   let bootReady=false;
   const bootStyle=document.createElement('style');
   bootStyle.textContent=`
-    .loader{z-index:9999!important;background:#1d2127!important;transition:opacity .34s ease,visibility .34s ease!important}
+    .loader{z-index:9999!important;background:#00184c!important;transition:opacity .34s ease,visibility .34s ease!important}
     .loader>div{width:min(260px,62vw)!important;text-align:center!important;display:grid!important;place-items:center!important}
-    .loader .bootTrack{display:block!important;position:relative!important;width:min(210px,56vw)!important;height:3px!important;border:1px solid #727b86!important;background:#292f38!important;overflow:hidden!important}
-    .loader .bootTrack i{position:absolute!important;top:0!important;bottom:0!important;width:28%!important;background:#f0d23f!important;box-shadow:0 0 9px rgba(79,121,232,.24)!important;animation:inkiviBoot .92s steps(14,end) infinite!important}
+    .loader .bootTrack{display:block!important;position:relative!important;width:min(210px,56vw)!important;height:3px!important;border:1px solid #6b8fc4!important;background:#062969!important;overflow:hidden!important}
+    .loader .bootTrack i{position:absolute!important;top:0!important;bottom:0!important;width:28%!important;background:#f3dc54!important;box-shadow:none!important;animation:inkiviBoot .92s steps(14,end) infinite!important}
     @keyframes inkiviBoot{0%{left:-30%}100%{left:104%}}
   `;
   document.head.appendChild(bootStyle);
@@ -26,7 +26,7 @@
     addCss('./assets/ui-polish.css?v=20260808c'),
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260808c'),
-    addCss('./assets/visual-tuning.css?v=20260809a')
+    addCss('./assets/visual-tuning.css?v=20260809b')
   ];
 
   document.documentElement.classList.remove('inkivi-custom-cursor');
