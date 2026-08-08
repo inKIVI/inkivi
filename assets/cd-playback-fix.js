@@ -9,6 +9,11 @@
   polishCss.href='./assets/ui-polish.css?v=20260808c';
   document.head.appendChild(polishCss);
 
+  const themeCss=document.createElement('link');
+  themeCss.rel='stylesheet';
+  themeCss.href='./assets/win98-ps1-theme.css?v=20260808a';
+  document.head.appendChild(themeCss);
+
   const customCursor=document.createElement('script');
   customCursor.src='./assets/custom-cursor.js?v=20260808a';
   customCursor.defer=true;
