@@ -2,7 +2,7 @@
    Artwork/CD exclusions are cut out by an SVG mask created in JS. */
 .foundFootage,.inkiviGrain,.retroFx{display:none!important}
 
-/* Remove the previous background experiment completely. */
+/* Keep the base site surfaces untouched. */
 .stage,.panel{
   background-image:none!important;
   animation:none!important;
@@ -18,22 +18,10 @@
   overflow:hidden!important;
   opacity:1!important;
 }
-#vcrMonitorFx .vcrNoise{
-  opacity:.25;
-  mix-blend-mode:multiply;
-}
-#vcrMonitorFx .vcrScan{
-  opacity:.25;
-  mix-blend-mode:soft-light;
-}
-#vcrMonitorFx .vcrPixel{
-  opacity:.12;
-  mix-blend-mode:overlay;
-}
-#vcrMonitorFx .vcrShade{
-  opacity:.16;
-  mix-blend-mode:multiply;
-}
+#vcrMonitorFx .vcrNoise{opacity:.25;mix-blend-mode:multiply}
+#vcrMonitorFx .vcrScan{opacity:.30;mix-blend-mode:soft-light}
+#vcrMonitorFx .vcrPixel{opacity:.10;mix-blend-mode:overlay}
+#vcrMonitorFx .vcrShade{opacity:.15;mix-blend-mode:multiply}
 
 @keyframes vcrOverlayJitter{
   0%{transform:translate3d(0,0,0)}
@@ -43,9 +31,17 @@
   79%{transform:translate3d(-.25px,.35px,0)}
   100%{transform:translate3d(0,0,0)}
 }
+@keyframes vcrScanFall{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(0,8px,0)}
+}
 #vcrMonitorFx .vcrRasterGroup{
   animation:vcrOverlayJitter .42s steps(5,end) infinite;
   transform-origin:center;
+}
+#vcrMonitorFx .vcrScanMover{
+  animation:vcrScanFall .30s linear infinite;
+  will-change:transform;
 }
 
 /* Existing DOM cursor implementation. */
@@ -66,4 +62,7 @@
   .retroCursor.is-pointer .cursorHand{display:block!important}
 }
 @media(pointer:coarse){.retroCursor{display:none!important}}
-@media(prefers-reduced-motion:reduce){#vcrMonitorFx .vcrRasterGroup{animation:none!important}}
+@media(prefers-reduced-motion:reduce){
+  #vcrMonitorFx .vcrRasterGroup,
+  #vcrMonitorFx .vcrScanMover{animation:none!important}
+}
