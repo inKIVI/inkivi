@@ -1,4 +1,4 @@
-/* inkivi interface polish: custom scrollbars + desktop cursor */
+/* inkivi interface polish: custom scrollbars + custom desktop cursor */
 
 /* Firefox */
 html,
@@ -31,69 +31,84 @@ body,
 ::-webkit-scrollbar-corner {
   background: #0b0b09;
 }
+.trackDrawer::-webkit-scrollbar { width: 6px; }
+.trackDrawer::-webkit-scrollbar-track { border-left: 0; background: transparent; }
+.trackDrawer::-webkit-scrollbar-thumb { border-width: 1px; background: rgba(232,224,210,.32); }
+.trackDrawer::-webkit-scrollbar-thumb:hover { background: rgba(232,224,210,.62); }
 
-/* Keep the scrollbar understated inside the release track drawer. */
-.trackDrawer::-webkit-scrollbar {
-  width: 6px;
-}
-.trackDrawer::-webkit-scrollbar-track {
-  border-left: 0;
-  background: transparent;
-}
-.trackDrawer::-webkit-scrollbar-thumb {
-  border-width: 1px;
-  background: rgba(232,224,210,.32);
-}
-.trackDrawer::-webkit-scrollbar-thumb:hover {
-  background: rgba(232,224,210,.62);
-}
-
-/* Custom cursor only on devices that really have a mouse/trackpad. */
 @media (pointer:fine) {
-  html,
-  body,
-  body * {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 1v6M12 17v6M1 12h6M17 12h6' stroke='%23efe7df' stroke-width='1.4'/%3E%3Crect x='10' y='10' width='4' height='4' fill='%230b0b09' stroke='%23efe7df' stroke-width='1.2'/%3E%3C/svg%3E") 12 12, crosshair;
-  }
+  html.inkivi-custom-cursor,
+  html.inkivi-custom-cursor body,
+  html.inkivi-custom-cursor body * { cursor: none !important; }
 
-  a,
-  button,
-  [role='button'],
-  input[type='button'],
-  input[type='submit'],
-  input[type='range'],
-  .zone,
-  .platformLink,
-  .trackPlay,
-  .trackToggle,
-  .dockProgress,
-  .dockPlay,
-  .dockClose,
-  .close {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 1v6M12 17v6M1 12h6M17 12h6' stroke='%23ffffff' stroke-width='1.6'/%3E%3Crect x='9' y='9' width='6' height='6' fill='%23efe7df' stroke='%230b0b09' stroke-width='1.2'/%3E%3C/svg%3E") 12 12, pointer;
+  .inkiviCursor {
+    position: fixed;
+    z-index: 2147483647;
+    left: 0;
+    top: 0;
+    width: 64px;
+    height: 64px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(-100px,-100px,0);
+    transition: opacity .09s linear;
+    image-rendering: pixelated;
+    will-change: transform;
   }
+  .inkiviCursor.visible { opacity: 1; }
+  .inkiviCursor > i {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background-image: var(--cursor-image);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 64px 64px;
+    image-rendering: pixelated;
+  }
+  .inkiviCursor > i:first-child { z-index: 3; }
 
-  input[type='text'],
-  input[type='search'],
-  input[type='email'],
-  input[type='password'],
-  input[type='url'],
-  input[type='number'],
-  textarea,
-  [contenteditable='true'] {
-    cursor: text;
+  /* Tiny sliced duplicates create an occasional pixel-jitter without blurring the hand. */
+  .inkiviCursor > i:nth-child(2) {
+    z-index: 4;
+    opacity: .52;
+    clip-path: inset(17px 0 34px 0);
+    animation: inkiviCursorSliceA 1.35s steps(1,end) infinite;
+  }
+  .inkiviCursor > i:nth-child(3) {
+    z-index: 5;
+    opacity: .38;
+    clip-path: inset(38px 0 11px 0);
+    animation: inkiviCursorSliceB 1.8s steps(1,end) infinite;
+  }
+  .inkiviCursor.is-hot > i:nth-child(2) { animation-duration: 1.05s; }
+  .inkiviCursor.is-hot > i:nth-child(3) { animation-duration: 1.42s; }
+  .inkiviCursor.tap { animation: inkiviCursorTap .16s steps(2,end); }
+
+  @keyframes inkiviCursorSliceA {
+    0%,79%,100% { transform: translate(0,0); opacity: 0; }
+    80% { transform: translate(2px,0); opacity: .48; }
+    83% { transform: translate(-1px,1px); opacity: .34; }
+    86% { transform: translate(0,0); opacity: 0; }
+  }
+  @keyframes inkiviCursorSliceB {
+    0%,63%,100% { transform: translate(0,0); opacity: 0; }
+    64% { transform: translate(-2px,0); opacity: .35; }
+    67% { transform: translate(1px,-1px); opacity: .25; }
+    70% { transform: translate(0,0); opacity: 0; }
+  }
+  @keyframes inkiviCursorTap {
+    0% { margin-left: 0; margin-top: 0; }
+    50% { margin-left: 1px; margin-top: 2px; }
+    100% { margin-left: 0; margin-top: 0; }
   }
 }
 
-/* Touch devices do not need visible scrollbar chrome. */
+/* Touch devices do not need visible scrollbar chrome or custom cursor. */
 @media (pointer:coarse) and (max-width:760px) {
   .content,
-  .trackDrawer {
-    scrollbar-width: none;
-  }
+  .trackDrawer { scrollbar-width: none; }
   .content::-webkit-scrollbar,
-  .trackDrawer::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
+  .trackDrawer::-webkit-scrollbar { width: 0; height: 0; }
+  .inkiviCursor { display: none !important; }
 }
