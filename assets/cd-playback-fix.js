@@ -4,6 +4,11 @@
   mobileCss.href='./assets/mobile-fix.css?v=20260808d';
   document.head.appendChild(mobileCss);
 
+  const polishCss=document.createElement('link');
+  polishCss.rel='stylesheet';
+  polishCss.href='./assets/ui-polish.css?v=20260808a';
+  document.head.appendChild(polishCss);
+
   const player=document.createElement('script');
   player.src='./assets/player-v3.js?v=20260808g';
   player.defer=true;
