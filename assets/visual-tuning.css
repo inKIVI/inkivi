@@ -1,54 +1,93 @@
-/* Final visual cleanup: quieter header, true overlay dock, optical CD. */
+/* inkivi visual tuning: brighter late-90s palette + optical CD + soft pixel typography. */
+:root{
+  --ink:#f0dfaa!important;
+  --muted:#b7a477!important;
+  --line:#715b37!important;
+  --xp-panel:#b99f68!important;
+  --xp-panel-hi:#ead79b!important;
+  --xp-panel-lo:#594426!important;
+  --xp-yellow:#d2ad3f!important;
+  --xp-amber:#b87827!important;
+  --xp-dark:#130d08!important;
+}
 
-:root{--ink:#eadfb7!important;--muted:#97896a!important;--line:#554832!important}
-.panelHead{background:#17110c!important;border-bottom:1px solid #554832!important;box-shadow:inset 0 1px 0 rgba(234,223,183,.08)!important}
-.panelHead h2,.panel h2{color:#eadfb7!important;text-shadow:1px 1px 0 #070503!important}.close{background:#aa9868!important;color:#151008!important}
-.panel{padding-bottom:0!important}.content{bottom:0!important;background:#0b0806!important}
-.audioDock{background:#100c08!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid #6a5a40!important;box-shadow:0 8px 22px rgba(0,0,0,.72)!important;overflow:hidden!important;z-index:1000!important}
+html,body,button,a,input,select,textarea{
+  font-family:"Pixelify Sans",Tahoma,"MS Sans Serif",Arial,sans-serif!important;
+  font-optical-sizing:auto;
+}
+.eyebrow,.date,.unit span,.releaseDateSmall,.dockLabel,.dockTime,.trackNo{
+  font-family:"Pixelify Sans",Tahoma,sans-serif!important;
+  letter-spacing:.035em!important;
+}
+.loader b,h1,.panel h2,.zoneTitle,.releaseInfo h3{
+  font-family:"Pixelify Sans",Tahoma,sans-serif!important;
+  font-weight:700!important;
+}
+
+html,body{background:#120c07!important;color:var(--ink)!important}
+body{background:radial-gradient(circle at 22% 4%,rgba(210,173,63,.10),transparent 31%),linear-gradient(#1c120a,#0e0906 76%)!important}
+.stage{background:radial-gradient(circle at 50% 2%,rgba(210,173,63,.12),transparent 34%),linear-gradient(#21150c,#0f0906 78%)!important}
+.panel{background:#120c08!important;padding-bottom:0!important}
+.content{bottom:0!important;background:#120c08!important}
+.panelHead{background:#21160e!important;border-bottom:1px solid #715b37!important;box-shadow:inset 0 1px 0 rgba(240,223,170,.10)!important}
+.panelHead h2,.panel h2{color:#f0dfaa!important;text-shadow:1px 1px 0 #080503!important}.close{background:#bca36c!important;color:#171008!important}
+
+.releaseCard{background:linear-gradient(90deg,#1a120c,#120c08)!important;border-color:#715b37!important}
+.releaseCoverBox{background:#100a07!important;border-color:#59472b!important}
+.releaseInfo h3,.trackLite b{color:#f0dfaa!important}
+.releaseDateSmall,.trackNo,.dockLabel,.dockTime{color:#b7a477!important}
+.platformLink{background:#b99f68!important;color:#1a1108!important;border-color:#e0cb91 #5d492a #5d492a #e0cb91!important}
+.platformLink.allPlatforms{background:#a58c5e!important}.trackPlay{background:#c8ae74!important;color:#171008!important}.trackToggle{background:#ad9362!important;color:#171008!important}.trackLite{background:#100a07!important;border-color:#665231!important}
+
+.audioDock{background:#15100b!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid #78623c!important;box-shadow:0 8px 22px rgba(0,0,0,.68)!important;overflow:hidden!important;z-index:1000!important}
 .audioDock::before,.audioDock::after{content:none!important;display:none!important}.audioDockOpen .content{padding-bottom:18px!important}.audioDockOpen .releaseListRich::after,.audioDockOpen .visualGridRich::after{content:"";display:block;grid-column:1/-1;height:82px;pointer-events:none;background:transparent}
-.dockProgress{height:10px!important;margin:2px 0!important;background:transparent!important;border:0!important}.dockProgress:before{top:4px!important;height:1px!important;background:#514633!important}.dockProgress i{top:3px!important;height:3px!important;background:#c2a13d!important}
-.platformLink{background:#aa9868!important;color:#171109!important}.platformLink.allPlatforms{background:#95845d!important}.trackPlay{background:#c0ad78!important;color:#171109!important}.trackToggle{background:#a29063!important;color:#171109!important}.releaseInfo h3,.trackLite b{color:#eadfb7!important}.releaseDateSmall,.trackNo,.dockLabel,.dockTime{color:#97896a!important}.releaseCard{border-color:#554832!important}
+.dockProgress{height:10px!important;margin:2px 0!important;background:transparent!important;border:0!important}.dockProgress:before{top:4px!important;height:1px!important;background:#685738!important}.dockProgress i{top:3px!important;height:3px!important;background:#d2ad3f!important}
 
-/* Optical polycarbonate CD: pale silver base with oil-slick diffraction bands. */
+/* Optical polycarbonate CD. The base stays translucent pearl; colour lives in thin diffraction sectors. */
 .cdDisc{
   background:
-    radial-gradient(circle at 34% 29%,rgba(255,255,255,.48) 0 4%,rgba(255,255,255,.13) 11%,transparent 22%),
-    radial-gradient(circle at 68% 69%,rgba(255,255,255,.10),transparent 38%),
-    conic-gradient(from 8deg,
-      #b9bdbe 0deg,#d7dbd9 28deg,#aeb4b6 55deg,#d5d8d5 86deg,
-      #a4aaad 118deg,#c9cdcb 151deg,#aeb3b4 186deg,#d9dbd7 220deg,
-      #a2a8aa 257deg,#c7cbca 296deg,#b0b5b5 330deg,#b9bdbe 360deg)!important;
-  border:1px solid rgba(233,235,231,.55)!important;
-  box-shadow:inset 0 0 0 1px rgba(39,42,41,.42),inset 0 0 26px rgba(255,255,255,.12),0 10px 22px rgba(0,0,0,.46)!important;
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.64) 0 3%,rgba(255,255,255,.22) 9%,transparent 20%),
+    radial-gradient(circle at 66% 72%,rgba(255,255,255,.15),transparent 38%),
+    conic-gradient(from 14deg,
+      #d7dddd 0deg,#bfc8ca 30deg,#e2e5e2 62deg,#b9c2c4 92deg,
+      #dce1df 124deg,#b7c0c3 155deg,#e3e4df 188deg,#bcc5c6 221deg,
+      #dfe2df 255deg,#b9c2c5 289deg,#e2e5e1 325deg,#d7dddd 360deg)!important;
+  border:1px solid rgba(247,248,244,.70)!important;
+  box-shadow:inset 0 0 0 1px rgba(72,78,78,.34),inset 0 0 26px rgba(255,255,255,.20),0 10px 22px rgba(0,0,0,.46)!important;
 }
 .cdDisc:before{
-  content:""!important;position:absolute!important;inset:4%!important;border-radius:50%!important;
+  content:""!important;position:absolute!important;inset:3%!important;border-radius:50%!important;
   background:
-    conic-gradient(from 58deg,
-      transparent 0 22deg,
-      rgba(119,218,194,.34) 27deg 40deg,
-      rgba(115,171,239,.29) 44deg 56deg,
-      rgba(180,123,231,.31) 60deg 73deg,
-      rgba(235,122,177,.20) 77deg 86deg,
-      transparent 92deg 145deg,
-      rgba(163,230,124,.25) 151deg 166deg,
-      rgba(103,196,225,.26) 171deg 185deg,
-      rgba(168,122,225,.23) 190deg 203deg,
-      transparent 210deg 267deg,
-      rgba(225,199,103,.20) 273deg 286deg,
-      rgba(111,215,184,.24) 292deg 306deg,
-      rgba(133,151,235,.24) 311deg 326deg,
-      transparent 333deg 360deg),
-    repeating-radial-gradient(circle,transparent 0 4px,rgba(255,255,255,.045) 5px,transparent 6px 9px)!important;
-  mix-blend-mode:screen!important;filter:blur(.15px)!important;opacity:.78!important;pointer-events:none!important
+    conic-gradient(from 44deg,
+      transparent 0 12deg,
+      rgba(91,235,190,.58) 17deg 28deg,
+      rgba(88,186,255,.52) 33deg 45deg,
+      rgba(158,103,248,.55) 50deg 63deg,
+      rgba(238,103,192,.38) 68deg 78deg,
+      rgba(255,208,97,.28) 82deg 91deg,
+      transparent 96deg 128deg,
+      rgba(113,242,139,.45) 134deg 146deg,
+      rgba(85,210,240,.47) 151deg 163deg,
+      rgba(142,106,245,.48) 168deg 181deg,
+      transparent 187deg 218deg,
+      rgba(235,119,210,.34) 224deg 235deg,
+      rgba(120,238,178,.46) 241deg 253deg,
+      rgba(99,171,255,.44) 258deg 271deg,
+      rgba(186,113,246,.42) 276deg 288deg,
+      transparent 294deg 327deg,
+      rgba(255,209,112,.25) 333deg 342deg,
+      rgba(97,229,195,.42) 347deg 356deg,
+      transparent 359deg 360deg),
+    repeating-radial-gradient(circle,transparent 0 3px,rgba(255,255,255,.075) 4px,transparent 5px 8px)!important;
+  mix-blend-mode:screen!important;filter:saturate(1.15) blur(.2px)!important;opacity:.92!important;pointer-events:none!important
 }
 .cdDisc:after{
-  content:""!important;position:absolute!important;inset:13%!important;border-radius:50%!important;
+  content:""!important;position:absolute!important;inset:10%!important;border-radius:50%!important;
   background:
-    radial-gradient(circle,transparent 0 35%,rgba(255,255,255,.08) 36%,transparent 39%),
-    conic-gradient(from 210deg,transparent 0 35deg,rgba(156,105,219,.13) 46deg 60deg,rgba(91,203,178,.12) 67deg 81deg,transparent 90deg 360deg)!important;
-  border:1px solid rgba(67,72,71,.29)!important;box-shadow:inset 0 0 20px rgba(42,44,43,.16)!important;mix-blend-mode:screen!important;pointer-events:none!important
+    radial-gradient(circle,transparent 0 31%,rgba(255,255,255,.16) 33%,transparent 37%),
+    linear-gradient(118deg,transparent 20%,rgba(167,118,244,.18) 32%,rgba(77,230,181,.16) 42%,transparent 52%,rgba(90,180,255,.13) 63%,transparent 75%)!important;
+  border:1px solid rgba(82,89,88,.27)!important;box-shadow:inset 0 0 18px rgba(51,55,54,.15)!important;mix-blend-mode:screen!important;pointer-events:none!important
 }
-.cdRing{background:rgba(177,181,179,.64)!important;border-color:rgba(57,62,60,.48)!important;box-shadow:0 0 0 2px rgba(232,234,229,.18),inset 0 0 6px rgba(255,255,255,.18)!important}.cdLabel{opacity:.64!important}
+.cdRing{background:rgba(205,211,209,.58)!important;border-color:rgba(83,90,88,.38)!important;box-shadow:0 0 0 2px rgba(247,248,244,.25),inset 0 0 7px rgba(255,255,255,.24)!important}.cdLabel{opacity:.60!important}
 
 @media(max-width:760px){.content{bottom:0!important}.audioDockOpen .content{padding-bottom:calc(18px + env(safe-area-inset-bottom))!important}.audioDockOpen .releaseListRich::after,.audioDockOpen .visualGridRich::after{height:92px}}
