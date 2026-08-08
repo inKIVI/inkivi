@@ -1,39 +1,56 @@
-/* BIOS BLUE: safe animated monitor noise.
-   This file must NEVER mutate artwork, CD, card or component internals. */
-
-/* Old overlay experiments stay disabled. */
+/* BIOS BLUE: animated old-monitor texture painted ONLY into backgrounds.
+   Do not target CD/media internals, pseudo-elements, filters or transforms. */
 .foundFootage,.inkiviGrain,.retroFx{display:none!important}
 
-/*
-  The monitor treatment exists ONLY as background paint on the outer screens.
-  Background paint is behind descendants by definition, so covers/discs/media
-  cannot be tinted, filtered, flattened or have their own texture replaced.
-*/
+:root{
+  --monitor-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='132' viewBox='0 0 132 132'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.94' numOctaves='3' seed='31' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='.32' intercept='.01'/%3E%3CfeFuncG type='linear' slope='.37' intercept='.015'/%3E%3CfeFuncB type='linear' slope='.48' intercept='.025'/%3E%3CfeFuncA type='linear' slope='.62' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Full-screen monitor field. Every layer is background paint, always behind DOM content. */
 html,body,.stage,.panel{
-  --monitor-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='144' viewBox='0 0 144 144'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.76' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='.34' intercept='.03'/%3E%3CfeFuncG type='linear' slope='.40' intercept='.04'/%3E%3CfeFuncB type='linear' slope='.54' intercept='.06'/%3E%3CfeFuncA type='linear' slope='.48' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-image:
     var(--monitor-noise),
-    repeating-linear-gradient(to bottom,rgba(0,0,0,.14) 0 1px,transparent 1px 4px),
-    radial-gradient(ellipse at 50% 46%,transparent 54%,rgba(0,5,34,.20) 100%)!important;
-  background-size:144px 144px,100% 4px,100% 100%!important;
-  background-repeat:repeat,repeat,no-repeat!important;
-  background-blend-mode:multiply,soft-light,normal!important;
-  background-position:0 0,0 0,center!important;
-  animation:inkiviMonitorNoise .24s steps(5,end) infinite!important;
+    repeating-linear-gradient(to bottom,rgba(0,0,0,.20) 0 1px,rgba(16,38,83,.05) 1px 2px,transparent 2px 4px),
+    repeating-linear-gradient(to right,rgba(16,28,65,.12) 0 1px,transparent 1px 3px),
+    radial-gradient(ellipse at 50% 46%,transparent 48%,rgba(0,5,30,.22) 100%)!important;
+  background-size:132px 132px,100% 4px,3px 100%,100% 100%!important;
+  background-repeat:repeat,repeat,repeat,no-repeat!important;
+  background-blend-mode:multiply,soft-light,soft-light,normal!important;
+  background-position:0 0,0 0,0 0,center!important;
+  animation:inkiviMonitorDrift .22s steps(4,end) infinite!important;
 }
 
-/* Dark VCR/CRT instability: only the texture phase moves. No element filter,
-   transform, opacity or brightness is animated, so child media remains exact. */
-@keyframes inkiviMonitorNoise{
-  0%{background-position:0 0,0 0,center}
-  20%{background-position:-8px 5px,0 1px,center}
-  40%{background-position:7px -6px,0 0,center}
-  60%{background-position:-5px -8px,0 2px,center}
-  80%{background-position:6px 7px,0 1px,center}
-  100%{background-position:0 0,0 0,center}
+/* Opaque BIOS surfaces need the same background paint or the monitor texture disappears there.
+   Still safe: backgrounds render behind each element's children. */
+.panelHead,.content,.zone,.releaseRight,.audioDock,.visualCaption,.timer,.actions{
+  background-image:
+    var(--monitor-noise),
+    repeating-linear-gradient(to bottom,rgba(0,0,0,.15) 0 1px,transparent 1px 4px),
+    repeating-linear-gradient(to right,rgba(9,25,65,.10) 0 1px,transparent 1px 3px)!important;
+  background-size:132px 132px,100% 4px,3px 100%!important;
+  background-repeat:repeat,repeat,repeat!important;
+  background-blend-mode:multiply,soft-light,soft-light!important;
+  background-position:0 0,0 0,0 0!important;
+  animation:inkiviSurfaceDrift .27s steps(5,end) infinite!important;
 }
 
-/* DOM cursor from JS. No cursor:url assets. */
+@keyframes inkiviMonitorDrift{
+  0%{background-position:0 0,0 0,0 0,center}
+  25%{background-position:-6px 4px,0 1px,1px 0,center}
+  50%{background-position:8px -5px,0 0,-1px 0,center}
+  75%{background-position:-4px -7px,0 2px,0 0,center}
+  100%{background-position:0 0,0 0,0 0,center}
+}
+@keyframes inkiviSurfaceDrift{
+  0%{background-position:0 0,0 0,0 0}
+  20%{background-position:5px -4px,0 1px,1px 0}
+  40%{background-position:-7px 5px,0 0,0 0}
+  60%{background-position:6px 7px,0 1px,-1px 0}
+  80%{background-position:-5px -6px,0 0,1px 0}
+  100%{background-position:0 0,0 0,0 0}
+}
+
+/* Existing DOM cursor implementation. */
 @media (pointer:fine){
   html.retroCursorOn,html.retroCursorOn body,html.retroCursorOn body *{cursor:none!important}
   .retroCursor{
@@ -53,8 +70,9 @@ html,body,.stage,.panel{
 @media(pointer:coarse){.retroCursor{display:none!important}}
 
 @media(max-width:760px){
-  html,body,.stage,.panel{background-size:176px 176px,100% 5px,100% 100%!important}
+  html,body,.stage,.panel{background-size:156px 156px,100% 5px,4px 100%,100% 100%!important}
+  .panelHead,.content,.zone,.releaseRight,.audioDock,.visualCaption,.timer,.actions{background-size:156px 156px,100% 5px,4px 100%!important}
 }
 @media(prefers-reduced-motion:reduce){
-  html,body,.stage,.panel{animation:none!important}
+  html,body,.stage,.panel,.panelHead,.content,.zone,.releaseRight,.audioDock,.visualCaption,.timer,.actions{animation:none!important}
 }
