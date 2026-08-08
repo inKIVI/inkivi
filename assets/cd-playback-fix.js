@@ -25,9 +25,9 @@
     addCss('./assets/mobile-fix.css?v=20260808d'),
     addCss('./assets/ui-polish.css?v=20260808c'),
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
-    addCss('./assets/panel-header-fix.css?v=20260808c'),
+    addCss('./assets/panel-header-fix.css?v=20260809d'),
     addCss('./assets/visual-tuning.css?v=20260809b'),
-    addCss('./assets/grain-overlay.css?v=20260809d')
+    addCss('./assets/grain-overlay.css?v=20260809e')
   ];
 
   if(!document.querySelector('.inkiviGrain')){
