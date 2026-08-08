@@ -44,6 +44,15 @@
   will-change:transform;
 }
 
+/* Start title only: slightly smaller and clean white. */
+.start h1{
+  color:#fff!important;
+  font-size:clamp(68px,15vw,205px)!important;
+}
+@media(max-width:620px){
+  .start h1{font-size:20vw!important}
+}
+
 /* Clean old-system cursor. SVG shapes from JS are deliberately hidden;
    the arrow is drawn once in CSS so there are no stray black pixels. */
 @media (pointer:fine){
