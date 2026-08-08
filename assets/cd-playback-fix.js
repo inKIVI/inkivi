@@ -11,7 +11,7 @@
 
   const themeCss=document.createElement('link');
   themeCss.rel='stylesheet';
-  themeCss.href='./assets/win98-ps1-theme.css?v=20260808a';
+  themeCss.href='./assets/win98-ps1-theme.css?v=20260808b';
   document.head.appendChild(themeCss);
 
   const customCursor=document.createElement('script');
@@ -20,7 +20,7 @@
   document.head.appendChild(customCursor);
 
   const player=document.createElement('script');
-  player.src='./assets/player-v3.js?v=20260808g';
+  player.src='./assets/player-v3.js?v=20260808h';
   player.defer=true;
   document.head.appendChild(player);
 
