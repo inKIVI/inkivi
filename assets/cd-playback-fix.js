@@ -27,13 +27,107 @@
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260809d'),
     addCss('./assets/visual-tuning.css?v=20260809b'),
-    addCss('./assets/grain-overlay.css?v=20260809l')
+    addCss('./assets/grain-overlay.css?v=20260809m')
   ];
 
   document.querySelector('.inkiviGrain')?.remove();
   document.querySelectorAll('.retroFx').forEach(x=>x.remove());
   document.documentElement.classList.remove('inkivi-custom-cursor');
   document.querySelectorAll('.inkiviCursor').forEach(x=>x.remove());
+
+  /* One VCR layer above the whole UI. Covers/CDs are not restyled: the SVG mask
+     simply cuts transparent holes where protected media currently sits. */
+  document.getElementById('vcrMonitorFx')?.remove();
+  const NS='http://www.w3.org/2000/svg';
+  const fx=document.createElementNS(NS,'svg');
+  fx.id='vcrMonitorFx';
+  fx.setAttribute('aria-hidden','true');
+  fx.setAttribute('preserveAspectRatio','none');
+  fx.innerHTML=`
+    <defs>
+      <filter id="vcrNoiseFilter" x="-15%" y="-15%" width="130%" height="130%">
+        <feTurbulence id="vcrTurbulence" type="fractalNoise" baseFrequency="0.72 0.95" numOctaves="3" seed="11" stitchTiles="stitch"/>
+        <feColorMatrix type="matrix" values="0.22 0 0 0 0  0 0.28 0 0 0  0 0 0.42 0 0  0 0 0 .72 0"/>
+      </filter>
+      <pattern id="vcrScanPattern" width="4" height="4" patternUnits="userSpaceOnUse">
+        <rect width="4" height="1" fill="rgba(0,0,0,.78)"/>
+        <rect y="1" width="4" height="1" fill="rgba(160,200,255,.10)"/>
+      </pattern>
+      <pattern id="vcrPixelPattern" width="3" height="3" patternUnits="userSpaceOnUse">
+        <rect width="1" height="3" fill="rgba(255,80,80,.18)"/>
+        <rect x="1" width="1" height="3" fill="rgba(90,220,150,.12)"/>
+        <rect x="2" width="1" height="3" fill="rgba(90,145,255,.20)"/>
+      </pattern>
+      <radialGradient id="vcrShadeGradient" cx="50%" cy="46%" r="72%">
+        <stop offset="55%" stop-color="rgba(0,0,0,0)"/>
+        <stop offset="100%" stop-color="rgba(0,2,22,.95)"/>
+      </radialGradient>
+      <mask id="vcrCutMask" maskUnits="userSpaceOnUse">
+        <rect id="vcrMaskBase" x="0" y="0" width="100%" height="100%" fill="white"/>
+        <g id="vcrMaskHoles"></g>
+      </mask>
+    </defs>
+    <g class="vcrRasterGroup" mask="url(#vcrCutMask)">
+      <rect class="vcrNoise" x="-40" y="-40" width="calc(100% + 80px)" height="calc(100% + 80px)" filter="url(#vcrNoiseFilter)"/>
+      <rect class="vcrScan" x="0" y="0" width="100%" height="100%" fill="url(#vcrScanPattern)"/>
+      <rect class="vcrPixel" x="0" y="0" width="100%" height="100%" fill="url(#vcrPixelPattern)"/>
+      <rect class="vcrShade" x="0" y="0" width="100%" height="100%" fill="url(#vcrShadeGradient)"/>
+    </g>`;
+  document.body.appendChild(fx);
+
+  const protectedSelectors=[
+    '.releaseCoverBox','.releaseCover','.releaseCoverFallback',
+    '.cdScene','.cdDisc','.cdCase','.cdLabel','.cdRing',
+    '#heroReleaseCover','.heroReleaseCover','.heroCover','.hero img','.hero picture','.hero video',
+    '.dockCover'
+  ].join(',');
+  const holes=fx.querySelector('#vcrMaskHoles');
+  const turb=fx.querySelector('#vcrTurbulence');
+  const syncVcrMask=()=>{
+    const w=window.innerWidth,h=window.innerHeight;
+    fx.setAttribute('viewBox',`0 0 ${w} ${h}`);
+    const base=fx.querySelector('#vcrMaskBase');
+    base?.setAttribute('width',String(w));base?.setAttribute('height',String(h));
+    if(!holes)return;
+    holes.replaceChildren();
+    const seen=[];
+    document.querySelectorAll(protectedSelectors).forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.width<2||r.height<2||r.bottom<0||r.right<0||r.top>h||r.left>w)return;
+      if(seen.some(s=>Math.abs(s.left-r.left)<2&&Math.abs(s.top-r.top)<2&&Math.abs(s.width-r.width)<2&&Math.abs(s.height-r.height)<2))return;
+      seen.push(r);
+      const pad=2;
+      const shape=document.createElementNS(NS,el.matches('.cdDisc,.cdLabel,.cdRing')?'ellipse':'rect');
+      if(shape.tagName.toLowerCase()==='ellipse'){
+        shape.setAttribute('cx',String(r.left+r.width/2));
+        shape.setAttribute('cy',String(r.top+r.height/2));
+        shape.setAttribute('rx',String(r.width/2+pad));
+        shape.setAttribute('ry',String(r.height/2+pad));
+      }else{
+        shape.setAttribute('x',String(r.left-pad));shape.setAttribute('y',String(r.top-pad));
+        shape.setAttribute('width',String(r.width+pad*2));shape.setAttribute('height',String(r.height+pad*2));
+        shape.setAttribute('rx','3');
+      }
+      shape.setAttribute('fill','black');
+      holes.appendChild(shape);
+    });
+  };
+  let maskFrame=0;
+  const queueMask=()=>{if(maskFrame)return;maskFrame=requestAnimationFrame(()=>{maskFrame=0;syncVcrMask()})};
+  window.addEventListener('resize',queueMask,{passive:true});
+  window.addEventListener('scroll',queueMask,{passive:true});
+  document.addEventListener('transitionrun',queueMask,true);
+  document.addEventListener('transitionend',queueMask,true);
+  const vcrObserver=new MutationObserver(queueMask);
+  vcrObserver.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style']});
+  syncVcrMask();
+  let noiseSeed=11;
+  setInterval(()=>{
+    if(document.hidden||!turb)return;
+    noiseSeed=(noiseSeed+17)%997;
+    turb.setAttribute('seed',String(noiseSeed));
+    turb.setAttribute('baseFrequency',`${(0.68+Math.random()*.10).toFixed(3)} ${(0.88+Math.random()*.14).toFixed(3)}`);
+  },140);
 
   if(matchMedia('(pointer:fine)').matches){
     const old=document.querySelector('.retroCursor');
@@ -72,6 +166,7 @@
     try{await document.fonts?.load?.('400 16px "IBM Plex Mono"');await document.fonts?.ready}catch{}
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       bootReady=true;bootGuard?.disconnect();loader?.classList.add('done');
+      syncVcrMask();
     }));
   });
 
@@ -86,9 +181,9 @@
   function syncTrackButtons(active){document.querySelectorAll('.releaseCard .trackPlay').forEach(btn=>{const on=!!active&&btn===active&&isPlaying();btn.innerHTML=on?PAUSE:PLAY;btn.classList.toggle('active',on);btn.setAttribute('aria-label',on?'пауза':'воспроизвести')})}
   function syncCardState(){syncDockIcon();document.querySelectorAll('.releaseCard.is-active,.releaseCard.is-playing').forEach(card=>card.classList.remove('is-active','is-playing'));const active=findReleaseTrackButton();syncTrackButtons(active);if(!active)return;const card=active.closest('.releaseCard');if(card)card.classList.add('is-active');if(isPlaying()&&card)card.classList.add('is-playing')}
   function prepareLabel(label){if(label.dataset.spinFace==='1')return;const art=label.style.backgroundImage;if(art&&art!=='none')label.style.setProperty('--cd-label-art',art);label.style.backgroundImage='none';label.dataset.spinFace='1'}
-  function scan(root=document){root.querySelectorAll?.('.cdLabel').forEach(prepareLabel)}
+  function scan(root=document){root.querySelectorAll?.('.cdLabel').forEach(prepareLabel);queueMask()}
   let syncQueued=false;
-  function queueSync(){if(syncQueued)return;syncQueued=true;requestAnimationFrame(()=>{syncQueued=false;syncCardState()})}
+  function queueSync(){if(syncQueued)return;syncQueued=true;requestAnimationFrame(()=>{syncQueued=false;syncCardState();queueMask()})}
   const observer=new MutationObserver(mutations=>{let dirty=false;for(const m of mutations){if(m.type==='childList'){m.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)});if(m.addedNodes.length||m.removedNodes.length)dirty=true}if(m.type==='attributes'&&m.target.id==='globalAudioDock')dirty=true}if(dirty)queueSync()});
   observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
   document.addEventListener('click',e=>{if(e.target.closest?.('.trackPlay,.dockPlay,.dockClose'))setTimeout(queueSync,80)},true);
