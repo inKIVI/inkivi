@@ -3,10 +3,10 @@
   let bootReady=false;
   const bootStyle=document.createElement('style');
   bootStyle.textContent=`
-    .loader{z-index:9999!important;background:#171008!important;transition:opacity .34s ease,visibility .34s ease!important}
+    .loader{z-index:9999!important;background:#24231f!important;transition:opacity .34s ease,visibility .34s ease!important}
     .loader>div{width:min(260px,62vw)!important;text-align:center!important;display:grid!important;place-items:center!important}
-    .loader .bootTrack{display:block!important;position:relative!important;width:min(210px,56vw)!important;height:3px!important;border:1px solid #80683d!important;background:#1e140b!important;overflow:hidden!important}
-    .loader .bootTrack i{position:absolute!important;top:0!important;bottom:0!important;width:28%!important;background:#ddb94a!important;box-shadow:0 0 8px rgba(221,185,74,.18)!important;animation:inkiviBoot .92s steps(14,end) infinite!important}
+    .loader .bootTrack{display:block!important;position:relative!important;width:min(210px,56vw)!important;height:3px!important;border:1px solid #686454!important;background:#302e28!important;overflow:hidden!important}
+    .loader .bootTrack i{position:absolute!important;top:0!important;bottom:0!important;width:28%!important;background:#b9b06a!important;box-shadow:0 0 7px rgba(185,176,106,.14)!important;animation:inkiviBoot .92s steps(14,end) infinite!important}
     @keyframes inkiviBoot{0%{left:-30%}100%{left:104%}}
   `;
   document.head.appendChild(bootStyle);
@@ -22,11 +22,12 @@
     link.onload=()=>resolve(true);link.onerror=()=>resolve(false);document.head.appendChild(link);
   });
   const cssReady=[
+    addCss('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500&display=swap'),
     addCss('./assets/mobile-fix.css?v=20260808d'),
     addCss('./assets/ui-polish.css?v=20260808c'),
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260808c'),
-    addCss('./assets/visual-tuning.css?v=20260808g')
+    addCss('./assets/visual-tuning.css?v=20260808h')
   ];
 
   document.documentElement.classList.remove('inkivi-custom-cursor');
@@ -41,7 +42,7 @@
   const pageReady=document.readyState==='complete'?Promise.resolve():new Promise(r=>window.addEventListener('load',r,{once:true}));
   const minBoot=new Promise(r=>setTimeout(r,520));
   Promise.allSettled([...cssReady,playerReady,pageReady,minBoot]).then(async()=>{
-    try{await document.fonts?.load?.('600 18px "IBM Plex Mono"');await document.fonts?.ready}catch{}
+    try{await document.fonts?.load?.('400 16px "Pixelify Sans"');await document.fonts?.ready}catch{}
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       bootReady=true;bootGuard?.disconnect();loader?.classList.add('done');
     }));
