@@ -3,7 +3,9 @@
 html body,
 html body *{
   font-family:"VCR OSD Mono Cyr","IBM Plex Mono",monospace!important;
+  font-weight:400!important;
   font-synthesis:none!important;
+  font-variant-ligatures:none!important;
 }
 
 /* The original inline HTML still contains the old inkivi/загрузка loader for a
@@ -44,3 +46,14 @@ html body .loader .bootTrack{display:none!important}
 .releaseCard.is-playing .cdLabel::before{animation:cdCenterArtSpin 2.45s linear infinite!important}
 @keyframes cdCenterArtSpin{to{transform:rotate(360deg)}}
 .zoneMeta{display:none!important}
+
+/* The old mobile layout intentionally shifted the CD scene left to make room
+   for the sliding disc. On a full-width vertical card that reads as off-center.
+   Keep the whole cover/case centered; the disc can still slide inside it. */
+@media(max-width:660px){
+  .releaseCoverBox .cdScene{
+    margin-left:auto!important;
+    margin-right:auto!important;
+    transform:none!important;
+  }
+}
