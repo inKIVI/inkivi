@@ -1,3 +1,43 @@
+/* First-paint typography/loader guard. The @font-face itself is loaded by grain-overlay.css;
+   this stronger rule makes every UI element actually use it once available. */
+html,body,body *,button,a,input,select,textarea{
+  font-family:"VCR OSD Mono Cyr","IBM Plex Mono",monospace!important;
+  font-synthesis:none!important;
+}
+
+/* The original inline HTML still contains the old inkivi/загрузка loader for a
+   few milliseconds before JS boots. Hide that legacy content at CSS parse time
+   and show the same minimal system loading line from the very first paint. */
+.loader{
+  background:#00184c!important;
+  display:grid!important;
+  place-items:center!important;
+}
+.loader>div{
+  position:relative!important;
+  width:min(210px,56vw)!important;
+  height:5px!important;
+  display:block!important;
+  overflow:hidden!important;
+  border:1px solid #6b8fc4!important;
+  background:#062969!important;
+  text-align:left!important;
+}
+.loader b,.loader small{display:none!important}
+.loader>div::before{
+  content:""!important;
+  position:absolute!important;
+  top:0!important;
+  bottom:0!important;
+  width:28%!important;
+  background:#f3dc54!important;
+  animation:inkiviFirstBoot .92s steps(14,end) infinite!important;
+}
+/* JS inserts its own .bootTrack a moment later; keep it invisible so there is
+   never a second loader design or a duplicate bar. */
+html body .loader .bootTrack{display:none!important}
+@keyframes inkiviFirstBoot{from{left:-30%}to{left:104%}}
+
 .cdLabel{background-image:none!important;overflow:hidden!important}
 .cdLabel::before{content:"";position:absolute;inset:0;border-radius:50%;background-image:var(--cd-label-art);background-size:cover;background-position:center;transform-origin:50% 50%;transform:rotate(0deg);will-change:transform}
 .releaseCard.is-playing .cdLabel::before{animation:cdCenterArtSpin 2.45s linear infinite!important}
