@@ -27,21 +27,13 @@
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260809d'),
     addCss('./assets/visual-tuning.css?v=20260809b'),
-    addCss('./assets/grain-overlay.css?v=20260809h')
+    addCss('./assets/grain-overlay.css?v=20260809i')
   ];
 
   document.querySelector('.inkiviGrain')?.remove();
+  document.querySelectorAll('.retroFx').forEach(x=>x.remove());
   document.documentElement.classList.remove('inkivi-custom-cursor');
   document.querySelectorAll('.inkiviCursor').forEach(x=>x.remove());
-
-  const ensureFx=el=>{
-    if(!el||el.querySelector(':scope > .retroFx'))return;
-    const fx=document.createElement('div');
-    fx.className='retroFx';
-    fx.setAttribute('aria-hidden','true');
-    el.appendChild(fx);
-  };
-  ['start','menu','panel'].forEach(id=>ensureFx(document.getElementById(id)));
 
   if(matchMedia('(pointer:fine)').matches){
     const old=document.querySelector('.retroCursor');
@@ -60,15 +52,11 @@
     document.body.appendChild(c);
     document.documentElement.classList.add('retroCursorOn');
     const interactive='a,button,[role="button"],input[type="button"],input[type="submit"],input[type="range"],.zone,.platformLink,.trackPlay,.trackToggle,.dockPlay,.dockClose,.btn';
-    let x=-80,y=-80;
     const move=e=>{
-      x=e.clientX;y=e.clientY;
-      c.style.setProperty('transform',`translate3d(${x}px,${y}px,0)`,'important');
+      c.style.setProperty('transform',`translate3d(${e.clientX}px,${e.clientY}px,0)`,'important');
       c.classList.toggle('is-pointer',!!e.target.closest?.(interactive));
     };
     window.addEventListener('pointermove',move,{passive:true});
-    window.addEventListener('pointerdown',()=>c.classList.add('is-down'),{passive:true});
-    window.addEventListener('pointerup',()=>c.classList.remove('is-down'),{passive:true});
     window.addEventListener('blur',()=>{c.style.setProperty('transform','translate3d(-80px,-80px,0)','important')});
   }
 
@@ -98,11 +86,7 @@
   function syncTrackButtons(active){document.querySelectorAll('.releaseCard .trackPlay').forEach(btn=>{const on=!!active&&btn===active&&isPlaying();btn.innerHTML=on?PAUSE:PLAY;btn.classList.toggle('active',on);btn.setAttribute('aria-label',on?'пауза':'воспроизвести')})}
   function syncCardState(){syncDockIcon();document.querySelectorAll('.releaseCard.is-active,.releaseCard.is-playing').forEach(card=>card.classList.remove('is-active','is-playing'));const active=findReleaseTrackButton();syncTrackButtons(active);if(!active)return;const card=active.closest('.releaseCard');if(card)card.classList.add('is-active');if(isPlaying()&&card)card.classList.add('is-playing')}
   function prepareLabel(label){if(label.dataset.spinFace==='1')return;const art=label.style.backgroundImage;if(art&&art!=='none')label.style.setProperty('--cd-label-art',art);label.style.backgroundImage='none';label.dataset.spinFace='1'}
-  function scan(root=document){
-    root.querySelectorAll?.('.cdLabel').forEach(prepareLabel);
-    if(root.id==='globalAudioDock')ensureFx(root);
-    root.querySelectorAll?.('#globalAudioDock').forEach(ensureFx);
-  }
+  function scan(root=document){root.querySelectorAll?.('.cdLabel').forEach(prepareLabel)}
   let syncQueued=false;
   function queueSync(){if(syncQueued)return;syncQueued=true;requestAnimationFrame(()=>{syncQueued=false;syncCardState()})}
   const observer=new MutationObserver(mutations=>{let dirty=false;for(const m of mutations){if(m.type==='childList'){m.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)});if(m.addedNodes.length||m.removedNodes.length)dirty=true}if(m.type==='attributes'&&m.target.id==='globalAudioDock')dirty=true}if(dirty)queueSync()});
