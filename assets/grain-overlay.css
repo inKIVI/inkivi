@@ -44,22 +44,39 @@
   will-change:transform;
 }
 
-/* Existing DOM cursor implementation. */
+/* Clean old-system cursor. SVG shapes from JS are deliberately hidden;
+   the arrow is drawn once in CSS so there are no stray black pixels. */
 @media (pointer:fine){
   html.retroCursorOn,html.retroCursorOn body,html.retroCursorOn body *{cursor:none!important}
   .retroCursor{
     position:fixed!important;
-    left:0!important;top:0!important;
-    width:28px!important;height:32px!important;
+    left:0!important;
+    top:0!important;
+    width:20px!important;
+    height:27px!important;
     z-index:12000!important;
     pointer-events:none!important;
     transform:translate3d(-80px,-80px,0)!important;
     will-change:transform!important;
   }
-  .retroCursor svg{display:block!important;width:28px!important;height:32px!important;overflow:visible!important;shape-rendering:crispEdges!important}
-  .retroCursor .cursorHand{display:none!important}
-  .retroCursor.is-pointer .cursorArrow{display:none!important}
-  .retroCursor.is-pointer .cursorHand{display:block!important}
+  .retroCursor svg,
+  .retroCursor .cursorArrow,
+  .retroCursor .cursorHand,
+  .retroCursor.is-pointer .cursorArrow,
+  .retroCursor.is-pointer .cursorHand{display:none!important}
+  .retroCursor::before{
+    content:""!important;
+    display:block!important;
+    position:absolute!important;
+    left:0!important;
+    top:0!important;
+    width:18px!important;
+    height:25px!important;
+    background:#fff!important;
+    clip-path:polygon(0 0,0 86%,5px 81%,8px 100%,12px 98%,9px 78%,16px 78%)!important;
+    filter:drop-shadow(-1px 0 #050505) drop-shadow(1px 0 #050505) drop-shadow(0 -1px #050505) drop-shadow(0 1px #050505)!important;
+    image-rendering:pixelated!important;
+  }
 }
 @media(pointer:coarse){.retroCursor{display:none!important}}
 @media(prefers-reduced-motion:reduce){
