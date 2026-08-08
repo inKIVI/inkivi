@@ -1,11 +1,11 @@
 (()=>{
   const mobileCss=document.createElement('link');
   mobileCss.rel='stylesheet';
-  mobileCss.href='./assets/mobile-fix.css?v=20260808c';
+  mobileCss.href='./assets/mobile-fix.css?v=20260808d';
   document.head.appendChild(mobileCss);
 
   const player=document.createElement('script');
-  player.src='./assets/player-v3.js?v=20260808f';
+  player.src='./assets/player-v3.js?v=20260808g';
   player.defer=true;
   document.head.appendChild(player);
 
