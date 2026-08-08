@@ -3,15 +3,15 @@
   let bootReady=false;
   const bootStyle=document.createElement('style');
   bootStyle.textContent=`
-    .loader{z-index:9999!important;background:#080604!important;transition:opacity .38s ease,visibility .38s ease!important}
-    .loader>div{width:min(340px,72vw)!important;text-align:left!important}
-    .loader .bootWord{display:block!important;margin:0 0 18px!important;font:900 clamp(44px,10vw,76px)/.82 "Arial Black",Impact,Tahoma,sans-serif!important;letter-spacing:-.065em!important;color:#eadfb7!important;text-shadow:2px 2px 0 #24180c!important}
-    .loader .bootTrack{display:block!important;position:relative!important;width:100%!important;height:5px!important;border:1px solid #554832!important;background:#100c08!important;overflow:hidden!important}
-    .loader .bootTrack i{position:absolute!important;top:0!important;bottom:0!important;width:31%!important;background:#c2a13d!important;animation:inkiviBoot 1.05s steps(14,end) infinite!important}
-    @keyframes inkiviBoot{0%{left:-34%}100%{left:105%}}
+    .loader{z-index:9999!important;background:#120c07!important;transition:opacity .38s ease,visibility .38s ease!important}
+    .loader>div{width:min(300px,72vw)!important;text-align:center!important;display:grid!important;justify-items:center!important;align-content:center!important}
+    .loader .bootWord{display:block!important;margin:0 0 18px!important;font:600 clamp(24px,5vw,38px)/1 "Pixelify Sans",Tahoma,sans-serif!important;letter-spacing:.035em!important;color:#f0dfaa!important;text-shadow:1px 1px 0 #24180c!important;text-transform:lowercase!important}
+    .loader .bootTrack{display:block!important;position:relative!important;width:min(230px,62vw)!important;height:4px!important;border:1px solid #715b37!important;background:#17100b!important;overflow:hidden!important}
+    .loader .bootTrack i{position:absolute!important;top:0!important;bottom:0!important;width:27%!important;background:#d2ad3f!important;animation:inkiviBoot .95s steps(14,end) infinite!important}
+    @keyframes inkiviBoot{0%{left:-30%}100%{left:104%}}
   `;
   document.head.appendChild(bootStyle);
-  if(loader)loader.innerHTML='<div><b class="bootWord">inkivi</b><span class="bootTrack"><i></i></span></div>';
+  if(loader)loader.innerHTML='<div><b class="bootWord">загрузка</b><span class="bootTrack"><i></i></span></div>';
 
   const bootGuard=loader?new MutationObserver(()=>{
     if(!bootReady&&loader.classList.contains('done'))loader.classList.remove('done');
@@ -23,11 +23,12 @@
     link.onload=()=>resolve(true);link.onerror=()=>resolve(false);document.head.appendChild(link);
   });
   const cssReady=[
+    addCss('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap'),
     addCss('./assets/mobile-fix.css?v=20260808d'),
     addCss('./assets/ui-polish.css?v=20260808c'),
     addCss('./assets/win98-ps1-theme.css?v=20260808c'),
     addCss('./assets/panel-header-fix.css?v=20260808c'),
-    addCss('./assets/visual-tuning.css?v=20260808e')
+    addCss('./assets/visual-tuning.css?v=20260808f')
   ];
 
   document.documentElement.classList.remove('inkivi-custom-cursor');
@@ -35,14 +36,14 @@
 
   const playerReady=new Promise(resolve=>{
     const player=document.createElement('script');
-    player.src='./assets/player-v3.js?v=20260808j';player.defer=true;
+    player.src='./assets/player-v3.js?v=20260808k';player.defer=true;
     player.onload=()=>resolve(true);player.onerror=()=>resolve(false);document.head.appendChild(player);
   });
 
-  const fontReady=document.fonts?.ready?.catch?.(()=>{})||Promise.resolve();
   const pageReady=document.readyState==='complete'?Promise.resolve():new Promise(r=>window.addEventListener('load',r,{once:true}));
-  const minBoot=new Promise(r=>setTimeout(r,650));
-  Promise.allSettled([...cssReady,playerReady,fontReady,pageReady,minBoot]).then(()=>{
+  const minBoot=new Promise(r=>setTimeout(r,700));
+  Promise.allSettled([...cssReady,playerReady,pageReady,minBoot]).then(async()=>{
+    try{await document.fonts?.load?.('600 24px "Pixelify Sans"');await document.fonts?.ready}catch{}
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       bootReady=true;bootGuard?.disconnect();loader?.classList.add('done');
     }));
