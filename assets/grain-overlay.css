@@ -1,0 +1,23 @@
+/* Visible film grain for BIOS BLUE. Separate fixed layer so theme pseudo-elements cannot hide it. */
+.inkiviGrain{
+  position:fixed!important;
+  inset:-45%!important;
+  z-index:9000!important;
+  pointer-events:none!important;
+  opacity:.17!important;
+  mix-blend-mode:soft-light!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.95'/%3E%3C/svg%3E")!important;
+  background-repeat:repeat!important;
+  transform:translate3d(0,0,0)!important;
+  animation:inkiviGrainShift .34s steps(2,end) infinite!important;
+}
+@keyframes inkiviGrainShift{
+  0%{transform:translate3d(-3%,-2%,0)}
+  20%{transform:translate3d(2%,-4%,0)}
+  40%{transform:translate3d(-4%,3%,0)}
+  60%{transform:translate3d(4%,1%,0)}
+  80%{transform:translate3d(-2%,4%,0)}
+  100%{transform:translate3d(3%,-3%,0)}
+}
+@media(max-width:760px){.inkiviGrain{opacity:.14!important}}
+@media(prefers-reduced-motion:reduce){.inkiviGrain{animation:none!important}}
