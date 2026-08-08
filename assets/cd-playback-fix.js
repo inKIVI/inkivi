@@ -6,8 +6,13 @@
 
   const polishCss=document.createElement('link');
   polishCss.rel='stylesheet';
-  polishCss.href='./assets/ui-polish.css?v=20260808a';
+  polishCss.href='./assets/ui-polish.css?v=20260808b';
   document.head.appendChild(polishCss);
+
+  const customCursor=document.createElement('script');
+  customCursor.src='./assets/custom-cursor.js?v=20260808a';
+  customCursor.defer=true;
+  document.head.appendChild(customCursor);
 
   const player=document.createElement('script');
   player.src='./assets/player-v3.js?v=20260808g';
