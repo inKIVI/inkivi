@@ -1,6 +1,7 @@
 /* First-paint typography/loader guard. The @font-face itself is loaded by grain-overlay.css;
-   this stronger rule makes every UI element actually use it once available. */
-html,body,body *,button,a,input,select,textarea{
+   these stronger selectors keep later theme styles from restoring IBM Plex. */
+html body,
+html body *{
   font-family:"VCR OSD Mono Cyr","IBM Plex Mono",monospace!important;
   font-synthesis:none!important;
 }
