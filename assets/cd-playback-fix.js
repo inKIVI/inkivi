@@ -6,7 +6,7 @@
 
   const polishCss=document.createElement('link');
   polishCss.rel='stylesheet';
-  polishCss.href='./assets/ui-polish.css?v=20260808b';
+  polishCss.href='./assets/ui-polish.css?v=20260808c';
   document.head.appendChild(polishCss);
 
   const customCursor=document.createElement('script');
