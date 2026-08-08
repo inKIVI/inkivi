@@ -1,69 +1,110 @@
-/* BIOS BLUE retro-screen treatment: visible pixel matrix + moving grain + system cursors. */
+/* BIOS BLUE CRT treatment: scanlines + phosphor triads + subtle flicker.
+   Cover artwork and optical discs are explicitly lifted above the screen layer. */
 .inkiviGrain{
   position:fixed!important;
   inset:0!important;
-  z-index:9000!important;
+  z-index:700!important;
   pointer-events:none!important;
   opacity:1!important;
-  mix-blend-mode:normal!important;
   background:
-    repeating-conic-gradient(
-      from 45deg,
-      rgba(155,198,255,.075) 0 25%,
-      rgba(0,14,70,.025) 0 50%
-    ) 0 0/4px 4px!important;
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,.19) 0,
+      rgba(0,0,0,.19) 1px,
+      rgba(190,218,255,.025) 1px,
+      rgba(190,218,255,.025) 2px,
+      transparent 2px,
+      transparent 4px
+    )!important;
+  box-shadow:inset 0 0 90px rgba(0,5,28,.22)!important;
+  animation:inkiviCrtFlicker 2.8s steps(2,end) infinite!important;
 }
 
-/* A second, offset micro-grid makes flat BIOS surfaces feel like an old digital display. */
+/* Fine RGB phosphor structure. Kept weak enough that white text stays white. */
 .inkiviGrain::before{
   content:""!important;
   position:absolute!important;
   inset:0!important;
   pointer-events:none!important;
-  opacity:.72!important;
+  opacity:.54!important;
   background:
-    radial-gradient(circle at 1px 1px,rgba(224,238,255,.17) 0 .55px,transparent .72px) 0 0/3px 3px,
-    radial-gradient(circle at 1px 1px,rgba(243,220,84,.055) 0 .5px,transparent .7px) 1px 1px/5px 5px!important;
-  mix-blend-mode:soft-light!important;
+    repeating-linear-gradient(
+      to right,
+      rgba(255,70,70,.055) 0,
+      rgba(255,70,70,.055) 1px,
+      rgba(80,255,135,.035) 1px,
+      rgba(80,255,135,.035) 2px,
+      rgba(90,145,255,.065) 2px,
+      rgba(90,145,255,.065) 3px,
+      transparent 3px,
+      transparent 4px
+    )!important;
+  mix-blend-mode:screen!important;
 }
 
-/* Actual grain lives on its own layer so it remains visible above all theme surfaces. */
+/* CRT glass falloff / bloom, not a decorative page gradient. */
 .inkiviGrain::after{
   content:""!important;
   position:absolute!important;
-  inset:-28%!important;
+  inset:0!important;
   pointer-events:none!important;
-  opacity:.22!important;
-  mix-blend-mode:screen!important;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")!important;
-  background-repeat:repeat!important;
-  animation:inkiviGrainShift .26s steps(2,end) infinite!important;
+  background:radial-gradient(ellipse at center,rgba(120,176,255,.035) 0 46%,rgba(0,8,38,.06) 72%,rgba(0,3,20,.24) 100%)!important;
 }
 
-@keyframes inkiviGrainShift{
-  0%{transform:translate3d(-2%,-1%,0)}
-  25%{transform:translate3d(1.5%,-2.5%,0)}
-  50%{transform:translate3d(-2.5%,2%,0)}
-  75%{transform:translate3d(2.5%,1%,0)}
-  100%{transform:translate3d(-1%,2.5%,0)}
+@keyframes inkiviCrtFlicker{
+  0%,100%{filter:brightness(1)}
+  48%{filter:brightness(.985)}
+  51%{filter:brightness(1.015)}
 }
 
-/* Pixel cursor: drawn as crisp 1px blocks, no external asset request. */
+/* Keep artwork and physical CD surfaces clean — no CRT mesh on these. */
+.releaseCoverBox,
+.cdScene,
+.cdDisc,
+.cdCase,
+.releaseCover,
+.releaseCoverFallback,
+.cdLabel,
+.dockCover,
+#heroReleaseCover,
+.heroReleaseCover,
+.heroCover{
+  position:relative!important;
+  z-index:720!important;
+  isolation:isolate!important;
+}
+
+/* The bottom player sits above the global CRT layer, so reproduce the CRT only
+   on its interface chrome while keeping .dockCover clean. */
+.audioDock{position:fixed!important}
+.audioDock::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  opacity:.55!important;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.16) 0 1px,transparent 1px 4px)!important;
+}
+.audioDock>*{position:relative;z-index:2}
+.audioDock .dockCover{z-index:3!important}
+
+/* Real local SVG files are more reliable than encoded data-URI cursors. */
 @media (pointer:fine){
-  html,body,
-  .stage,.panel,.content,.releaseCard,.trackLite,.visualCard,.visualItem{
-    cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M2 1h2v2h2v2h2v2h2v2h2v2h2v2h2v2h-5v2h2v4h-3v-4H8v3H6V5H4v13H2z'/%3E%3Cpath fill='%23fff' d='M3 2h1v2h2v2h2v2h2v2h2v2h2v2h-4v2H8v-2H7V6H5v10H3z'/%3E%3C/svg%3E") 2 1,default!important;
+  html,body,.stage,.panel,.content,.releaseCard,.trackLite,.visualCard,.visualItem{
+    cursor:url('./cursor-arrow.svg') 2 1,default!important;
   }
   a,button,[role='button'],input[type='button'],input[type='submit'],input[type='range'],
   .zone,.platformLink,.trackPlay,.trackToggle,.dockPlay,.dockClose,.btn{
-    cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M9 1h4v7h2V5h3v4h2v3h2v7h-2v3H8v-2H6v-4H4v-5h3v2h1V3h1z'/%3E%3Cpath fill='%23fff' d='M10 2h2v8h2V7h2v4h2V9h1v4h2v5h-2v2H9v-2H7v-3H5v-3h1v2h3V3h1z'/%3E%3C/svg%3E") 9 2,pointer!important;
+    cursor:url('./cursor-hand.svg') 9 2,pointer!important;
   }
-  input,textarea,select{cursor:text!important}
+  input[type='text'],input[type='email'],input[type='password'],input[type='search'],textarea{cursor:text!important}
 }
 
 @media(max-width:760px){
-  .inkiviGrain{background-size:5px 5px!important}
-  .inkiviGrain::before{opacity:.52!important}
-  .inkiviGrain::after{opacity:.15!important}
+  .inkiviGrain{background-size:100% 5px!important}
+  .inkiviGrain::before{opacity:.34!important}
+  .inkiviGrain::after{opacity:.78!important}
 }
-@media(prefers-reduced-motion:reduce){.inkiviGrain::after{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.inkiviGrain{animation:none!important}}
