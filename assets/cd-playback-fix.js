@@ -14,10 +14,13 @@
   themeCss.href='./assets/win98-ps1-theme.css?v=20260808c';
   document.head.appendChild(themeCss);
 
-  const customCursor=document.createElement('script');
-  customCursor.src='./assets/custom-cursor.js?v=20260808a';
-  customCursor.defer=true;
-  document.head.appendChild(customCursor);
+  const headerFixCss=document.createElement('link');
+  headerFixCss.rel='stylesheet';
+  headerFixCss.href='./assets/panel-header-fix.css?v=20260808a';
+  document.head.appendChild(headerFixCss);
+
+  document.documentElement.classList.remove('inkivi-custom-cursor');
+  document.querySelectorAll('.inkiviCursor').forEach(x=>x.remove());
 
   const player=document.createElement('script');
   player.src='./assets/player-v3.js?v=20260808h';
