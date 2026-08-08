@@ -1,14 +1,14 @@
-/* inkivi visual tuning: muted cat palette — yellow, blue and computer gray. */
+/* inkivi visual tuning: vivid cat palette — yellow, blue and computer gray. */
 :root{
-  --ink:#e7e8e2!important;
-  --muted:#a7aaa0!important;
-  --line:#666b70!important;
-  --xp-panel:#92958f!important;
-  --xp-panel-hi:#c9cbc3!important;
-  --xp-panel-lo:#4b4f52!important;
-  --xp-yellow:#c8b65d!important;
-  --xp-amber:#aaa05c!important;
-  --xp-dark:#202225!important;
+  --ink:#f1f3f4!important;
+  --muted:#b9bec5!important;
+  --line:#727b86!important;
+  --xp-panel:#a7adb5!important;
+  --xp-panel-hi:#e2e6ea!important;
+  --xp-panel-lo:#505862!important;
+  --xp-yellow:#f0d23f!important;
+  --xp-amber:#c7b548!important;
+  --xp-dark:#1c2026!important;
 }
 
 /* Temporary neutral type until the custom font is supplied. */
@@ -18,92 +18,72 @@ html,body,button,a,input,select,textarea{
   font-variant-ligatures:none!important;
   letter-spacing:0!important;
 }
-.eyebrow,.date,.unit span,.releaseDateSmall,.dockLabel,.dockTime,.trackNo{
-  font-family:"IBM Plex Mono","Lucida Console",monospace!important;
-  letter-spacing:.025em!important;
+.eyebrow,.date,.unit span,.releaseDateSmall,.dockLabel,.dockTime,.trackNo{letter-spacing:.025em!important}
+h1,.panel h2,.zoneTitle,.releaseInfo h3{font-weight:700!important;letter-spacing:-.045em!important}
+
+/* Cleaner graphite base with vivid cat-blue and cat-yellow accents. */
+html,body{background:#1d2127!important;color:var(--ink)!important}
+body{background:radial-gradient(circle at 18% 2%,rgba(67,114,235,.16),transparent 30%),radial-gradient(circle at 80% 5%,rgba(240,210,63,.10),transparent 24%),linear-gradient(#292f38,#1b1f25 82%)!important}
+.stage{background:radial-gradient(circle at 26% 0%,rgba(67,114,235,.18),transparent 31%),radial-gradient(circle at 78% 8%,rgba(240,210,63,.10),transparent 27%),linear-gradient(#303743,#1d2127 82%)!important}
+.panel{background:#232830!important;padding-bottom:0!important}
+.content{bottom:0!important;background:#232830!important}
+.panelHead{background:linear-gradient(90deg,#363d47,#303741)!important;border-bottom:1px solid #7c8793!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important}
+.panelHead h2,.panel h2{color:#f2f4f5!important;text-shadow:1px 1px 0 #13171c!important}
+.close{background:#aeb4bb!important;color:#20252b!important;border-color:#e4e8ec #535b65 #535b65 #e4e8ec!important}
+.close:hover{background:#f0d23f!important;color:#171a1f!important}
+
+/* Main launcher tiles must visibly carry the palette. */
+.zone{border-color:#69737e!important;background:#242a32!important}
+.zoneSkin{
+  background:
+    radial-gradient(circle at 78% 18%,rgba(68,115,235,.20),transparent 30%),
+    radial-gradient(circle at 10% 88%,rgba(240,210,63,.12),transparent 34%),
+    linear-gradient(145deg,rgba(255,255,255,.045),rgba(0,0,0,.24))!important;
 }
-h1,.panel h2,.zoneTitle,.releaseInfo h3{
-  font-family:"IBM Plex Mono","Lucida Console",monospace!important;
-  font-weight:700!important;
-  letter-spacing:-.045em!important;
+.zone:nth-child(2) .zoneSkin,.zone:nth-child(3) .zoneSkin{
+  background:
+    radial-gradient(circle at 74% 15%,rgba(240,210,63,.15),transparent 28%),
+    radial-gradient(circle at 12% 88%,rgba(68,115,235,.17),transparent 34%),
+    linear-gradient(145deg,rgba(255,255,255,.05),rgba(0,0,0,.23))!important;
 }
+.zone:hover{border-color:#f0d23f!important;box-shadow:inset 0 0 0 1px rgba(68,115,235,.42),0 0 18px rgba(68,115,235,.12)!important}
+.zoneTitle{color:#f1f3f4!important;text-shadow:1px 1px 0 #15191e!important}
+.zoneIndex{color:rgba(104,145,255,.18)!important;text-shadow:0 0 18px rgba(68,115,235,.10)!important}
+.zone:nth-child(2) .zoneIndex,.zone:nth-child(3) .zoneIndex{color:rgba(240,210,63,.16)!important}
 
-/* Dark computer gray, dusty blue, soft character-yellow accents. */
-html,body{background:#202225!important;color:var(--ink)!important}
-body{background:radial-gradient(circle at 22% 3%,rgba(91,113,151,.13),transparent 31%),radial-gradient(circle at 78% 12%,rgba(200,182,93,.055),transparent 25%),linear-gradient(#2b2e32,#1d1f22 82%)!important}
-.stage{background:radial-gradient(circle at 48% 1%,rgba(94,116,156,.14),transparent 34%),radial-gradient(circle at 76% 20%,rgba(200,182,93,.05),transparent 28%),linear-gradient(#303338,#202225 82%)!important}
-.panel{background:#25272a!important;padding-bottom:0!important}
-.content{bottom:0!important;background:#25272a!important}
-.panelHead{background:#34373b!important;border-bottom:1px solid #666b70!important;box-shadow:inset 0 1px 0 rgba(231,232,226,.10)!important}
-.panelHead h2,.panel h2{color:#e7e8e2!important;text-shadow:1px 1px 0 #15171a!important}
-.close{background:#92958f!important;color:#202225!important;border-color:#c9cbc3 #4b4f52 #4b4f52 #c9cbc3!important}
-.close:hover{background:#b8aa62!important;color:#202225!important}
+.releaseCard{background:linear-gradient(90deg,#2d333c,#252a31)!important;border-color:#68727d!important}
+.releaseCard.is-active{border-color:#f0d23f!important;box-shadow:inset 0 0 0 1px rgba(68,115,235,.28)!important}
+.releaseCoverBox{background:#1e2329!important;border-color:#59636d!important}
+.releaseInfo h3,.trackLite b{color:#f1f3f4!important}
+.releaseDateSmall,.trackNo,.dockLabel,.dockTime{color:#b9bec5!important}
 
-.releaseCard{background:linear-gradient(90deg,#2d3034,#26282b)!important;border-color:#64696e!important}
-.releaseCoverBox{background:#202225!important;border-color:#565b60!important}
-.releaseInfo h3,.trackLite b{color:#e7e8e2!important}
-.releaseDateSmall,.trackNo,.dockLabel,.dockTime{color:#a7aaa0!important}
+.platformLink{background:#a7adb5!important;color:#20252b!important;border-color:#e2e6ea #505862 #505862 #e2e6ea!important}
+.platformLink:hover{background:#4f79e8!important;color:#fff!important;border-color:#8da9ff #3156b4 #3156b4 #8da9ff!important}
+.platformLink.allPlatforms{background:#7f8a99!important;color:#f7f8fa!important}
+.trackPlay{background:#b2b8bf!important;color:#20252b!important;border-color:#e4e8ec #555d67 #555d67 #e4e8ec!important;position:relative!important;z-index:3!important}
+.trackPlay:hover{background:#4f79e8!important;color:#fff!important}
+.trackPlay.active{background:#f0d23f!important;color:#181b20!important;border-color:#fff18e #88791e #88791e #fff18e!important}
+.trackLite{background:#1f242a!important;border-color:#5d6771!important}
+.trackLite::before,.trackLite::after{pointer-events:none!important}
 
-/* Windows-like gray controls; blue is secondary, yellow only highlights action/state. */
-.platformLink{background:#8e918c!important;color:#202225!important;border-color:#c9cbc3 #4c5053 #4c5053 #c9cbc3!important}
-.platformLink:hover{background:#7485a4!important;color:#f3f4ee!important;border-color:#9eabc0 #445169 #445169 #9eabc0!important}
-.platformLink.allPlatforms{background:#7f8790!important;color:#f1f2ec!important}
-.trackPlay{background:#a6a9a2!important;color:#202225!important;border-color:#d0d2ca #55595c #55595c #d0d2ca!important}
-.trackPlay:hover,.trackPlay.active{background:#c8b65d!important;color:#202225!important}
-.trackLite{background:#212326!important;border-color:#5d6267!important}
+.trackToggle{background:#414a56!important;color:#f1f3f4!important;border-color:#788390!important}
+.trackToggle:hover{background:#4b5d78!important}
+.trackToggle span{color:#f0d23f!important;font-weight:600!important}
 
-.trackToggle{background:#3c424b!important;color:#e7e8e2!important;border-color:#737b84!important}
-.trackToggle:hover{background:#465262!important}
-.trackToggle span{color:#d1c16a!important;font-weight:600!important}
-
-.audioDock{background:#292c30!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid #686d72!important;box-shadow:0 8px 22px rgba(0,0,0,.50)!important;overflow:hidden!important;z-index:1000!important}
+.audioDock{background:#292f37!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid #737e89!important;box-shadow:0 8px 22px rgba(0,0,0,.50)!important;overflow:hidden!important;z-index:1000!important}
 .audioDock::before,.audioDock::after{content:none!important;display:none!important}
 .audioDockOpen .content{padding-bottom:18px!important}
 .audioDockOpen .releaseListRich::after,.audioDockOpen .visualGridRich::after{content:"";display:block;grid-column:1/-1;height:82px;pointer-events:none;background:transparent}
 .dockProgress{height:10px!important;margin:2px 0!important;background:transparent!important;border:0!important}
-.dockProgress:before{top:4px!important;height:1px!important;background:#5d6369!important}
-.dockProgress i{top:3px!important;height:3px!important;background:#c8b65d!important}
+.dockProgress:before{top:4px!important;height:1px!important;background:#626d78!important}
+.dockProgress i{top:3px!important;height:3px!important;background:#f0d23f!important}
+.dockPlay{background:#aeb4bb!important;color:#20252b!important}
+.audioDock.playing .dockPlay{background:#f0d23f!important;color:#171a1f!important}
 
 /* Optical CD kept darker; label artwork remains completely clean above the texture. */
-.cdDisc{
-  isolation:isolate!important;
-  background:
-    radial-gradient(circle at 31% 24%,rgba(255,255,255,.20) 0 3%,rgba(255,255,255,.04) 10%,transparent 20%),
-    radial-gradient(circle at 50% 50%,#858d90 0 28%,#697276 47%,#7d8689 67%,#596267 86%,#747d80 100%)!important;
-  border:1px solid rgba(190,198,199,.38)!important;
-  box-shadow:inset 0 0 0 1px rgba(24,29,31,.52),inset 0 0 22px rgba(255,255,255,.055),0 10px 22px rgba(0,0,0,.43)!important;
-}
-.cdDisc:before{
-  content:""!important;position:absolute!important;z-index:1!important;inset:3%!important;border-radius:50%!important;
-  background:
-    conic-gradient(from 48deg,
-      transparent 0 17deg,
-      rgba(68,180,145,.31) 23deg 36deg,
-      rgba(74,132,206,.34) 42deg 57deg,
-      rgba(139,83,194,.34) 63deg 78deg,
-      rgba(190,86,145,.22) 84deg 94deg,
-      transparent 101deg 151deg,
-      rgba(116,181,84,.25) 158deg 172deg,
-      rgba(66,155,187,.29) 179deg 193deg,
-      rgba(125,81,185,.27) 200deg 214deg,
-      transparent 221deg 281deg,
-      rgba(190,157,70,.18) 288deg 300deg,
-      rgba(68,176,145,.25) 307deg 320deg,
-      rgba(79,111,189,.24) 327deg 342deg,
-      transparent 349deg 360deg),
-    repeating-radial-gradient(circle,transparent 0 4px,rgba(255,255,255,.022) 5px,transparent 6px 9px)!important;
-  mix-blend-mode:screen!important;
-  opacity:.58!important;
-  pointer-events:none!important
-}
-.cdDisc:after{
-  content:""!important;position:absolute!important;z-index:2!important;inset:8%!important;border-radius:50%!important;
-  background:linear-gradient(118deg,transparent 17%,rgba(134,78,191,.10) 30%,rgba(59,181,143,.105) 41%,transparent 53%,rgba(68,130,194,.095) 64%,transparent 77%)!important;
-  border:1px solid rgba(48,56,58,.30)!important;
-  box-shadow:inset 0 0 18px rgba(18,23,24,.22)!important;
-  mix-blend-mode:screen!important;
-  pointer-events:none!important
-}
+.cdDisc{isolation:isolate!important;background:radial-gradient(circle at 31% 24%,rgba(255,255,255,.20) 0 3%,rgba(255,255,255,.04) 10%,transparent 20%),radial-gradient(circle at 50% 50%,#858d90 0 28%,#697276 47%,#7d8689 67%,#596267 86%,#747d80 100%)!important;border:1px solid rgba(190,198,199,.38)!important;box-shadow:inset 0 0 0 1px rgba(24,29,31,.52),inset 0 0 22px rgba(255,255,255,.055),0 10px 22px rgba(0,0,0,.43)!important}
+.cdDisc:before{content:""!important;position:absolute!important;z-index:1!important;inset:3%!important;border-radius:50%!important;background:conic-gradient(from 48deg,transparent 0 17deg,rgba(68,180,145,.31) 23deg 36deg,rgba(74,132,206,.34) 42deg 57deg,rgba(139,83,194,.34) 63deg 78deg,rgba(190,86,145,.22) 84deg 94deg,transparent 101deg 151deg,rgba(116,181,84,.25) 158deg 172deg,rgba(66,155,187,.29) 179deg 193deg,rgba(125,81,185,.27) 200deg 214deg,transparent 221deg 281deg,rgba(190,157,70,.18) 288deg 300deg,rgba(68,176,145,.25) 307deg 320deg,rgba(79,111,189,.24) 327deg 342deg,transparent 349deg 360deg),repeating-radial-gradient(circle,transparent 0 4px,rgba(255,255,255,.022) 5px,transparent 6px 9px)!important;mix-blend-mode:screen!important;opacity:.58!important;pointer-events:none!important}
+.cdDisc:after{content:""!important;position:absolute!important;z-index:2!important;inset:8%!important;border-radius:50%!important;background:linear-gradient(118deg,transparent 17%,rgba(134,78,191,.10) 30%,rgba(59,181,143,.105) 41%,transparent 53%,rgba(68,130,194,.095) 64%,transparent 77%)!important;border:1px solid rgba(48,56,58,.30)!important;box-shadow:inset 0 0 18px rgba(18,23,24,.22)!important;mix-blend-mode:screen!important;pointer-events:none!important}
 .cdLabel{z-index:8!important;opacity:1!important;filter:none!important;mix-blend-mode:normal!important;isolation:isolate!important;box-shadow:0 0 0 1px rgba(25,28,29,.45)!important}
 .cdLabel::before{z-index:0!important;opacity:1!important;filter:none!important;mix-blend-mode:normal!important}
 .cdRing{z-index:9!important;background:rgba(113,121,123,.80)!important;border-color:rgba(35,42,44,.60)!important;box-shadow:0 0 0 2px rgba(202,208,207,.17),inset 0 0 6px rgba(255,255,255,.09)!important}
