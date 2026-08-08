@@ -45,16 +45,16 @@
 
 /* Dedicated phone layout. */
 @media (max-width:660px){
-  .releaseListRich{gap:18px!important}
+  .releaseListRich{gap:18px!important;overflow:visible!important}
   .releaseCard{display:flex!important;flex-direction:column!important;align-items:stretch!important;width:100%!important;min-height:0!important;overflow:visible!important;padding:18px 14px 14px!important;background:rgba(12,12,10,.82)!important}
-  .releaseCoverBox{order:1!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;border-right:0!important;background:transparent!important;display:grid!important;place-items:center!important;overflow:visible!important;padding:8px 0 20px!important}
-  .cdScene{width:min(62vw,250px)!important;height:min(62vw,250px)!important}
+  .releaseCoverBox{order:1!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;border-right:0!important;background:transparent!important;display:grid!important;place-items:center!important;overflow:visible!important;padding:10px 0 24px!important}
+  .cdScene{width:min(60vw,240px)!important;height:min(60vw,240px)!important;transform:translateX(-7%)!important;overflow:visible!important}
   .cdCase{box-shadow:0 22px 52px rgba(0,0,0,.52)!important}
-  .cdDisc{width:90%!important;height:90%!important;top:5%!important;left:7%!important}
+  .cdDisc{width:90%!important;height:90%!important;top:5%!important;left:7%!important;transition:transform .58s cubic-bezier(.22,.8,.25,1)!important}
   .cdLabel{width:42%!important;height:42%!important}
-  .releaseCard:hover .cdDisc{transform:translateX(18%) rotate(35deg)!important}
-  .releaseCard.is-playing .cdDisc{transform:translateX(18%)!important;animation:cdSpinPhone 2.8s linear infinite!important}
-  @keyframes cdSpinPhone{to{transform:translateX(18%) rotate(360deg)}}
+  .releaseCard:hover .cdDisc{transform:translateX(32%) rotate(35deg)!important}
+  .releaseCard.is-playing .cdDisc{transform:translateX(32%)!important;animation:cdSpinPhone 2.8s linear infinite!important}
+  @keyframes cdSpinPhone{to{transform:translateX(32%) rotate(360deg)}}
 
   .releaseRight{order:2!important;display:flex!important;flex-direction:column!important;width:100%!important;background:transparent!important}
   .releaseInfo{padding:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;gap:12px!important}
@@ -72,6 +72,6 @@
 
 @media (max-width:390px){
   .panelHead{min-height:84px!important;padding-left:10px!important}.panelHead h2{font-size:clamp(36px,13vw,54px)!important}.content{top:84px!important;padding-left:8px!important;padding-right:8px!important}
-  .releaseCard{padding:14px 10px 12px!important}.cdScene{width:min(68vw,232px)!important;height:min(68vw,232px)!important}.releaseInfo h3{font-size:clamp(28px,10vw,40px)!important}.trackLite{grid-template-columns:24px 44px minmax(0,1fr)!important;padding:7px 8px!important}.trackLite .trackPlay{width:42px!important;height:42px!important}
+  .releaseCard{padding:14px 10px 12px!important}.cdScene{width:min(64vw,220px)!important;height:min(64vw,220px)!important;transform:translateX(-8%)!important}.releaseInfo h3{font-size:clamp(28px,10vw,40px)!important}.trackLite{grid-template-columns:24px 44px minmax(0,1fr)!important;padding:7px 8px!important}.trackLite .trackPlay{width:42px!important;height:42px!important}
   .audioDock{grid-template-columns:38px minmax(0,1fr) 34px!important}.dockCover{display:none!important}.dockPlay{width:38px!important;height:38px!important;min-width:38px!important}.dockClose{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
 }
