@@ -1,9 +1,9 @@
-/* Panel-header geometry: left-aligned title, optically centered, unclipped close button. */
+/* Panel-header geometry: left-aligned title, optically centered, flush to viewport edges. */
 .panelHead{
   position:absolute!important;
-  left:8px!important;
-  right:8px!important;
-  top:8px!important;
+  left:0!important;
+  right:0!important;
+  top:0!important;
   height:112px!important;
   min-height:112px!important;
   padding:0 78px 0 20px!important;
@@ -44,7 +44,7 @@
 }
 .panelHead .close:active,
 .close:active{transform:translateY(calc(-50% + 1px))!important}
-.content{top:132px!important}
+.content{top:124px!important}
 
 @media(max-width:760px){
   .panelHead{
