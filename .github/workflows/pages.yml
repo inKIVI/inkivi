@@ -30,11 +30,15 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
-          encoded = ''.join((Path('assets/vcr-font.part01').read_text() + Path('assets/vcr-font.part02').read_text()).split())
-          data = base64.b64decode(encoded)
+          import base64, hashlib, lzma
+          packed = base64.b64decode(''.join(Path('assets/vcr-font.xz.b64').read_text().split()), validate=True)
+          data = lzma.decompress(packed)
+          digest = hashlib.sha256(data).hexdigest()
+          expected = '696c9cb7cd2a467b003c3cf9ecdb73ee694eac5327a43a3e93d170d5a854b09a'
+          if len(data) != 30764 or digest != expected:
+              raise SystemExit(f'Bad VCR font: {len(data)} bytes, sha256={digest}')
           Path('assets/VCR-OSD-Mono-Cyr.ttf').write_bytes(data)
-          print(f'VCR font built: {len(data)} bytes')
+          print(f'VCR font OK: {len(data)} bytes, sha256={digest}')
           PY
 
       - name: Setup Pages
