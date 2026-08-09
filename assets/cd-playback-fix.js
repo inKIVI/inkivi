@@ -115,7 +115,10 @@
   const queueMask=()=>{if(maskFrame)return;maskFrame=requestAnimationFrame(()=>{maskFrame=0;syncVcrMask()})};
   const refreshMaskBurst=()=>{queueMask();requestAnimationFrame(queueMask);setTimeout(queueMask,80);setTimeout(queueMask,220);setTimeout(queueMask,520);setTimeout(queueMask,900)};
   window.addEventListener('resize',refreshMaskBurst,{passive:true});
-  window.addEventListener('scroll',queueMask,{passive:true});
+  window.addEventListener('scroll',syncVcrMask,{passive:true});
+  document.addEventListener('scroll',syncVcrMask,true);
+  window.visualViewport?.addEventListener('scroll',syncVcrMask,{passive:true});
+  window.visualViewport?.addEventListener('resize',syncVcrMask,{passive:true});
   document.addEventListener('transitionrun',refreshMaskBurst,true);
   document.addEventListener('transitionend',refreshMaskBurst,true);
   document.addEventListener('click',refreshMaskBurst,true);
@@ -126,13 +129,20 @@
   let noiseSeed=11;
   setInterval(()=>{if(document.hidden||!turb)return;noiseSeed=(noiseSeed+17)%997;turb.setAttribute('seed',String(noiseSeed));turb.setAttribute('baseFrequency',`${(0.68+Math.random()*.10).toFixed(3)} ${(0.88+Math.random()*.14).toFixed(3)}`)},140);
 
-  document.documentElement.classList.remove('retroCursorOn');
-  document.querySelector('.retroCursor')?.remove();
+  if(matchMedia('(pointer:fine)').matches){
+    const old=document.querySelector('.retroCursor');if(old)old.remove();
+    const c=document.createElement('div');c.className='retroCursor';c.setAttribute('aria-hidden','true');
+    c.innerHTML=`<svg class="cursorArrow" viewBox="0 0 28 32" aria-hidden="true"><path d="M2 1v24l6-6 5 11 5-2-5-10h9L2 1Z" fill="#fff" stroke="#050505" stroke-width="2" stroke-linejoin="miter"/></svg><svg class="cursorHand" viewBox="0 0 28 32" aria-hidden="true"><path d="M11 2h5v11h2V8h4v7h2v-4h3v12h-2v5H10l-2-3-4-6v-5h4l3 4V2Z" fill="#fff" stroke="#050505" stroke-width="2" stroke-linejoin="miter"/><path d="M12 4h2v11h-2zM19 10h1v7h-1zM24 13h1v6h-1z" fill="#050505"/></svg>`;
+    document.body.appendChild(c);document.documentElement.classList.add('retroCursorOn');
+    const interactive='a,button,[role="button"],input[type="button"],input[type="submit"],input[type="range"],.zone,.platformLink,.trackPlay,.trackToggle,.dockPlay,.dockClose,.btn';
+    const move=e=>{c.style.setProperty('transform',`translate3d(${e.clientX}px,${e.clientY}px,0)`,'important');c.classList.toggle('is-pointer',!!e.target.closest?.(interactive))};
+    window.addEventListener('pointermove',move,{passive:true});window.addEventListener('blur',()=>{c.style.setProperty('transform','translate3d(-80px,-80px,0)','important')});
+  }
 
   const playerReady=new Promise(resolve=>{const player=document.createElement('script');player.src='./assets/player-v3.js?v=20260809c';player.defer=true;player.onload=()=>resolve(true);player.onerror=()=>resolve(false);document.head.appendChild(player)});
   const pageReady=document.readyState==='complete'?Promise.resolve():new Promise(r=>window.addEventListener('load',r,{once:true}));
   const minBoot=new Promise(r=>setTimeout(r,520));
-  Promise.allSettled([...cssReady,playerReady,pageReady,minBoot]).then(async()=>{try{await document.fonts?.load?.('400 16px "IBM Plex Mono"');await document.fonts?.ready}catch{}requestAnimationFrame(()=>requestAnimationFrame(()=>{bootReady=true;bootGuard?.disconnect();loader?.classList.add('done');refreshMaskBurst()}))});
+  Promise.allSettled([...cssReady,playerReady,pageReady,minBoot]).then(async()=>{try{await document.fonts?.load?.('400 16px "VCR OSD Mono Cyr"');await document.fonts?.ready}catch{}requestAnimationFrame(()=>requestAnimationFrame(()=>{bootReady=true;bootGuard?.disconnect();loader?.classList.add('done');refreshMaskBurst()}))});
 
   const PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
   const PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
