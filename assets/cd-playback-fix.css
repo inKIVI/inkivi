@@ -1,7 +1,12 @@
-@import url("./grain-overlay.css?v=20260809q");
+@font-face{
+  font-family:"VCR OSD Mono Cyr";
+  src:url("./VCR-OSD-Mono-Cyr.ttf?v=20260809r") format("truetype");
+  font-style:normal;
+  font-weight:400;
+  font-display:block;
+}
 
-/* First-paint typography/loader guard. Load the VCR @font-face above before any
-   theme overrides so Safari can use it from the first rendered frame. */
+/* First-paint typography/loader guard. */
 html body,
 html body *{
   font-family:"VCR OSD Mono Cyr",monospace!important;
