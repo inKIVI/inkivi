@@ -15,8 +15,9 @@ html body,html body *{
 
 .foundFootage,.inkiviGrain,.retroFx,#vcrMonitorFx{display:none!important}
 
-.view,.panel{isolation:isolate}
-.view::before,.panel::before{
+/* Main/start/menu screens can keep one full-screen monitor layer. */
+.view{isolation:isolate}
+.view::before{
   content:"";
   position:absolute;
   inset:0;
@@ -36,8 +37,54 @@ html body,html body *{
 @keyframes vcrBgScan{from{background-position-y:0,0,0}to{background-position-y:0,8px,0}}
 @keyframes vcrBgFlicker{0%,18%,20%,51%,53%,79%,100%{opacity:.72}19%{opacity:.66}52%{opacity:.76}80%{opacity:.68}}
 
-.releaseCoverBox,#heroReleaseCover,.heroReleaseCover,.heroCover{position:relative!important;z-index:6!important}
-.releaseCoverBox .cdScene{z-index:6!important}
+/* Artwork on start/menu is always above the monitor layer. */
+#heroReleaseCover,.heroReleaseCover,.heroCover,.zoneMedia{position:relative!important;z-index:8!important}
+
+/* RELEASE PANEL: never put an overlay over the whole panel/content.
+   The CRT effect lives only on UI regions, so cover/CD can never be touched. */
+.panel{isolation:isolate}
+.panel::before{display:none!important}
+.panelHead{position:relative!important;isolation:isolate!important}
+.panelHead::after,
+.releaseRight::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:20!important;
+  pointer-events:none!important;
+  opacity:.66!important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.84' numOctaves='3' seed='31' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.52'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(to bottom,rgba(0,0,0,.22) 0,rgba(0,0,0,.22) 1px,rgba(125,174,255,.04) 1px,rgba(125,174,255,.04) 2px,transparent 2px,transparent 4px),
+    repeating-linear-gradient(to right,rgba(255,90,90,.018) 0,rgba(255,90,90,.018) 1px,rgba(80,210,150,.014) 1px,rgba(80,210,150,.014) 2px,rgba(90,135,255,.020) 2px,rgba(90,135,255,.020) 3px)!important;
+  background-size:160px 160px,100% 4px,3px 100%!important;
+  background-blend-mode:multiply,soft-light,overlay!important;
+  animation:vcrUiNoise .24s steps(2,end) infinite,vcrBgScan .48s linear infinite!important;
+}
+@keyframes vcrUiNoise{0%{background-position:0 0,0 0,0 0}50%{background-position:7px -5px,0 2px,1px 0}100%{background-position:-6px 8px,0 4px,0 0}}
+
+.releaseCoverBox{
+  position:relative!important;
+  z-index:30!important;
+  isolation:isolate!important;
+}
+.releaseCoverBox .cdScene{
+  position:relative!important;
+  z-index:31!important;
+}
+.releaseCoverBox .cdCase,
+.releaseCoverBox .cdDisc,
+.releaseCoverBox .cdLabel,
+.releaseCoverBox .cdRing,
+.releaseCoverBox .releaseCover,
+.releaseCoverBox .releaseCoverFallback{
+  filter:none!important;
+  mix-blend-mode:normal!important;
+}
+
+/* Keep controls/content above their local texture so it remains visual-only. */
+.releaseRight>*{position:relative;z-index:21}
+.panelHead>*{position:relative;z-index:21}
 
 #globalAudioDock{isolation:isolate!important}
 #globalAudioDock::after{
@@ -53,7 +100,8 @@ html body,html body *{
   animation:vcrDockNoise .24s steps(2,end) infinite!important;
 }
 @keyframes vcrDockNoise{0%{background-position:0 0,0 0}50%{background-position:8px -5px,0 2px}100%{background-position:-5px 7px,0 4px}}
-#globalAudioDock .dockCover{position:relative!important;z-index:6!important}
+#globalAudioDock .dockCover{position:relative!important;z-index:10!important;filter:none!important;mix-blend-mode:normal!important}
+#globalAudioDock>*:not(.dockCover){position:relative;z-index:6}
 
 html.retroCursorOn,html.retroCursorOn body,html.retroCursorOn body *{cursor:revert!important}
 .retroCursor{display:none!important}
@@ -61,4 +109,4 @@ html.retroCursorOn,html.retroCursorOn body,html.retroCursorOn body *{cursor:reve
 .start h1{color:#fff!important;font-size:clamp(54px,11vw,160px)!important;margin:10px 0 7px!important}
 .start .heroReleaseCover{width:clamp(220px,24vw,310px)!important;margin:12px auto 8px!important}
 @media(max-width:620px){.start h1{font-size:16vw!important}.start .heroReleaseCover{width:clamp(180px,58vw,260px)!important}}
-@media(prefers-reduced-motion:reduce){.view::before,.panel::before,#globalAudioDock::after{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.view::before,.panelHead::after,.releaseRight::after,#globalAudioDock::after{animation:none!important}}
