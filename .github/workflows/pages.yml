@@ -25,6 +25,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Build VCR font
+        run: |
+          cat assets/vcr-font.part01 assets/vcr-font.part02 | tr -d '\r\n' | base64 --decode > assets/VCR-OSD-Mono-Cyr.ttf
+          test "$(stat -c%s assets/VCR-OSD-Mono-Cyr.ttf)" -eq 30764
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
