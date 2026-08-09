@@ -1,22 +1,20 @@
 @font-face{
-  font-family:"VCR OSD Mono Cyr";
-  src:url("./VCR-OSD-Mono-Cyr.ttf?v=20260809s") format("truetype");
+  font-family:"Inkivi VCR";
+  src:url("./VCR-OSD-Mono-Cyr.ttf?v=20260809t") format("truetype");
   font-style:normal;
   font-weight:400;
   font-display:block;
 }
 
 html body,html body *{
-  font-family:"VCR OSD Mono Cyr",monospace!important;
+  font-family:"Inkivi VCR",monospace!important;
   font-weight:400!important;
   font-synthesis:none!important;
   font-variant-ligatures:none!important;
 }
 
-/* Old global mask-based layer is disabled completely. */
 .foundFootage,.inkiviGrain,.retroFx,#vcrMonitorFx{display:none!important}
 
-/* One local monitor layer per screen. No geometry tracking, no masks. */
 .view,.panel{isolation:isolate}
 .view::before,.panel::before{
   content:"";
@@ -34,29 +32,13 @@ html body,html body *{
   animation:vcrBgNoise .22s steps(2,end) infinite,vcrBgScan .48s linear infinite,vcrBgFlicker 3.8s steps(1,end) infinite;
 }
 
-@keyframes vcrBgNoise{
-  0%{background-position:0 0,0 0,0 0}
-  25%{background-position:-9px 6px,0 1px,1px 0}
-  50%{background-position:7px -8px,0 2px,0 0}
-  75%{background-position:-5px -3px,0 3px,-1px 0}
-  100%{background-position:0 0,0 4px,0 0}
-}
+@keyframes vcrBgNoise{0%{background-position:0 0,0 0,0 0}25%{background-position:-9px 6px,0 1px,1px 0}50%{background-position:7px -8px,0 2px,0 0}75%{background-position:-5px -3px,0 3px,-1px 0}100%{background-position:0 0,0 4px,0 0}}
 @keyframes vcrBgScan{from{background-position-y:0,0,0}to{background-position-y:0,8px,0}}
 @keyframes vcrBgFlicker{0%,18%,20%,51%,53%,79%,100%{opacity:.72}19%{opacity:.66}52%{opacity:.76}80%{opacity:.68}}
 
-/* Artwork is simply on the front plane of the same screen. No holes/cutouts. */
-.releaseCoverBox,
-#heroReleaseCover,
-.heroReleaseCover,
-.heroCover{
-  position:relative!important;
-  z-index:6!important;
-}
-
-/* The disc itself is untouched; its existing texture/animation stays intact. */
+.releaseCoverBox,#heroReleaseCover,.heroReleaseCover,.heroCover{position:relative!important;z-index:6!important}
 .releaseCoverBox .cdScene{z-index:6!important}
 
-/* Player gets its own local VCR layer, with only the cover above it. */
 #globalAudioDock{isolation:isolate!important}
 #globalAudioDock::after{
   content:""!important;
@@ -66,22 +48,17 @@ html body,html body *{
   z-index:5!important;
   pointer-events:none!important;
   opacity:.68!important;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' seed='23' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.52'/%3E%3C/svg%3E"),
-    repeating-linear-gradient(to bottom,rgba(0,0,0,.24) 0,rgba(0,0,0,.24) 1px,rgba(130,180,255,.04) 1px,rgba(130,180,255,.04) 2px,transparent 2px,transparent 4px)!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' seed='23' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.52'/%3E%3C/svg%3E"),repeating-linear-gradient(to bottom,rgba(0,0,0,.24) 0,rgba(0,0,0,.24) 1px,rgba(130,180,255,.04) 1px,rgba(130,180,255,.04) 2px,transparent 2px,transparent 4px)!important;
   background-size:120px 120px,100% 4px!important;
   animation:vcrDockNoise .24s steps(2,end) infinite!important;
 }
 @keyframes vcrDockNoise{0%{background-position:0 0,0 0}50%{background-position:8px -5px,0 2px}100%{background-position:-5px 7px,0 4px}}
 #globalAudioDock .dockCover{position:relative!important;z-index:6!important}
 
-/* Native browser/system cursor. */
 html.retroCursorOn,html.retroCursorOn body,html.retroCursorOn body *{cursor:revert!important}
 .retroCursor{display:none!important}
 
-/* Start screen proportions. */
 .start h1{color:#fff!important;font-size:clamp(54px,11vw,160px)!important;margin:10px 0 7px!important}
 .start .heroReleaseCover{width:clamp(220px,24vw,310px)!important;margin:12px auto 8px!important}
 @media(max-width:620px){.start h1{font-size:16vw!important}.start .heroReleaseCover{width:clamp(180px,58vw,260px)!important}}
-
 @media(prefers-reduced-motion:reduce){.view::before,.panel::before,#globalAudioDock::after{animation:none!important}}
