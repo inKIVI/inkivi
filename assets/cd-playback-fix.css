@@ -1,22 +1,21 @@
+@import url("./grain-overlay.css?v=20260809t");
+
 @font-face{
-  font-family:"VCR OSD Mono Cyr";
-  src:url("./VCR-OSD-Mono-Cyr.ttf?v=20260809r") format("truetype");
+  font-family:"Inkivi VCR";
+  src:url("./VCR-OSD-Mono-Cyr.ttf?v=20260809t") format("truetype");
   font-style:normal;
   font-weight:400;
   font-display:block;
 }
 
-/* First-paint typography/loader guard. */
 html body,
 html body *{
-  font-family:"VCR OSD Mono Cyr",monospace!important;
+  font-family:"Inkivi VCR",monospace!important;
   font-weight:400!important;
   font-synthesis:none!important;
   font-variant-ligatures:none!important;
 }
 
-/* Hide the legacy inkivi/загрузка loader at CSS parse time and show only the
-   minimal loading line from the first paint. */
 .loader{
   background:#00184c!important;
   display:grid!important;
