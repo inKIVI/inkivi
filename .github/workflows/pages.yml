@@ -26,9 +26,23 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build VCR font
+        shell: bash
         run: |
-          cat assets/vcr-font.part01 assets/vcr-font.part02 | tr -d '\r\n' | base64 --decode > assets/VCR-OSD-Mono-Cyr.ttf
-          test "$(stat -c%s assets/VCR-OSD-Mono-Cyr.ttf)" -eq 30764
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, hashlib
+
+          encoded = ''.join(
+              (Path('assets/vcr-font.part01').read_text() + Path('assets/vcr-font.part02').read_text()).split()
+          )
+          data = base64.b64decode(encoded, validate=True)
+          digest = hashlib.sha256(data).hexdigest()
+          expected = '696c9cb7cd2a467b003c3cf9ecdb73ee694eac5327a43a3e93d170d5a854b09a'
+          if digest != expected:
+              raise SystemExit(f'VCR font checksum mismatch: {digest}')
+          Path('assets/VCR-OSD-Mono-Cyr.ttf').write_bytes(data)
+          print(f'VCR font built: {len(data)} bytes, sha256={digest}')
+          PY
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
