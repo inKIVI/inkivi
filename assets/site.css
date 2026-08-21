@@ -87,7 +87,7 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
 .visuals{grid-row:1/3}.game{grid-column:3;grid-row:1/3}.music{grid-column:2;grid-row:1}.back{grid-column:2;grid-row:2}
 
 .fade{position:fixed;inset:0;z-index:60;background:#00113c;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .42s var(--ease),visibility .42s}
-.fade.active{opacity:1;visibility:visible;pointer-events:auto}
+.fade.active{opacity:.78;visibility:visible;pointer-events:auto}
 .panel{position:fixed;inset:0;z-index:80;overflow:hidden;padding:0;background:var(--surface);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .38s,visibility .38s}
 .panel.on{opacity:1;visibility:visible;pointer-events:auto}
 .panelHead{position:absolute;z-index:20;left:0;right:0;top:0;height:112px;padding:0 78px 0 20px;display:flex;align-items:center;background:#082b70;border-bottom:1px solid #7096ce;box-shadow:inset 0 1px rgba(255,255,255,.1)}
@@ -149,9 +149,9 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
 .dockVolume{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--muted);font-size:8px}.dockVolume input{width:105px;margin:0;accent-color:var(--yellow)}
 .dockClose{width:34px;height:34px;padding:0;border:1px solid var(--line);background:#0a347b;color:var(--ink);font-size:20px;cursor:pointer}
 .audioDockOpen .content{padding-bottom:124px}
+.audioDockOpen .menu:not(.off) .zones{padding-bottom:110px}
 
 #vcrMonitorFx{position:fixed;inset:0;z-index:9000;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:.72;mix-blend-mode:soft-light}
-html.vcrTransitioning #vcrMonitorFx{opacity:0}
 #vcrMonitorFx .vcrNoise{fill:#9ab9e6;opacity:.16}
 #vcrMonitorFx .vcrScan{opacity:.38}
 #vcrMonitorFx .vcrPixel{opacity:.12}

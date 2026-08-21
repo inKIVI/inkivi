@@ -171,22 +171,31 @@ async function boot(){
   window.inkiviVcrRefresh?.();
 }
 
-let vcrTransitionTimer=0;
+let vcrTransitionFrame=0;
+let vcrTransitionUntil=0;
 function markVcrTransition(duration=480){
-  clearTimeout(vcrTransitionTimer);
+  vcrTransitionUntil=Math.max(vcrTransitionUntil,performance.now()+duration);
   document.documentElement.classList.add('vcrTransitioning');
-  window.inkiviVcrRefresh?.();
-  vcrTransitionTimer=setTimeout(()=>{document.documentElement.classList.remove('vcrTransitioning');window.inkiviVcrRefresh?.()},duration);
+  if(vcrTransitionFrame)return;
+  const track=()=>{
+    window.inkiviVcrRefresh?.();
+    if(performance.now()<vcrTransitionUntil){vcrTransitionFrame=requestAnimationFrame(track);return}
+    vcrTransitionFrame=0;
+    vcrTransitionUntil=0;
+    document.documentElement.classList.remove('vcrTransitioning');
+    window.inkiviVcrRefresh?.();
+  };
+  vcrTransitionFrame=requestAnimationFrame(track);
 }
 
 function swap(from,to){
   if(document.body.dataset.transitioning==='1')return;
   document.body.dataset.transitioning='1';
-  markVcrTransition(720);
+  markVcrTransition(780);
   $('fade').classList.add('active');
-  setTimeout(()=>{from.classList.add('off');to.classList.remove('off');scrollTo(0,0);window.inkiviVcrRefresh?.()},420);
-  setTimeout(()=>$('fade').classList.remove('active'),560);
-  setTimeout(()=>delete document.body.dataset.transitioning,880);
+  setTimeout(()=>{from.classList.add('off');to.classList.remove('off');scrollTo(0,0);window.inkiviVcrRefresh?.()},260);
+  setTimeout(()=>$('fade').classList.remove('active'),420);
+  setTimeout(()=>delete document.body.dataset.transitioning,820);
 }
 
 function platformLinks(release){

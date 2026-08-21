@@ -58,18 +58,17 @@ function sync(){
   svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
   [base,...layers].forEach(layer=>{layer.setAttribute('x','0');layer.setAttribute('y',layer.classList?.contains('vcrScan')?'-8':'0');layer.setAttribute('width',String(width));layer.setAttribute('height',String(height+(layer.classList?.contains('vcrScan')?16:0)))});
   holes.replaceChildren();
-  if(document.getElementById('fade')?.classList.contains('active')||document.documentElement.classList.contains('vcrTransitioning'))return;
   const activePanel=document.querySelector('.panel.on');
   const seen=new Set();
-  document.querySelectorAll(protectedSelector).forEach(element=>{
+
+  function paintElement(element,fill='black',pad=2){
     if(activePanel&&!element.closest('.panel')&&!element.closest('.audioDock'))return;
     if(!visible(element))return;
     const rect=element.getBoundingClientRect();
     const round=element.matches('.cdDisc');
-    const key=[round?'circle':'rect',Math.round(rect.left),Math.round(rect.top),Math.round(rect.width),Math.round(rect.height)].join(':');
+    const key=[fill,round?'circle':'rect',Math.round(rect.left),Math.round(rect.top),Math.round(rect.width),Math.round(rect.height)].join(':');
     if(seen.has(key))return;
     seen.add(key);
-    const pad=2;
     const shape=document.createElementNS(NS,round?'ellipse':'rect');
     if(round){
       shape.setAttribute('cx',String(rect.left+rect.width/2));
@@ -83,9 +82,17 @@ function sync(){
       shape.setAttribute('height',String(Math.min(height,rect.bottom+pad)-Math.max(0,rect.top-pad)));
       shape.setAttribute('rx','2');
     }
-    shape.setAttribute('fill','black');
+    shape.setAttribute('fill',fill);
     holes.appendChild(shape);
-  });
+  }
+
+  const protectedMedia=[...document.querySelectorAll(protectedSelector)];
+  protectedMedia.filter(element=>!element.matches('.dockCover')).forEach(element=>paintElement(element));
+
+  const audioDock=document.querySelector('.audioDock:not([hidden])');
+  if(audioDock&&visible(audioDock))paintElement(audioDock,'white',0);
+
+  protectedMedia.filter(element=>element.matches('.dockCover')).forEach(element=>paintElement(element));
 }
 
 let frame=0;
