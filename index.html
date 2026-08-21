@@ -1,108 +1,94 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0b08">
-<title>inkivi</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/content-ui.css">
-<link rel="stylesheet" href="./assets/cd-refine.css">
-<link rel="stylesheet" href="./assets/cd-playback-fix.css">
-<style>
-:root{--bg:#0b0b08;--ink:#e8e0d2;--muted:#9b9285;--line:rgba(232,224,210,.15);--ease:cubic-bezier(.22,.8,.25,1)}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Mono",monospace}
-body{overflow:hidden}
-button,a{font:inherit;color:inherit}
-.off{opacity:0;visibility:hidden;pointer-events:none}
-.loader{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#080806;transition:.6s}
-.loader.done{opacity:0;visibility:hidden;pointer-events:none}
-.loader b{font-size:clamp(48px,12vw,110px);letter-spacing:-.07em}
-.loader small{display:block;margin-top:22px;text-align:center;color:var(--muted);letter-spacing:.12em}
-.stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 5%,rgba(150,135,90,.12),transparent 31%),linear-gradient(#191914,#090908)}
-.stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,transparent 38%,rgba(0,0,0,.72))}
-.view{position:absolute;inset:0;z-index:2;min-height:100svh;transition:opacity .55s var(--ease),visibility .55s}
-.start{display:grid;place-items:center;padding:24px 16px}
-.hero{width:min(1100px,100%);text-align:center}
-.eyebrow,.date,.unit span,.btn,.zoneMeta{text-transform:uppercase}
-.eyebrow,.date{color:var(--muted);font-size:11px;letter-spacing:.08em}
-h1{margin:28px 0 18px;font-size:clamp(78px,18vw,240px);line-height:.72;letter-spacing:-.08em;transform:rotate(-.25deg)}
-.release{font-size:clamp(15px,2vw,29px)}
-.date{margin-top:9px}
-.timer{width:min(680px,100%);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,2vw,32px);margin:44px auto}
-.unit{position:relative;min-width:0}.unit:not(:last-child):after{content:"";position:absolute;right:calc(clamp(10px,2vw,32px)/-2);top:8%;bottom:8%;width:1px;background:var(--line)}
-.unit b{display:block;font-size:clamp(38px,6vw,88px);line-height:.9;font-weight:500;letter-spacing:-.06em}.unit span{display:block;margin-top:8px;color:var(--muted);font-size:9px}
-.actions{display:flex;justify-content:center;gap:10px}
-.btn{min-width:210px;padding:14px 18px;border:1px solid var(--line);background:rgba(12,12,10,.7);font-size:10px;text-decoration:none;cursor:pointer;transition:.35s}
-.btn.primary{background:var(--ink);color:#151511}.btn:hover{transform:translateY(-3px) rotate(-.2deg)}
-.menu{overflow:hidden}.zones{min-height:100%;display:grid;grid-template-columns:1.18fr .82fr 1.18fr;grid-template-rows:1fr 1fr;gap:10px;padding:10px}
-.zone{position:relative;min-width:0;min-height:0;padding:0;border:1px solid var(--line);background:transparent;overflow:hidden;text-align:left;cursor:pointer;transform-style:preserve-3d;transition:transform .55s var(--ease),border-color .3s}
-.zone:hover{border-color:rgba(232,224,210,.34)}
-.zoneSkin{position:absolute;inset:0;background:radial-gradient(circle at 72% 18%,rgba(155,132,79,.16),transparent 29%),radial-gradient(circle at 10% 90%,rgba(128,81,61,.14),transparent 35%),linear-gradient(150deg,rgba(255,255,255,.04),rgba(0,0,0,.38))}
-.zoneIndex{position:absolute;top:22px;right:25px;color:rgba(232,224,210,.07);font-size:clamp(60px,8vw,150px);font-weight:600}
-.zoneMedia{position:absolute;inset:70px 30px 100px;display:grid;place-items:center;overflow:hidden}.zoneMedia img{display:block;width:auto;height:auto;max-width:88%;max-height:88%;object-fit:contain;filter:drop-shadow(0 26px 40px rgba(0,0,0,.55))}
-.zoneCopy{position:absolute;z-index:3;left:28px;right:28px;bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
-.zoneTitle{font-size:clamp(34px,4.6vw,78px);line-height:.8;letter-spacing:-.06em}.zoneMeta{color:var(--muted);font-size:9px;text-align:right}
-.visuals{grid-row:1/3}.game{grid-column:3;grid-row:1/3}.music{grid-column:2;grid-row:1}.back{grid-column:2;grid-row:2}
-.fade{position:fixed;inset:0;z-index:60;background:#070705;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s var(--ease),visibility .5s}.fade.active{opacity:1;visibility:visible;pointer-events:auto}
-.panel{position:fixed;inset:0;z-index:30;padding:24px;background:#0b0b09;opacity:0;visibility:hidden;pointer-events:none;transition:.5s}.panel.on{opacity:1;visibility:visible;pointer-events:auto}.panelHead{display:flex;justify-content:space-between;align-items:flex-start}.panel h2{margin:0;font-size:clamp(56px,11vw,170px);line-height:.75;letter-spacing:-.07em}.close{width:50px;height:50px;border:1px solid var(--line);background:none;font-size:28px}.content{position:absolute;left:24px;right:24px;bottom:24px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted)}
-.foundFootage{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden;mix-blend-mode:soft-light}
-.foundFootage:before{content:"";position:absolute;inset:-40px;opacity:.48;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");background-size:160px 160px;filter:contrast(215%) brightness(82%);animation:filmGrain .12s steps(2,end) infinite}
-.foundFootage:after{content:"";position:absolute;inset:0;opacity:.74;background:radial-gradient(ellipse at 50% 44%,transparent 46%,rgba(0,0,0,.12) 72%,rgba(0,0,0,.29) 100%),radial-gradient(circle at 24% 18%,rgba(235,219,178,.035),transparent 27%),radial-gradient(circle at 76% 70%,rgba(255,255,255,.018),transparent 35%)}
-@keyframes filmGrain{0%{transform:translate3d(0,0,0)}20%{transform:translate3d(-4px,2px,0)}40%{transform:translate3d(3px,-3px,0)}60%{transform:translate3d(-2px,-1px,0)}80%{transform:translate3d(4px,3px,0)}100%{transform:translate3d(1px,-4px,0)}}
-.glyph{display:inline-block;will-change:transform;transform:translate3d(0,0,0)}
-.cursorGlow{position:fixed;z-index:49;left:0;top:0;width:280px;height:280px;border-radius:50%;pointer-events:none;opacity:0;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(230,211,165,.14) 0%,rgba(190,166,112,.07) 30%,rgba(125,112,78,.025) 57%,transparent 74%);filter:blur(10px);mix-blend-mode:screen;transition:opacity .22s ease}.cursorGlow.on{opacity:1}
-@media(min-width:901px){html,body{width:100%;height:100%;overflow:hidden}.stage,.menu,.zones{overflow:hidden}.zones{contain:paint}.zone{transform-origin:center center}}
-@media(max-width:900px){body{overflow:auto}.stage{position:relative;min-height:100dvh;overflow:visible}.view{position:relative;inset:auto;min-height:100dvh}.view.off{display:none!important}.menu{min-height:0;overflow:visible}.zones{min-height:0;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:clamp(270px,48vw,380px)}.visuals,.game,.music,.back{grid-column:auto;grid-row:auto}}
-@media(max-width:620px){.stage{min-height:0}.view{min-height:0}.start{min-height:100dvh}.menu{min-height:0}.zones{display:grid;grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:clamp(250px,72vw,340px);min-height:0;padding:8px;gap:8px}.zone{height:auto;min-height:0}.zoneMedia{inset:42px 18px 76px}.zoneCopy{left:17px;right:17px;bottom:15px}.zoneIndex{top:18px;right:17px;font-size:70px}.zoneTitle{font-size:clamp(39px,13vw,64px)}.zoneMeta{font-size:8px}h1{font-size:23vw;margin:23px 0 15px}.timer{width:100%;gap:5px;margin:28px auto}.unit:not(:last-child):after{right:-3px}.unit b{font-size:clamp(26px,8.8vw,38px)}.unit span{font-size:6px;letter-spacing:0}.actions{display:grid;grid-template-columns:1.25fr .75fr;width:100%;gap:7px}.btn{min-width:0;width:100%;padding:11px 7px;font-size:8px;white-space:nowrap}}
-@media(hover:none),(pointer:coarse){.cursorGlow{display:none}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}.glyph{transform:none!important}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#00184c">
+  <meta name="description" content="Официальный сайт inkivi — релизы, музыка и визуалы.">
+  <title>inkivi</title>
+  <link rel="preload" href="./assets/VCR-OSD-Mono-Cyr.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="./assets/site.css?v=20260822a">
+  <link rel="stylesheet" href="./assets/cd-refine.css?v=20260822a">
 </head>
 <body>
-<div class="loader" id="loader"><div><b>inkivi</b><small>загрузка</small></div></div>
-<div class="stage">
-<section class="view start" id="start"><div class="hero"><div class="eyebrow" id="releaseMode">ближайший релиз</div><h1>inkivi</h1><div class="release" id="releaseTitle">предстоящий релиз</div><div class="date" id="releaseDateLabel">01 сентября 2026</div><div class="timer" id="timer"></div><div class="actions"><a class="btn primary" href="#" id="presave">сделать пресейв</a><button class="btn" id="enter">войти</button></div></div></section>
-<main class="view menu off" id="menu"><section class="zones">
-<button class="zone visuals" data-panel="визуалы"><span class="zoneSkin"></span><span class="zoneIndex">01</span><span class="zoneMedia"><img src="./assets/visuals.png" alt=""></span><span class="zoneCopy"><strong class="zoneTitle">визуалы</strong><span class="zoneMeta">TikTok / видео</span></span></button>
-<button class="zone music" data-panel="релизы"><span class="zoneSkin"></span><span class="zoneIndex">02</span><span class="zoneMedia"><img src="./assets/releases.png" alt=""></span><span class="zoneCopy"><strong class="zoneTitle">релизы</strong><span class="zoneMeta">музыка / ссылки</span></span></button>
-<button class="zone back" id="back"><span class="zoneSkin"></span><span class="zoneIndex">03</span><span class="zoneMedia"><img src="./assets/door.png" alt=""></span><span class="zoneCopy"><strong class="zoneTitle">назад</strong><span class="zoneMeta">к экрану релиза</span></span></button>
-<button class="zone game" data-panel="игра"><span class="zoneSkin"></span><span class="zoneIndex">04</span><span class="zoneMedia"><img src="./assets/game.png" alt=""></span><span class="zoneCopy"><strong class="zoneTitle">игра</strong><span class="zoneMeta">запустить</span></span></button>
-</section></main>
-</div>
-<div class="foundFootage" aria-hidden="true"></div><div class="cursorGlow" id="cursorGlow"></div><div class="fade" id="fade"></div>
-<section class="panel" id="panel"><div class="panelHead"><h2 id="panelTitle">раздел</h2><button class="close" id="close">×</button></div><div class="content" id="panelText"></div></section>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-let target=new Date('2026-09-01T00:00:00+03:00'),timer=document.getElementById('timer');
-function tick(){const d=Math.max(0,target-Date.now()),v=[Math.floor(d/864e5),Math.floor(d/36e5)%24,Math.floor(d/6e4)%60,Math.floor(d/1e3)%60],n=['дней','часов','минут','секунд'];timer.innerHTML=v.map((x,i)=>`<div class="unit"><b>${String(x).padStart(2,'0')}</b><span>${n[i]}</span></div>`).join('')}
-tick();setInterval(tick,1000);
-const loader=document.getElementById('loader');Promise.all(['./assets/visuals.png','./assets/releases.png','./assets/door.png','./assets/game.png'].map(src=>new Promise(r=>{const i=new Image;i.onload=i.onerror=r;i.src=src}))).finally(()=>setTimeout(()=>loader.classList.add('done'),200));setTimeout(()=>loader.classList.add('done'),2200);
-document.querySelectorAll('.zoneMedia img').forEach(i=>i.onerror=()=>i.hidden=true);
-const start=document.getElementById('start'),menu=document.getElementById('menu'),fade=document.getElementById('fade');let busy=false;
-function swap(a,b){if(busy)return;busy=true;fade.classList.add('active');setTimeout(()=>{a.classList.add('off');b.classList.remove('off');window.scrollTo(0,0)},500);setTimeout(()=>fade.classList.remove('active'),650);setTimeout(()=>busy=false,1050)}
-document.getElementById('enter').onclick=()=>swap(start,menu);document.getElementById('back').onclick=()=>swap(menu,start);
-const presaveBtn=document.getElementById('presave');presaveBtn.onclick=e=>{if(!presaveBtn.dataset.href)e.preventDefault();};
-const panel=document.getElementById('panel'),pt=document.getElementById('panelTitle'),px=document.getElementById('panelText');let releaseRows=[],visualRows=[];
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function renderReleases(){if(!releaseRows.length)return 'релизов пока нет';return releaseRows.map(r=>`<div style="padding:12px 0;border-top:1px solid var(--line)"><b style="color:var(--ink)">${esc(r.title)}</b><div style="font-size:10px;margin:5px 0">${new Date(r.release_date).toLocaleDateString('ru-RU')}</div>${r.source_url?`<a href="${esc(r.source_url)}" target="_blank" rel="noopener" style="color:var(--ink)">слушать / площадки →</a>`:''}</div>`).join('')}
-function renderVisuals(){if(!visualRows.length)return 'визуалов пока нет';return visualRows.map(v=>`<div style="padding:12px 0;border-top:1px solid var(--line)"><a href="${esc(v.url)}" target="_blank" rel="noopener" style="color:var(--ink)">${esc(v.title||v.platform||'визуал')} →</a></div>`).join('')}
-document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>{const key=b.dataset.panel;pt.textContent=key;if(key==='релизы')px.innerHTML=renderReleases();else if(key==='визуалы')px.innerHTML=renderVisuals();else px.textContent='Здесь будет браузерная игра.';panel.classList.add('on');refreshGlyphs(pt)});document.getElementById('close').onclick=()=>panel.classList.remove('on');
-if(matchMedia('(hover:hover) and (pointer:fine)').matches)document.querySelectorAll('.zone').forEach(z=>{z.onpointermove=e=>{const r=z.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;z.style.transform=`perspective(1000px) rotateX(${-y*4}deg) rotateY(${x*5}deg)`};z.onpointerleave=()=>z.style.transform=''});
-function splitGlyphs(el){if(el.dataset.glyphs==='1')return;const text=el.textContent;el.textContent='';[...text].forEach(ch=>{const s=document.createElement('span');s.className='glyph';s.textContent=ch===' '?'\u00a0':ch;el.appendChild(s)});el.dataset.glyphs='1'}
-function twitch(g){const delay=520+Math.random()*2500;setTimeout(()=>{const amount=.42+Math.random()*.62,x=(Math.random()<.5?-1:1)*amount,y=(Math.random()<.5?-1:1)*(Math.random()*.62);g.style.transform=`translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;setTimeout(()=>{g.style.transform='translate3d(0,0,0)';twitch(g)},55+Math.random()*95)},delay)}
-function refreshGlyphs(root=document){root.querySelectorAll?.('h1,.release,.eyebrow,.zoneTitle,.zoneMeta,.panel h2,.loader b').forEach(el=>{splitGlyphs(el);if(!matchMedia('(prefers-reduced-motion: reduce)').matches)el.querySelectorAll('.glyph').forEach(g=>{if(!g.dataset.live){g.dataset.live='1';setTimeout(()=>twitch(g),Math.random()*1200)}})})}
-const SUPABASE_URL='https://ytckdpaegunralpxvmlx.supabase.co',SUPABASE_KEY='sb_publishable_oyJmCk-WH3ig_QTJlJh1vQ_wLICx0X0',db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-async function loadContent(){try{const [{data:rels},{data:vis}]=await Promise.all([db.from('releases').select('*').eq('published',true).order('release_date',{ascending:false}),db.from('visuals').select('*').eq('published',true).order('sort_order',{ascending:true})]);releaseRows=rels||[];visualRows=vis||[];if(releaseRows.length){const now=Date.now(),future=releaseRows.filter(r=>new Date(r.release_date).getTime()>now).sort((a,b)=>new Date(a.release_date)-new Date(b.release_date)),current=future[0]||releaseRows[0],isFuture=new Date(current.release_date).getTime()>now;target=new Date(current.release_date);const mode=document.getElementById('releaseMode'),title=document.getElementById('releaseTitle'),date=document.getElementById('releaseDateLabel');mode.textContent=isFuture?'ближайший релиз':'последний релиз';title.textContent=current.title;date.textContent=new Date(current.release_date).toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});if(current.presave_url||current.source_url){presaveBtn.dataset.href=current.presave_url||current.source_url;presaveBtn.href=current.presave_url||current.source_url;presaveBtn.target='_blank';presaveBtn.rel='noopener';presaveBtn.textContent=isFuture?'сделать пресейв':'слушать релиз'}else{presaveBtn.removeAttribute('href');presaveBtn.textContent=isFuture?'сделать пресейв':'слушать релиз'}[mode,title].forEach(el=>{el.dataset.glyphs='';el.querySelectorAll('.glyph').forEach(g=>g.remove());});refreshGlyphs();tick()}}catch(e){console.warn('content load failed',e)}}
-loadContent();
-refreshGlyphs();
-const glow=document.getElementById('cursorGlow');if(glow&&matchMedia('(hover:hover) and (pointer:fine)').matches){let raf=0,x=0,y=0;addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY;glow.classList.add('on');if(!raf)raf=requestAnimationFrame(()=>{glow.style.left=x+'px';glow.style.top=y+'px';raf=0})},{passive:true});document.documentElement.addEventListener('mouseleave',()=>glow.classList.remove('on'))}
-</script>
-<script src="./assets/content-ui.js"></script>
-<script src="./assets/cd-playback-fix.js"></script>
-<script src="./assets/tiktok-profile.js"></script>
-<!-- grain-jitter-tune-v1 -->
-</body></html>
+  <div class="loader" id="loader" role="status" aria-live="polite">
+    <div class="loaderInner">
+      <strong>inkivi</strong>
+      <span class="bootTrack" aria-hidden="true"><i></i></span>
+      <small id="loaderStatus">загрузка данных</small>
+    </div>
+  </div>
+
+  <div class="stage">
+    <section class="view start" id="start" aria-labelledby="siteTitle">
+      <div class="hero">
+        <div class="eyebrow" id="releaseMode">ближайший релиз</div>
+        <h1 id="siteTitle">inkivi</h1>
+        <div class="release" id="releaseTitle">предстоящий релиз</div>
+        <img class="heroReleaseCover vcr-clean" id="heroReleaseCover" alt="" hidden>
+        <div class="date" id="releaseDateLabel">дата уточняется</div>
+        <div class="timer" id="timer" aria-label="До релиза"></div>
+        <button class="heroPlayStrip" id="heroPlayStrip" type="button" hidden></button>
+        <div class="actions">
+          <a class="btn primary" id="presave" aria-disabled="true">сделать пресейв</a>
+          <button class="btn" id="enter" type="button">войти</button>
+        </div>
+      </div>
+    </section>
+
+    <main class="view menu off" id="menu">
+      <section class="zones" aria-label="Разделы сайта">
+        <button class="zone visuals" type="button" data-panel="визуалы">
+          <span class="zoneSkin"></span><span class="zoneIndex">01</span>
+          <span class="zoneMedia vcr-clean"><img id="visualsZoneImage" alt="" hidden><span class="zonePlaceholder">VIS</span></span>
+          <span class="zoneCopy"><strong class="zoneTitle">визуалы</strong><span class="zoneMeta">TikTok / видео</span></span>
+        </button>
+        <button class="zone music" type="button" data-panel="релизы">
+          <span class="zoneSkin"></span><span class="zoneIndex">02</span>
+          <span class="zoneMedia vcr-clean"><img id="releasesZoneImage" alt="" hidden><span class="zonePlaceholder">CD</span></span>
+          <span class="zoneCopy"><strong class="zoneTitle">релизы</strong><span class="zoneMeta">музыка / ссылки</span></span>
+        </button>
+        <button class="zone back" id="back" type="button">
+          <span class="zoneSkin"></span><span class="zoneIndex">03</span>
+          <span class="zoneMedia vcr-clean"><span class="zonePlaceholder zoneDoor">←</span></span>
+          <span class="zoneCopy"><strong class="zoneTitle">назад</strong><span class="zoneMeta">к экрану релиза</span></span>
+        </button>
+        <button class="zone game" type="button" data-panel="игра">
+          <span class="zoneSkin"></span><span class="zoneIndex">04</span>
+          <span class="zoneMedia vcr-clean"><span class="zonePlaceholder">PLAY</span></span>
+          <span class="zoneCopy"><strong class="zoneTitle">игра</strong><span class="zoneMeta">скоро</span></span>
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <div class="fade" id="fade" aria-hidden="true"></div>
+  <section class="panel" id="panel" aria-modal="true" role="dialog" aria-labelledby="panelTitle" aria-hidden="true">
+    <div class="panelHead">
+      <h2 id="panelTitle">раздел</h2>
+      <button class="close" id="close" type="button" aria-label="Закрыть раздел">×</button>
+    </div>
+    <div class="content" id="panelText"></div>
+  </section>
+
+  <div class="audioDock" id="globalAudioDock" hidden>
+    <audio preload="metadata"></audio>
+    <iframe class="scEngine" title="SoundCloud player" allow="autoplay" tabindex="-1"></iframe>
+    <button class="dockPlay" type="button" aria-label="Воспроизвести"></button>
+    <img class="dockCover vcr-clean" alt="" hidden>
+    <div class="dockMain">
+      <div class="dockTop"><b class="dockTitle">—</b><span class="dockLabel">audio</span></div>
+      <button class="dockProgress" type="button" aria-label="Перемотать"><i></i></button>
+      <div class="dockBottom">
+        <span class="dockTime">0:00 / 0:00</span>
+        <label class="dockVolume"><span aria-hidden="true">VOL</span><input type="range" min="0" max="100" step="1" value="82" aria-label="Громкость"></label>
+      </div>
+    </div>
+    <button class="dockClose" type="button" aria-label="Закрыть плеер">×</button>
+  </div>
+
+  <noscript><div class="noScript">Для загрузки релизов требуется JavaScript.</div></noscript>
+  <script src="./assets/app.js?v=20260822a" defer></script>
+  <script src="./assets/vcr-effect.js?v=20260822a" defer></script>
+</body>
+</html>
