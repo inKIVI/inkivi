@@ -54,9 +54,9 @@ function initGlyphJitter(){
     for(let index=0;index<count;index++){
       const glyph=glyphs[Math.floor(Math.random()*glyphs.length)];
       if(!glyph)continue;
-      const strength=.35+Math.random()*.65;
+      const strength=.48+Math.random()*.78;
       const x=(Math.random()<.5?-1:1)*strength;
-      const y=(Math.random()<.5?-1:1)*Math.random()*.65;
+      const y=(Math.random()<.5?-1:1)*Math.random()*.82;
       glyph.style.transform=`translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;
       setTimeout(()=>{if(glyph.isConnected)glyph.style.transform='translate3d(0,0,0)'},42+Math.random()*72);
     }

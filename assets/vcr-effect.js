@@ -89,6 +89,11 @@ function sync(){
   const protectedMedia=[...document.querySelectorAll(protectedSelector)];
   protectedMedia.filter(element=>!element.matches('.dockCover')).forEach(element=>paintElement(element));
 
+  // Scrolling media can pass behind a fixed panel header. Restore the effect
+  // over the header after cutting media holes so their silhouettes never show.
+  const panelHead=document.querySelector('.panel.on .panelHead');
+  if(panelHead&&visible(panelHead))paintElement(panelHead,'white',0);
+
   const audioDock=document.querySelector('.audioDock:not([hidden])');
   if(audioDock&&visible(audioDock))paintElement(audioDock,'white',0);
 
