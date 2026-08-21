@@ -126,12 +126,7 @@ async function renderHero(release){
   setHeroButton(release);
   renderTimer();
   const cover=safeUrl(release.cover_url||release.platforms?.artwork);
-  const visual=safeUrl(state.visuals.find(item=>item.preview_url)?.preview_url);
-  return [
-    loadImage($('heroReleaseCover'),cover,`Обложка релиза ${release.title||''}`),
-    loadImage($('releasesZoneImage'),cover,''),
-    loadImage($('visualsZoneImage'),visual,'')
-  ];
+  return [loadImage($('heroReleaseCover'),cover,`Обложка релиза ${release.title||''}`)];
 }
 
 function fallbackHero(){
@@ -147,7 +142,6 @@ function fallbackHero(){
 
 async function boot(){
   const started=performance.now();
-  const status=$('loaderStatus');
   const fontReady=document.fonts?.load?withTimeout(document.fonts.load('400 16px "Inkivi VCR"'),4200,'font timeout').catch(()=>[]):Promise.resolve([]);
   let imageTasks=[];
   try{
@@ -156,11 +150,9 @@ async function boot(){
     state.visuals=Array.isArray(visuals)?visuals:[];
     imageTasks=await renderHero(chooseCurrent(state.releases));
     if(!state.current)fallbackHero();
-    status.textContent='загрузка обложек';
   }catch(error){
     console.warn('Не удалось загрузить данные сайта:',error);
     fallbackHero();
-    status.textContent='открываю без данных';
     setTimeout(async()=>{
       try{
         const [releases,visuals]=await Promise.all([rest('releases','release_date.desc'),rest('visuals','sort_order.asc,created_at.desc')]);
@@ -179,9 +171,18 @@ async function boot(){
   window.inkiviVcrRefresh?.();
 }
 
+let vcrTransitionTimer=0;
+function markVcrTransition(duration=480){
+  clearTimeout(vcrTransitionTimer);
+  document.documentElement.classList.add('vcrTransitioning');
+  window.inkiviVcrRefresh?.();
+  vcrTransitionTimer=setTimeout(()=>{document.documentElement.classList.remove('vcrTransitioning');window.inkiviVcrRefresh?.()},duration);
+}
+
 function swap(from,to){
   if(document.body.dataset.transitioning==='1')return;
   document.body.dataset.transitioning='1';
+  markVcrTransition(720);
   $('fade').classList.add('active');
   setTimeout(()=>{from.classList.add('off');to.classList.remove('off');scrollTo(0,0);window.inkiviVcrRefresh?.()},420);
   setTimeout(()=>$('fade').classList.remove('active'),560);
@@ -205,7 +206,7 @@ function trackRow(track,index,release){
 
 function cdMarkup(cover,title){
   const url=safeUrl(cover);
-  return `<div class="cdScene vcr-clean"><div class="cdDisc" aria-hidden="true"><span class="cdRing"></span><span class="cdLabel" data-art="${esc(url)}"></span></div><div class="cdCase">${url?`<img class="releaseCover" src="${esc(url)}" alt="${esc(title)}" loading="lazy">`:'<div class="releaseCoverFallback">inkivi</div>'}<span class="caseGlare"></span></div></div>`;
+  return `<div class="cdScene"><div class="cdDisc" aria-hidden="true"><span class="cdRing"></span><span class="cdLabel" data-art="${esc(url)}"></span></div><div class="cdCase">${url?`<img class="releaseCover" src="${esc(url)}" alt="${esc(title)}" loading="lazy">`:'<div class="releaseCoverFallback">inkivi</div>'}<span class="caseGlare"></span></div></div>`;
 }
 
 function releaseCard(release){
@@ -213,7 +214,7 @@ function releaseCard(release){
   const multi=tracks.length>1;
   const cover=release.cover_url||release.platforms?.artwork||'';
   const player=multi?`<div class="albumCompact">${trackRow(tracks[0],0,release)}<button class="trackToggle" type="button" aria-expanded="false">треклист <span>${tracks.length} ↓</span></button><div class="trackDrawer" hidden>${tracks.map((track,index)=>trackRow(track,index,release)).join('')}</div></div>`:trackRow(tracks[0]||{title:release.title},0,release);
-  return `<article class="releaseCard" data-release-id="${esc(release.id||'')}"><div class="releaseCoverBox vcr-clean">${cdMarkup(cover,release.title)}</div><div class="releaseRight"><div class="releaseInfo"><div><div class="releaseDateSmall"><span>${esc(multi?(tracks.length<=6?'ep':'album'):(release.type||'single'))}</span> · ${esc(formatDate(release.release_date))}</div><h3>${esc(release.title)}</h3></div><div class="platformRow">${platformLinks(release)}</div></div><div class="playerArea">${player}</div></div></article>`;
+  return `<article class="releaseCard" data-release-id="${esc(release.id||'')}"><div class="releaseCoverBox">${cdMarkup(cover,release.title)}</div><div class="releaseRight"><div class="releaseInfo"><div><div class="releaseDateSmall"><span>${esc(multi?(tracks.length<=6?'ep':'album'):(release.type||'single'))}</span> · ${esc(formatDate(release.release_date))}</div><h3>${esc(release.title)}</h3></div><div class="platformRow">${platformLinks(release)}</div></div><div class="playerArea">${player}</div></div></article>`;
 }
 
 function hydrateRenderedMedia(root){
@@ -253,6 +254,7 @@ function renderPanel(kind){
 }
 
 function openPanel(kind,trigger){
+  markVcrTransition();
   renderPanel(kind);
   const panel=$('panel');
   panel.dataset.triggerId=trigger?.dataset.panel||'';
@@ -264,6 +266,7 @@ function openPanel(kind,trigger){
 }
 
 function closePanel(){
+  markVcrTransition();
   const panel=$('panel');
   panel.classList.remove('on');
   panel.setAttribute('aria-hidden','true');

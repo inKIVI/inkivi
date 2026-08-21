@@ -41,7 +41,7 @@ document.body.appendChild(svg);
 const holes=svg.querySelector('#vcrMaskHoles');
 const base=svg.querySelector('#vcrMaskBase');
 const layers=[...svg.querySelectorAll('.vcrNoise,.vcrScan,.vcrPixel,.vcrShade')];
-const protectedSelector=['.vcr-clean','.releaseCoverBox','.cdScene','.heroReleaseCover','.dockCover','.visualMedia','.visualFallback img','.zoneMedia'].join(',');
+const protectedSelector=['.heroReleaseCover','.dockCover','.visualMedia','.visualFallback img','.cdCase','.cdDisc'].join(',');
 
 function visible(element){
   if(!element?.isConnected||element.closest('[hidden],.view.off'))return false;
@@ -58,21 +58,31 @@ function sync(){
   svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
   [base,...layers].forEach(layer=>{layer.setAttribute('x','0');layer.setAttribute('y',layer.classList?.contains('vcrScan')?'-8':'0');layer.setAttribute('width',String(width));layer.setAttribute('height',String(height+(layer.classList?.contains('vcrScan')?16:0)))});
   holes.replaceChildren();
-  if(document.getElementById('fade')?.classList.contains('active'))return;
+  if(document.getElementById('fade')?.classList.contains('active')||document.documentElement.classList.contains('vcrTransitioning'))return;
+  const activePanel=document.querySelector('.panel.on');
   const seen=new Set();
   document.querySelectorAll(protectedSelector).forEach(element=>{
+    if(activePanel&&!element.closest('.panel')&&!element.closest('.audioDock'))return;
     if(!visible(element))return;
     const rect=element.getBoundingClientRect();
-    const key=[Math.round(rect.left),Math.round(rect.top),Math.round(rect.width),Math.round(rect.height)].join(':');
+    const round=element.matches('.cdDisc');
+    const key=[round?'circle':'rect',Math.round(rect.left),Math.round(rect.top),Math.round(rect.width),Math.round(rect.height)].join(':');
     if(seen.has(key))return;
     seen.add(key);
     const pad=2;
-    const shape=document.createElementNS(NS,'rect');
-    shape.setAttribute('x',String(Math.max(0,rect.left-pad)));
-    shape.setAttribute('y',String(Math.max(0,rect.top-pad)));
-    shape.setAttribute('width',String(Math.min(width,rect.right+pad)-Math.max(0,rect.left-pad)));
-    shape.setAttribute('height',String(Math.min(height,rect.bottom+pad)-Math.max(0,rect.top-pad)));
-    shape.setAttribute('rx','2');
+    const shape=document.createElementNS(NS,round?'ellipse':'rect');
+    if(round){
+      shape.setAttribute('cx',String(rect.left+rect.width/2));
+      shape.setAttribute('cy',String(rect.top+rect.height/2));
+      shape.setAttribute('rx',String(rect.width/2+pad));
+      shape.setAttribute('ry',String(rect.height/2+pad));
+    }else{
+      shape.setAttribute('x',String(Math.max(0,rect.left-pad)));
+      shape.setAttribute('y',String(Math.max(0,rect.top-pad)));
+      shape.setAttribute('width',String(Math.min(width,rect.right+pad)-Math.max(0,rect.left-pad)));
+      shape.setAttribute('height',String(Math.min(height,rect.bottom+pad)-Math.max(0,rect.top-pad)));
+      shape.setAttribute('rx','2');
+    }
     shape.setAttribute('fill','black');
     holes.appendChild(shape);
   });

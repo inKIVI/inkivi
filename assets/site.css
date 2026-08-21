@@ -54,7 +54,7 @@ button:disabled{cursor:not-allowed;opacity:.48}
 .view{position:absolute;inset:0;z-index:2;min-height:100svh;transition:opacity .55s var(--ease),visibility .55s}
 .start{display:grid;place-items:center;padding:22px 16px}
 .hero{width:min(1100px,100%);text-align:center}
-.eyebrow,.date,.unit span,.btn,.zoneMeta,.releaseDateSmall,.dockLabel,.dockTime{text-transform:uppercase}
+.eyebrow,.date,.unit span,.btn,.releaseDateSmall,.dockLabel,.dockTime{text-transform:uppercase}
 .eyebrow,.date{color:var(--muted);font-size:11px;letter-spacing:.025em}
 h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78;letter-spacing:-.045em}
 .release{font-size:clamp(15px,2vw,29px)}
@@ -82,14 +82,8 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
 .zoneSkin{position:absolute;inset:0;background:rgba(12,57,137,.34)}
 .zoneIndex{position:absolute;top:22px;right:25px;color:rgba(123,177,255,.22);font-size:clamp(60px,8vw,150px)}
 .zone:nth-child(2) .zoneIndex,.zone:nth-child(3) .zoneIndex{color:rgba(243,220,84,.2)}
-.zoneMedia{position:absolute;inset:70px 30px 100px;display:grid;place-items:center;overflow:hidden;border:1px solid rgba(112,150,206,.24);background:#021744}
-.zoneMedia img{display:block;width:100%;height:100%;object-fit:contain}
-.zoneMedia img:not([hidden])+.zonePlaceholder{display:none}
-.zonePlaceholder{font-size:clamp(42px,7vw,112px);color:rgba(184,200,228,.28);letter-spacing:.04em}
-.zoneDoor{font-size:clamp(70px,10vw,150px)}
 .zoneCopy{position:absolute;z-index:3;left:28px;right:28px;bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
 .zoneTitle{color:var(--ink);font-size:clamp(34px,4.6vw,78px);line-height:.8;letter-spacing:-.045em;text-shadow:1px 1px #00113b}
-.zoneMeta{color:var(--muted);font-size:9px;text-align:right}
 .visuals{grid-row:1/3}.game{grid-column:3;grid-row:1/3}.music{grid-column:2;grid-row:1}.back{grid-column:2;grid-row:2}
 
 .fade{position:fixed;inset:0;z-index:60;background:#00113c;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .42s var(--ease),visibility .42s}
@@ -157,6 +151,7 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
 .audioDockOpen .content{padding-bottom:124px}
 
 #vcrMonitorFx{position:fixed;inset:0;z-index:9000;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:.72;mix-blend-mode:soft-light}
+html.vcrTransitioning #vcrMonitorFx{opacity:0}
 #vcrMonitorFx .vcrNoise{fill:#9ab9e6;opacity:.16}
 #vcrMonitorFx .vcrScan{opacity:.38}
 #vcrMonitorFx .vcrPixel{opacity:.12}
@@ -176,7 +171,7 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
 }
 @media(max-width:620px){
   .start{min-height:100dvh}.start h1{font-size:16vw}.heroReleaseCover{width:clamp(180px,58vw,260px)}.timer{gap:5px;margin:18px auto}.unit:not(:last-child)::after{right:-3px}.unit b{font-size:clamp(26px,8.8vw,38px)}.unit span{font-size:6px}.actions{display:grid;grid-template-columns:1.25fr .75fr;width:100%;gap:7px}.btn{min-width:0;width:100%;padding:11px 7px;font-size:8px;white-space:nowrap}
-  .zones{grid-template-columns:1fr;grid-auto-rows:clamp(250px,72vw,340px);padding:8px;gap:8px}.zoneMedia{inset:42px 18px 76px}.zoneCopy{left:17px;right:17px;bottom:15px}.zoneIndex{top:18px;right:17px;font-size:70px}.zoneTitle{font-size:clamp(39px,13vw,64px)}.zoneMeta{font-size:8px}
+  .zones{grid-template-columns:1fr;grid-auto-rows:clamp(250px,72vw,340px);padding:8px;gap:8px}.zoneCopy{left:17px;right:17px;bottom:15px}.zoneIndex{top:18px;right:17px;font-size:70px}.zoneTitle{font-size:clamp(39px,13vw,64px)}
 }
 @media(max-width:480px){.releaseCard{grid-template-columns:94px minmax(0,1fr)}.releaseCoverBox{width:94px;min-height:126px}.cdScene{width:76px;height:76px}.cdDisc{width:68px;height:68px;left:4px;top:4px}.cdLabel{width:31px;height:31px}.releaseInfo h3{font-size:20px}.releaseDateSmall{font-size:7px}.platformLink{font-size:7px;padding:6px 7px}.trackLite{grid-template-columns:18px 30px minmax(0,1fr);gap:6px;padding:7px}.trackLite>span:last-child{display:none}.trackPlay{width:30px;height:30px}.audioDock{grid-template-columns:40px 40px minmax(0,1fr) 28px}.dockPlay{width:36px;height:36px}.dockCover{width:40px;height:40px}.dockVolume input{width:46px}.dockTop b{font-size:9px}}
 @media(hover:none),(pointer:coarse){.zone{transform:none!important}}
