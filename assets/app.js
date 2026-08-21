@@ -161,15 +161,22 @@ async function boot(){
     console.warn('Не удалось загрузить данные сайта:',error);
     fallbackHero();
     status.textContent='открываю без данных';
+    setTimeout(async()=>{
+      try{
+        const [releases,visuals]=await Promise.all([rest('releases','release_date.desc'),rest('visuals','sort_order.asc,created_at.desc')]);
+        state.releases=Array.isArray(releases)?releases:[];
+        state.visuals=Array.isArray(visuals)?visuals:[];
+        const retries=await renderHero(chooseCurrent(state.releases));
+        await Promise.allSettled(retries);
+      }catch(retryError){console.warn('Повторная загрузка данных не удалась:',retryError)}
+    },1800);
   }
   await Promise.allSettled([fontReady,...imageTasks.map(task=>withTimeout(task,4700,'image timeout').catch(()=>false))]);
   const elapsed=performance.now()-started;
   if(elapsed<520)await wait(520-elapsed);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    $('loader').classList.add('done');
-    $('loader').setAttribute('aria-hidden','true');
-    window.inkiviVcrRefresh?.();
-  }));
+  $('loader').classList.add('done');
+  $('loader').setAttribute('aria-hidden','true');
+  window.inkiviVcrRefresh?.();
 }
 
 function swap(from,to){
