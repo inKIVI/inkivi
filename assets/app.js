@@ -7,7 +7,7 @@ const PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/
 const PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
 const PLATFORM_ORDER=['spotify','apple','yandex','vk','youtube','soundcloud','deezer','tidal','amazon','bandcamp'];
 const PLATFORM_NAMES={spotify:'spotify',apple:'apple music',yandex:'яндекс музыка',vk:'vk музыка',youtube:'youtube',soundcloud:'soundcloud',deezer:'deezer',tidal:'tidal',amazon:'amazon music',bandcamp:'bandcamp'};
-const state={releases:[],visuals:[],current:null,target:null,active:null,playSeq:0,scWidget:null,scDuration:0,scScript:null};
+const state={releases:[],visuals:[],current:null,target:null,active:null,playSeq:0,scWidget:null,scDuration:0,scScript:null,scCatalog:new Map(),scRetryAfter:0};
 
 const $=id=>document.getElementById(id);
 const q=(selector,root=document)=>root.querySelector(selector);
@@ -17,6 +17,53 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const withTimeout=(promise,ms,message='timeout')=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(message)),ms))]);
 const norm=value=>String(value||'').toLowerCase().replace(/^inkivi\s*[-—–:]\s*/i,'').replace(/[^a-zа-яё0-9]+/gi,' ').trim();
 const fmt=seconds=>!Number.isFinite(seconds)?'0:00':Math.floor(seconds/60)+':'+String(Math.floor(seconds%60)).padStart(2,'0');
+const GLYPH_SELECTOR='h1,.release,.eyebrow,.zoneTitle,.panel h2,.unit b,.releaseInfo h3,.trackLite b,.dockTitle,.loader strong';
+
+function splitGlyphs(element){
+  const text=element.textContent||'';
+  const glyphs=[...element.children];
+  if(element.dataset.glyphText===text&&glyphs.length===[...text].length&&glyphs.every(glyph=>glyph.classList.contains('glyph')))return;
+  element.textContent='';
+  [...text].forEach(character=>{
+    const glyph=document.createElement('span');
+    glyph.className='glyph';
+    glyph.setAttribute('aria-hidden','true');
+    glyph.textContent=character;
+    element.appendChild(glyph);
+  });
+  element.dataset.glyphText=text;
+  element.setAttribute('aria-label',text);
+}
+
+let glyphRefreshFrame=0;
+function refreshGlyphs(){
+  if(glyphRefreshFrame)return;
+  glyphRefreshFrame=requestAnimationFrame(()=>{
+    glyphRefreshFrame=0;
+    qa(GLYPH_SELECTOR).forEach(splitGlyphs);
+  });
+}
+
+function initGlyphJitter(){
+  refreshGlyphs();
+  new MutationObserver(refreshGlyphs).observe(document.body,{subtree:true,childList:true,characterData:true});
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const twitch=()=>{
+    const glyphs=qa('.glyph').filter(glyph=>glyph.parentElement?.matches(GLYPH_SELECTOR)&&glyph.isConnected&&glyph.getClientRects().length);
+    const count=Math.min(glyphs.length,1+Math.floor(glyphs.length/55));
+    for(let index=0;index<count;index++){
+      const glyph=glyphs[Math.floor(Math.random()*glyphs.length)];
+      if(!glyph)continue;
+      const strength=.35+Math.random()*.65;
+      const x=(Math.random()<.5?-1:1)*strength;
+      const y=(Math.random()<.5?-1:1)*Math.random()*.65;
+      glyph.style.transform=`translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;
+      setTimeout(()=>{if(glyph.isConnected)glyph.style.transform='translate3d(0,0,0)'},42+Math.random()*72);
+    }
+    setTimeout(twitch,58+Math.random()*105);
+  };
+  setTimeout(twitch,240);
+}
 
 function safeUrl(value){
   if(!value)return'';
@@ -69,8 +116,8 @@ function audioSources(track,release){
   const soundcloud=safeUrl(release?.platforms?.soundcloud);
   const sources=[];
   if(direct||releaseDirect)sources.push({kind:'full',url:direct||releaseDirect,label:'full'});
-  if(preview&&!sources.some(item=>item.url===preview))sources.push({kind:'preview',url:preview,label:'preview'});
   if(soundcloud)sources.push({kind:'soundcloud',url:soundcloud,label:'soundcloud'});
+  if(preview&&!sources.some(item=>item.url===preview))sources.push({kind:'preview',url:preview,label:'preview'});
   return sources;
 }
 
@@ -209,7 +256,7 @@ function platformLinks(release){
 function trackRow(track,index,release){
   const title=track.title||track.trackName||`трек ${index+1}`;
   const sources=audioSources(track,release);
-  const status=sources.some(item=>item.kind==='full')?'full':sources.some(item=>item.kind==='preview')?'preview':sources.length?'online':'нет audio';
+  const status=sources.some(item=>item.kind==='full'||item.kind==='soundcloud')?'full':sources.some(item=>item.kind==='preview')?'preview':'нет audio';
   return `<div class="trackLite"><span class="trackNo">${String(index+1).padStart(2,'0')}</span><button class="trackPlay" type="button" data-release-id="${esc(release.id||'')}" data-track-index="${index}" aria-label="Воспроизвести ${esc(title)}" ${sources.length?'':'disabled'}>${PLAY}</button><b>${esc(title)}</b><span>${status}</span></div>`;
 }
 
@@ -402,39 +449,135 @@ async function playNative(source,seq){
 function loadScript(src){
   if(state.scScript)return state.scScript;
   state.scScript=new Promise((resolve,reject)=>{
-    if(window.SC?.Widget)return resolve();
+    if(window.SC?.Widget){state.scRetryAfter=0;return resolve()}
     const script=document.createElement('script');
-    script.src=src;script.async=true;script.onload=resolve;script.onerror=reject;document.head.appendChild(script);
+    script.src=src;script.async=true;
+    script.onload=()=>{state.scRetryAfter=0;resolve()};
+    script.onerror=()=>{state.scScript=null;reject(new Error('soundcloud api unavailable'))};
+    document.head.appendChild(script);
   });
   return state.scScript;
+}
+
+function soundScore(title,sound){
+  const left=norm(title),right=norm(sound?.title||sound?.permalink||'');
+  if(!left||!right)return 0;
+  if(left===right)return 100;
+  if(left.includes(right)||right.includes(left))return 80;
+  const a=new Set(left.split(' ')),b=new Set(right.split(' '));
+  let matches=0;a.forEach(token=>{if(b.has(token))matches++});
+  return 60*matches/Math.max(a.size,b.size);
+}
+
+function soundMatch(sounds,title,fallbackIndex=0){
+  let best=null,bestScore=0;
+  sounds.forEach((sound,index)=>{const score=soundScore(title,sound);if(score>bestScore){best={sound,index};bestScore=score}});
+  if(best&&bestScore>=45)return best;
+  const index=Math.max(0,Math.min(sounds.length-1,Number(fallbackIndex)||0));
+  return sounds[index]?{sound:sounds[index],index}:null;
+}
+
+function soundCloudOptions(url,startIndex=0){
+  return {url,auto_play:false,start_track:Number(startIndex)||0,hide_related:true,show_comments:false,show_user:false,show_reposts:false,visual:false,buying:false,sharing:false,download:false};
+}
+
+function unbindSoundCloud(widget){
+  const events=window.SC?.Widget?.Events;
+  if(!events)return;
+  [events.READY,events.ERROR,events.PLAY,events.PAUSE,events.FINISH,events.PLAY_PROGRESS].forEach(event=>{try{widget.unbind(event)}catch{}});
+}
+
+async function loadSoundCloudWidget(url,startIndex,seq){
+  await withTimeout(loadScript('https://w.soundcloud.com/player/api.js'),4500,'soundcloud api timeout');
+  if(seq!==state.playSeq)return false;
+  const frame=q('.scEngine',dock());
+  const events=window.SC.Widget.Events;
+  if(!state.scWidget){
+    frame.src='https://w.soundcloud.com/player/?'+new URLSearchParams(soundCloudOptions(url,startIndex));
+    const widget=window.SC.Widget(frame);
+    state.scWidget=widget;
+    await withTimeout(new Promise((resolve,reject)=>{
+      widget.bind(events.READY,resolve);
+      widget.bind(events.ERROR,()=>reject(new Error('soundcloud widget error')));
+    }),7500,'soundcloud ready timeout');
+  }else{
+    const widget=state.scWidget;
+    unbindSoundCloud(widget);
+    const {url:ignored,...options}=soundCloudOptions(url,startIndex);
+    await withTimeout(new Promise((resolve,reject)=>{
+      widget.bind(events.ERROR,()=>reject(new Error('soundcloud widget error')));
+      widget.load(url,{...options,callback:resolve});
+    }),7500,'soundcloud load timeout');
+  }
+  return seq===state.playSeq;
+}
+
+function getSoundCloudSounds(widget){
+  return withTimeout(new Promise(resolve=>{
+    try{widget.getSounds(sounds=>resolve(Array.isArray(sounds)?sounds:[]))}catch{resolve([])}
+  }),2600,'soundcloud catalog timeout').catch(()=>[]);
+}
+
+async function resolveSoundCloudTrack(source,title,index,seq){
+  let sounds=state.scCatalog.get(source.url);
+  let sourceLoaded=false;
+  if(!sounds){
+    if(!await loadSoundCloudWidget(source.url,index,seq))return null;
+    sourceLoaded=true;
+    sounds=await getSoundCloudSounds(state.scWidget);
+    if(sounds.length)state.scCatalog.set(source.url,sounds);
+  }
+  if(seq!==state.playSeq)return null;
+  const match=soundMatch(sounds||[],title,index);
+  const direct=safeUrl(match?.sound?.permalink_url);
+  if(direct&&direct!==source.url)return {url:direct,startIndex:0,loaded:false};
+  return {url:source.url,startIndex:match?.index??index,loaded:sourceLoaded};
 }
 
 async function playSoundCloud(source,index,seq){
   dockLabel().textContent='soundcloud · загрузка';
   setRowStatus(state.active.button,'загрузка');
+  if(Date.now()<state.scRetryAfter)return false;
   try{
-    await withTimeout(loadScript('https://w.soundcloud.com/player/api.js'),5500,'soundcloud api timeout');
-    if(seq!==state.playSeq)return false;
-    const frame=q('.scEngine',dock());
-    frame.src='https://w.soundcloud.com/player/?'+new URLSearchParams({url:source.url,auto_play:'true',hide_related:'true',show_comments:'false',show_user:'false',show_reposts:'false',visual:'false',buying:'false',sharing:'false',download:'false'});
-    await withTimeout(new Promise((resolve,reject)=>{frame.onload=resolve;frame.onerror=reject}),6500,'soundcloud frame timeout');
-    if(seq!==state.playSeq)return false;
-    const widget=window.SC.Widget(frame);
-    state.scWidget=widget;
-    state.active.mode='soundcloud';
+    const resolved=await resolveSoundCloudTrack(source,state.active?.track?.title||state.active?.release?.title,index,seq);
+    if(!resolved||seq!==state.playSeq)return false;
+    if(!resolved.loaded&&!await loadSoundCloudWidget(resolved.url,resolved.startIndex,seq))return false;
+    const widget=state.scWidget;
     const events=window.SC.Widget.Events;
-    await withTimeout(new Promise(resolve=>widget.bind(events.READY,resolve)),6500,'soundcloud ready timeout');
-    if(seq!==state.playSeq)return false;
+    unbindSoundCloud(widget);
+    state.active.mode='soundcloud-pending';
+    state.scDuration=0;
     widget.setVolume(Number(q('.dockVolume input',dock()).value));
-    if(index>0)widget.skip(index);
-    widget.bind(events.PLAY,()=>{if(state.active?.mode==='soundcloud'){dockLabel().textContent='soundcloud · full';setRowStatus(state.active.button,'full');updatePlaying(true)}});
+    const started=await withTimeout(new Promise((resolve,reject)=>{
+      widget.bind(events.ERROR,()=>reject(new Error('soundcloud playback error')));
+      widget.bind(events.PLAY,()=>{
+        if(!String(state.active?.mode||'').startsWith('soundcloud'))return;
+        state.active.mode='soundcloud';
+        dockLabel().textContent='soundcloud · full';
+        setRowStatus(state.active.button,'full');
+        updatePlaying(true);
+        widget.getDuration(value=>{state.scDuration=Number(value)||0});
+        resolve(true);
+      });
+      widget.bind(events.PLAY_PROGRESS,event=>{
+        if(state.active?.mode!=='soundcloud')return;
+        const duration=state.scDuration||Number(event.duration)||0;
+        const position=Number(event.currentPosition)||0;
+        state.scDuration=duration;
+        dockFill().style.width=(duration?Math.min(1,position/duration):0)*100+'%';
+        dockTime().textContent=fmt(position/1000)+' / '+fmt(duration/1000);
+      });
+      widget.play();
+    }),6500,'soundcloud play timeout');
     widget.bind(events.PAUSE,()=>{if(state.active?.mode==='soundcloud')updatePlaying(false)});
     widget.bind(events.FINISH,()=>{if(state.active?.mode==='soundcloud')updatePlaying(false)});
-    widget.bind(events.PLAY_PROGRESS,event=>{if(state.active?.mode!=='soundcloud')return;const duration=state.scDuration||Number(event.duration)||0;const position=Number(event.currentPosition)||0;state.scDuration=duration;dockFill().style.width=(duration?Math.min(1,position/duration):0)*100+'%';dockTime().textContent=fmt(position/1000)+' / '+fmt(duration/1000)});
-    widget.getDuration(value=>{state.scDuration=Number(value)||0});
-    widget.play();
-    return true;
-  }catch{return false}
+    state.scRetryAfter=0;
+    return !!started;
+  }catch{
+    state.scRetryAfter=Date.now()+45000;
+    try{state.scWidget?.pause()}catch{}
+    return false;
+  }
 }
 
 async function chooseTrack(button){
@@ -528,10 +671,21 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches){
     zone.addEventListener('pointermove',event=>{const rect=zone.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width-.5,y=(event.clientY-rect.top)/rect.height-.5;zone.style.transform=`perspective(1000px) rotateX(${-y*4}deg) rotateY(${x*5}deg)`});
     zone.addEventListener('pointerleave',()=>zone.style.transform='');
   });
+  const heroCover=$('heroReleaseCover');
+  heroCover.addEventListener('pointermove',event=>{
+    const rect=heroCover.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width-.5,y=(event.clientY-rect.top)/rect.height-.5;
+    heroCover.style.transform=`perspective(900px) rotateX(${-y*7}deg) rotateY(${x*8}deg) scale(1.018)`;
+  });
+  heroCover.addEventListener('pointerleave',()=>heroCover.style.transform='');
 }
 
 bindPlayer();
+initGlyphJitter();
 renderTimer();
 setInterval(renderTimer,1000);
-boot();
+boot().then(()=>{
+  if(state.releases.some(release=>safeUrl(release.platforms?.soundcloud))){
+    setTimeout(()=>withTimeout(loadScript('https://w.soundcloud.com/player/api.js'),4200,'soundcloud preload timeout').catch(()=>{state.scRetryAfter=Date.now()+45000}),0);
+  }
+});
 })();

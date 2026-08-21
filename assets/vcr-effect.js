@@ -104,7 +104,7 @@ window.inkiviVcrRefresh=refresh;
 
 addEventListener('resize',refresh,{passive:true});
 addEventListener('scroll',refresh,{passive:true,capture:true});
-addEventListener('pointermove',event=>{if(event.target.closest?.('.zone'))refresh()},{passive:true});
+addEventListener('pointermove',event=>{if(event.target.closest?.('.zone,.heroReleaseCover'))refresh()},{passive:true});
 document.addEventListener('transitionrun',refresh,true);
 document.addEventListener('transitionend',refresh,true);
 new MutationObserver(mutations=>{

@@ -59,12 +59,14 @@ button:disabled{cursor:not-allowed;opacity:.48}
 h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78;letter-spacing:-.045em}
 .release{font-size:clamp(15px,2vw,29px)}
 .date{margin-top:8px}
-.heroReleaseCover{display:block;width:clamp(220px,24vw,310px);aspect-ratio:1;object-fit:cover;margin:12px auto 8px;border:1px solid var(--line);box-shadow:0 22px 55px rgba(0,0,0,.42)}
+.heroReleaseCover{display:block;width:clamp(220px,24vw,310px);aspect-ratio:1;object-fit:cover;margin:12px auto 8px;border:1px solid var(--line);box-shadow:0 22px 55px rgba(0,0,0,.42);transform-style:preserve-3d;will-change:transform;transition:transform .42s var(--ease),box-shadow .42s var(--ease)}
+.heroReleaseCover:hover{box-shadow:0 29px 68px rgba(0,0,0,.52)}
+.glyph{display:inline-block;white-space:pre;will-change:transform;transform:translate3d(0,0,0)}
 .timer{width:min(680px,100%);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,2vw,32px);margin:24px auto}
 .unit{position:relative;min-width:0}
 .unit:not(:last-child)::after{content:"";position:absolute;right:calc(clamp(10px,2vw,32px)/-2);top:8%;bottom:8%;width:1px;background:var(--line)}
 .unit b{display:block;font-size:clamp(38px,6vw,88px);line-height:.9;letter-spacing:-.045em}
-.unit span{display:block;margin-top:8px;color:var(--muted);font-size:9px;letter-spacing:.025em}
+.unit>span{display:block;margin-top:8px;color:var(--muted);font-size:9px;letter-spacing:.025em}
 .actions{display:flex;justify-content:center;gap:10px}
 .btn{min-width:210px;padding:14px 18px;border:1px solid var(--line);background:var(--surface-3);color:var(--ink);font-size:10px;text-decoration:none;cursor:pointer;box-shadow:inset 1px 1px rgba(255,255,255,.1),inset -1px -1px rgba(0,10,52,.35);transition:transform .2s,border-color .2s,background-color .2s}
 .btn.primary{background:var(--yellow);color:#111522;border-color:#fff0a2 var(--yellow-dark) var(--yellow-dark) #fff0a2}
@@ -175,4 +177,4 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
 }
 @media(max-width:480px){.releaseCard{grid-template-columns:94px minmax(0,1fr)}.releaseCoverBox{width:94px;min-height:126px}.cdScene{width:76px;height:76px}.cdDisc{width:68px;height:68px;left:4px;top:4px}.cdLabel{width:31px;height:31px}.releaseInfo h3{font-size:20px}.releaseDateSmall{font-size:7px}.platformLink{font-size:7px;padding:6px 7px}.trackLite{grid-template-columns:18px 30px minmax(0,1fr);gap:6px;padding:7px}.trackLite>span:last-child{display:none}.trackPlay{width:30px;height:30px}.audioDock{grid-template-columns:40px 40px minmax(0,1fr) 28px}.dockPlay{width:36px;height:36px}.dockCover{width:40px;height:40px}.dockVolume input{width:46px}.dockTop b{font-size:9px}}
 @media(hover:none),(pointer:coarse){.zone{transform:none!important}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}.zone{transform:none!important}#vcrMonitorFx .vcrNoise,#vcrMonitorFx .vcrPixel{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}.zone,.heroReleaseCover,.glyph{transform:none!important}#vcrMonitorFx .vcrNoise,#vcrMonitorFx .vcrPixel{display:none}}
