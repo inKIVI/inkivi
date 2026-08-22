@@ -7,7 +7,8 @@ const PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/
 const PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
 const PLATFORM_ORDER=['spotify','apple','yandex','vk','youtube','soundcloud','deezer','tidal','amazon','bandcamp'];
 const PLATFORM_NAMES={spotify:'spotify',apple:'apple music',yandex:'яндекс музыка',vk:'vk музыка',youtube:'youtube',soundcloud:'soundcloud',deezer:'deezer',tidal:'tidal',amazon:'amazon music',bandcamp:'bandcamp'};
-const state={releases:[],visuals:[],current:null,target:null,active:null,playSeq:0,scWidget:null,scDuration:0,scScript:null,scCatalog:new Map(),scRetryAfter:0};
+const GAME_URL='https://inkivi.github.io/game/';
+const state={releases:[],visuals:[],current:null,target:null,active:null,playSeq:0,scWidget:null,scDuration:0,scScript:null,scCatalog:new Map(),scRetryAfter:0,gamePoll:0,gameTimer:0};
 
 const $=id=>document.getElementById(id);
 const q=(selector,root=document)=>root.querySelector(selector);
@@ -17,7 +18,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const withTimeout=(promise,ms,message='timeout')=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(message)),ms))]);
 const norm=value=>String(value||'').toLowerCase().replace(/^inkivi\s*[-—–:]\s*/i,'').replace(/[^a-zа-яё0-9]+/gi,' ').trim();
 const fmt=seconds=>!Number.isFinite(seconds)?'0:00':Math.floor(seconds/60)+':'+String(Math.floor(seconds%60)).padStart(2,'0');
-const GLYPH_SELECTOR='h1,.release,.eyebrow,.zoneTitle,.panel h2,.unit b,.releaseInfo h3,.trackLite b,.dockTitle,.loader strong';
+const GLYPH_SELECTOR='h1,.release,.eyebrow,.zoneTitle,.panel h2,.unit b,.releaseInfo h3,.trackLite b,.dockTitle,.loader strong,.gameLoading strong';
 
 function splitGlyphs(element){
   const text=element.textContent||'';
@@ -296,13 +297,71 @@ function visualCard(visual){
   return `<article class="visualCard visualOther"><a class="visualFallback" target="_blank" rel="noopener" href="${esc(url)}">${preview?`<img class="vcr-clean" src="${esc(preview)}" alt="" loading="lazy">`:''}<div class="visualCaption">${esc(title)} →<div class="visualMeta">${esc(visual.platform||'visual')}</div></div></a></article>`;
 }
 
+function gameMarkup(){
+  return `<section class="gameShell" aria-label="Добро пожаловать в клуб"><div class="gameViewport"><iframe class="gameFrame" title="Добро пожаловать в клуб" src="${GAME_URL}" allow="autoplay; fullscreen" allowfullscreen></iframe><div class="gameLoading" role="status" aria-live="polite"><strong>загрузка данных</strong><span class="gameLoadTrack" aria-hidden="true"><i></i></span><small>подготавливаем клуб</small><a href="${GAME_URL}" target="_blank" rel="noopener">открыть отдельно</a></div><button class="gameFullscreen" type="button" aria-label="Открыть игру на весь экран">на весь экран</button></div></section>`;
+}
+
+function clearGameTimers(){
+  clearInterval(state.gamePoll);clearTimeout(state.gameTimer);
+  state.gamePoll=0;state.gameTimer=0;
+}
+
+function destroyGame(){
+  clearGameTimers();
+  const frame=q('.gameFrame',$('panelText'));
+  if(frame){frame.removeAttribute('src');frame.remove()}
+  document.body.classList.remove('gamePanelOpen');
+}
+
+function prepareGame(content){
+  const frame=q('.gameFrame',content),viewport=q('.gameViewport',content),status=q('.gameLoading small',content);
+  if(!frame||!viewport)return;
+  const started=Date.now();
+  const ready=()=>{
+    if(viewport.classList.contains('gameReady'))return;
+    viewport.classList.add('gameReady');
+    clearGameTimers();
+    window.inkiviVcrRefresh?.();
+  };
+  const inspect=()=>{
+    try{
+      const doc=frame.contentDocument;
+      if(!doc?.head){if(Date.now()-started>12000)ready();return}
+      if(!doc.getElementById('inkivi-game-embed')){
+        const style=doc.createElement('style');
+        style.id='inkivi-game-embed';
+        style.textContent=`html,body{width:100%!important;height:100%!important;overflow:hidden!important;background:#101012!important}#unity-container.unity-desktop,#unity-container.unity-mobile{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;transform:none!important}#unity-canvas,#unity-canvas.unity-mobile{display:block!important;width:100%!important;height:100%!important;background:#101012!important}#unity-footer,#unity-logo,#unity-loading-bar{display:none!important}#unity-warning{z-index:20!important;max-width:calc(100% - 24px)!important;padding:8px!important;background:#082b70!important;color:#f4f6fb!important;font-family:monospace!important;font-size:11px!important}`;
+        doc.head.appendChild(style);
+      }
+      frame.classList.add('gameFrameClean');
+      const loading=doc.querySelector('#unity-loading-bar');
+      if(loading?.style.display==='none')ready();
+    }catch{
+      // Local previews are cross-origin; production is same-origin and uses
+      // the precise Unity loading state above.
+      if(Date.now()-started>12000)ready();
+    }
+  };
+  frame.addEventListener('load',()=>{
+    inspect();
+    state.gamePoll=setInterval(inspect,250);
+  },{once:true});
+  frame.addEventListener('error',()=>{
+    clearGameTimers();
+    viewport.classList.add('gameError');
+    status.textContent='не удалось загрузить игру';
+  },{once:true});
+  state.gameTimer=setTimeout(()=>{if(!viewport.classList.contains('gameReady'))status.textContent='ещё немного — сборка большая'},18000);
+}
+
 function renderPanel(kind){
   $('panelTitle').textContent=kind;
   const content=$('panelText');
   if(kind==='релизы')content.innerHTML=state.releases.length?`<div class="releaseListRich">${state.releases.map(releaseCard).join('')}</div>`:'<div class="emptyState">релизов пока нет</div>';
   else if(kind==='визуалы')content.innerHTML=state.visuals.length?`<div class="visualGridRich">${state.visuals.map(visualCard).join('')}</div>`:'<div class="emptyState">визуалов пока нет</div>';
-  else content.innerHTML='<div class="emptyState">игра появится здесь позже</div>';
+  else content.innerHTML=gameMarkup();
   hydrateRenderedMedia(content);
+  if(kind==='игра')prepareGame(content);
   if(kind==='релизы'&&state.active){
     const replacement=qa('.trackPlay',content).find(button=>String(button.dataset.releaseId)===String(state.active.release?.id)&&Number(button.dataset.trackIndex)===Number(state.active.trackIndex));
     if(replacement){state.active.button=replacement;setActiveCard(replacement);updatePlaying(dock().classList.contains('playing'))}
@@ -313,17 +372,24 @@ function openPanel(kind,trigger){
   markVcrTransition();
   renderPanel(kind);
   const panel=$('panel');
+  panel.dataset.kind=kind;
   panel.dataset.triggerId=trigger?.dataset.panel||'';
   panel.classList.add('on');
   panel.setAttribute('aria-hidden','false');
   $('close').focus({preventScroll:true});
   window.inkiviVcrRefresh?.();
   if(kind==='релизы')hydrateMissingReleases();
+  if(kind==='игра'){
+    if(state.active)state.active.wantPlay=false;
+    stopSources(false);updatePlaying(false);
+    document.body.classList.add('gamePanelOpen');
+  }
 }
 
 function closePanel(){
   markVcrTransition();
   const panel=$('panel');
+  if(panel.dataset.kind==='игра')destroyGame();
   panel.classList.remove('on');
   panel.setAttribute('aria-hidden','true');
   qa('[data-panel]').find(button=>button.dataset.panel===panel.dataset.triggerId)?.focus({preventScroll:true});
@@ -656,7 +722,21 @@ document.addEventListener('click',event=>{
   const trackButton=event.target.closest('.trackPlay,.heroPlayStrip');
   if(trackButton&&!trackButton.disabled){event.preventDefault();chooseTrack(trackButton);return}
   const toggle=event.target.closest('.trackToggle');
-  if(toggle){const drawer=toggle.parentElement.querySelector('.trackDrawer');const open=toggle.getAttribute('aria-expanded')==='true';toggle.setAttribute('aria-expanded',String(!open));drawer.hidden=open;toggle.querySelector('span').textContent=drawer.querySelectorAll('.trackLite').length+(open?' ↓':' ↑');window.inkiviVcrRefresh?.()}
+  if(toggle){const drawer=toggle.parentElement.querySelector('.trackDrawer');const open=toggle.getAttribute('aria-expanded')==='true';toggle.setAttribute('aria-expanded',String(!open));drawer.hidden=open;toggle.querySelector('span').textContent=drawer.querySelectorAll('.trackLite').length+(open?' ↓':' ↑');window.inkiviVcrRefresh?.();return}
+  const fullscreen=event.target.closest('.gameFullscreen');
+  if(fullscreen){
+    const viewport=fullscreen.closest('.gameViewport');
+    if(document.fullscreenElement)document.exitFullscreen?.();
+    else viewport?.requestFullscreen?.();
+  }
+});
+
+document.addEventListener('fullscreenchange',()=>{
+  const button=q('.gameFullscreen');
+  if(!button)return;
+  const active=!!document.fullscreenElement;
+  button.textContent=active?'свернуть':'на весь экран';
+  button.setAttribute('aria-label',active?'Выйти из полноэкранного режима':'Открыть игру на весь экран');
 });
 
 qa('[data-panel]').forEach(button=>button.addEventListener('click',()=>openPanel(button.dataset.panel,button)));

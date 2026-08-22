@@ -142,6 +142,23 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
 .visualFallback{display:block;color:var(--ink);text-decoration:none}.visualFallback img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
 .visualCaption{padding:10px 2px 2px;color:var(--ink);font-size:11px;overflow-wrap:anywhere}.visualMeta{margin-top:5px;color:var(--muted);font-size:9px;text-transform:uppercase}
 
+.panel[data-kind="игра"] .content{left:0;right:0;padding:16px;overflow:hidden;background:#00184c}
+.gameShell{width:100%;height:100%;display:grid;place-items:center}
+.gameViewport{position:relative;width:min(960px,100%,calc((100dvh - 144px)*1.6));aspect-ratio:8/5;max-height:100%;overflow:hidden;isolation:isolate;border:1px solid #7096ce;background:#101012;box-shadow:0 22px 60px rgba(0,0,0,.48),inset 0 0 0 1px rgba(255,255,255,.06)}
+.gameViewport::after{content:"";position:absolute;z-index:5;inset:0;pointer-events:none;box-shadow:inset 0 0 42px rgba(0,5,28,.42)}
+.gameFrame{position:absolute;z-index:1;left:0;top:0;width:100%;height:calc(100% + 38px);border:0;background:#101012;opacity:0;transition:opacity .42s ease}.gameFrame.gameFrameClean{height:100%}
+.gameLoading{position:absolute;z-index:4;inset:0;display:grid;place-content:center;justify-items:center;padding:24px;background:#031f61;text-align:center;transition:opacity .34s ease,visibility .34s ease}
+.gameLoading strong{font-size:clamp(24px,4vw,52px);line-height:.9;color:var(--ink)}
+.gameLoading small{min-height:1em;margin-top:13px;color:var(--muted);font-size:9px;text-transform:uppercase}
+.gameLoading a{margin-top:18px;color:var(--muted);font-size:8px;text-transform:uppercase;text-underline-offset:3px}
+.gameLoadTrack{position:relative;width:min(310px,68vw);height:5px;margin-top:21px;overflow:hidden;border:1px solid var(--line);background:#062969}
+.gameLoadTrack i{position:absolute;top:0;bottom:0;width:28%;background:var(--yellow);animation:inkiviBoot .92s steps(14,end) infinite}
+.gameFullscreen{position:absolute;z-index:7;right:10px;bottom:10px;padding:8px 10px;border:1px solid;border-color:#dce9fb #31598f #31598f #dce9fb;background:#96aed2;color:#071632;font-size:8px;text-transform:uppercase;cursor:pointer;opacity:0;transform:translateY(5px);transition:opacity .25s,transform .25s,background-color .2s}
+.gameFullscreen:hover{background:var(--yellow)}
+.gameViewport.gameReady .gameFrame{opacity:1}.gameViewport.gameReady .gameLoading{opacity:0;visibility:hidden;pointer-events:none}.gameViewport.gameReady .gameFullscreen{opacity:.72;transform:none}.gameViewport.gameReady:hover .gameFullscreen,.gameFullscreen:focus-visible{opacity:1}
+.gameViewport:fullscreen{width:100vw;max-width:none;height:100vh;max-height:none;display:grid;place-items:center;aspect-ratio:auto;border:0}.gameViewport:fullscreen .gameFrame{position:relative;width:min(100vw,160vh);height:min(100vh,62.5vw)}.gameViewport:fullscreen .gameFullscreen{right:14px;bottom:14px}
+.gamePanelOpen{overflow:hidden}.gamePanelOpen .audioDock{opacity:0;visibility:hidden;pointer-events:none}
+
 .audioDock{position:fixed;z-index:1000;left:50%;bottom:14px;width:min(900px,calc(100% - 28px));display:grid;grid-template-columns:52px 54px minmax(0,1fr) 36px;gap:12px;align-items:center;padding:10px 12px;transform:translateX(-50%);overflow:hidden;border:1px solid #7096ce;background:#05235d;color:var(--ink);box-shadow:0 8px 22px rgba(0,0,0,.48)}
 .audioDock audio,.scEngine{position:absolute;left:-9999px;width:1px;height:1px;border:0;opacity:0;pointer-events:none}
 .dockPlay{width:48px;height:48px;padding:0;display:grid;place-items:center;border:1px solid;border-color:#e0ebfa #31598f #31598f #e0ebfa;background:var(--control);color:var(--control-dark);cursor:pointer}.audioDock.playing .dockPlay{background:var(--yellow)}
@@ -169,6 +186,7 @@ h1{margin:10px 0 7px;color:#fff;font-size:clamp(54px,11vw,160px);line-height:.78
   .panel{height:100dvh}.panelHead{height:98px;padding:0 64px 0 14px}.panel h2{max-width:calc(100% - 52px);font-size:clamp(36px,11vw,54px)}.close{right:10px;width:44px;height:44px}.content{top:98px;left:0;right:0;padding:14px 12px calc(112px + env(safe-area-inset-bottom))}
   .releaseCard{grid-template-columns:118px minmax(0,1fr);min-height:150px}.releaseCoverBox{width:118px;min-height:150px}.cdScene{width:96px;height:96px}.cdDisc{width:86px;height:86px;left:5px;top:5px}.cdLabel{width:38px;height:38px}.releaseInfo{padding:13px 14px 10px}.releaseInfo h3{font-size:24px}.playerArea{grid-column:1/-1;padding:0 12px 12px}
   .visualGridRich{grid-template-columns:1fr;gap:12px}.visualTikTok,.visualYouTube,.visualOther{grid-column:1;width:min(100%,340px);justify-self:center}
+  .panel[data-kind="игра"] .content{padding:8px}.gameViewport{width:min(960px,100%,calc((100dvh - 114px)*1.6))}.gameFullscreen{right:7px;bottom:7px;padding:7px 8px;font-size:7px}
   .audioDock{bottom:8px;width:calc(100% - 16px);grid-template-columns:44px 44px minmax(0,1fr) 30px;gap:8px;padding:8px}.dockPlay{width:40px;height:40px}.dockCover{width:44px;height:44px}.dockVolume input{width:62px}.dockClose{width:30px;height:30px}
 }
 @media(max-width:620px){
